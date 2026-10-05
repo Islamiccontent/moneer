@@ -16,7 +16,7 @@ from classify.services.splitter import DocumentError, extract_docx, extract_text
 from content.models import Document, DocumentTranslation, PhraseTranslation
 from core.models import Language
 from translate import tasks
-from translate.services import moneer_ui, term_match
+from translate.services import dashboard, moneer_ui, term_match
 
 LANG_BY_LABEL = {
     "English": "en",
@@ -184,38 +184,19 @@ def _stage_of(document) -> str:
 
 @require_safe
 def api_documents(request):
-    """قائمة المحتوى المحفوظ فعلياً بمراحله — تغذي صفحة التصفح ``/translate/documents/``."""
-    out = []
-    for document in Document.objects.order_by("-id").prefetch_related(
-        "translations__target_language"
-    ):
-        translations = [
-            {
-                "language": t.target_language.name,
-                "status": t.get_status_display(),
-            }
-            for t in document.translations.all()
-        ]
-        out.append(
-            {
-                "id": document.pk,
-                "title": document.title,
-                "source": document.source_file_name or "نص مباشر",
-                "phrases": document.phrases.count(),
-                "stage": _stage_of(document),
-                "translations": translations,
-                "url": f"/translate/documents/{document.pk}/",
-                "json_url": f"/classify/documents/{document.pk}.json",
-            }
-        )
-    return JsonResponse({"documents": out})
+    """قائمة المحتوى المحفوظ بمراحله ونسب تقدّمه لكل لغة — تغذي لوحة ``/translate/documents/``."""
+    return JsonResponse(dashboard.payload(), json_dumps_params={"ensure_ascii": False})
 
 
 @require_safe
 def api_document(request, pk):
-    """حالة مستند واحد بشكل الواجهة: وحداته، وترجماتها إن وُجدت (أحدث ترجمة)."""
+    """حالة مستند واحد بشكل الواجهة: وحداته وترجمته؛ ``?target=<iso>`` يختار لغة، وإلا الأحدث."""
     document = get_object_or_404(Document, pk=pk)
-    latest = document.translations.order_by("-id").first()
+    translations = document.translations.select_related("target_language").order_by("-id")
+    target = (request.GET.get("target") or "").strip()
+    latest = (
+        translations.filter(target_language__iso_code__iexact=target).first() if target else None
+    ) or translations.first()
     segments = moneer_ui.to_ui_segments(document, latest)
     if latest and latest.target_language.iso_code.lower() != "en":
         term_match.localize_terms(segments, latest.target_language)

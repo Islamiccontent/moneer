@@ -72,3 +72,24 @@ class RootFilesTests(SimpleTestCase):
 
     def test_unknown_root_file_is_404(self):
         self.assertEqual(self.client.get("/missing.png").status_code, 404)
+
+
+class DocumentsPageTests(SimpleTestCase):
+    """صفحة قائمة المستندات: تقرأ واجهة القائمة، وكل أصولها الثابتة موجودة فعلاً في pages/static."""
+
+    def test_page_reads_the_documents_api(self):
+        html = DOCUMENTS_PAGE.read_text(encoding="utf-8")
+        self.assertIn("/api/translate/documents/", html)
+        for stage in ("رفع الملف", "التقطيع الذكي", "المطابقة والترجمة", "المراجعة", "التصدير"):
+            self.assertIn(stage, html)
+
+    def test_referenced_static_assets_exist(self):
+        import re
+
+        html = DOCUMENTS_PAGE.read_text(encoding="utf-8")
+        paths = set(re.findall(r"/static/pages/([\w./-]+\.\w+)", html))
+        self.assertTrue(paths)
+        static_dir = Path(__file__).resolve().parent / "static" / "pages"
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertTrue((static_dir / path).is_file(), path)
