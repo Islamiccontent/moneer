@@ -1,4 +1,4 @@
 # الكنس الدوري لترجمات المستندات غير المكتملة كل ساعة؛ يُنسخ إلى /etc/cron.d/ بصلاحيات 644 بعد تعديل المستخدم والمسار، ومجلد السجل /var/log/moneer يجب أن يوجد ويملكه مستخدم الخدمة.
 SHELL=/bin/bash
 PATH=/usr/local/bin:/usr/bin:/bin
-0 * * * * moneer cd /home/moneer-testing-env && .venv/bin/python manage.py translate_pending >> /var/log/moneer/translate_pending.log 2>&1
+0 * * * * moneer cd /home/moneer && .venv/bin/python manage.py translate_pending >> /var/log/moneer/translate_pending.log 2>&1

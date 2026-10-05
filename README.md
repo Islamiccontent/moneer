@@ -18,8 +18,8 @@
 
 ```bash
 # 1) الاستنساخ
-git clone https://github.com/islamic-content-org/moneer-testing-env.git
-cd moneer-testing-env
+git clone https://github.com/Islamiccontent/moneer.git
+cd moneer
 
 # 2) بيئة افتراضية بـ Python 3.12 وتثبيت الاعتماديات (بإصدارات دقيقة)
 python3.12 -m venv .venv
@@ -82,12 +82,12 @@ python manage.py test
 
 ## النشر على الخادم (الترجمة في الخلفية)
 
-على خادم Linux بـ systemd وPostgreSQL 17، بمستخدم خدمة مثل `moneer` ومسار مثل `/srv/moneer`؛ عدّلهما في الملفات حيث يرِدان.
+على خادم Linux بـ systemd وPostgreSQL 17، بمستخدم خدمة مثل `moneer` ومسار مثل `/home/moneer`؛ عدّلهما في الملفات حيث يرِدان.
 
 ```bash
 # 1) الكود والاعتماديات
-git clone https://github.com/islamic-content-org/moneer-testing-env.git /srv/moneer
-cd /srv/moneer && python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
+git clone https://github.com/Islamiccontent/moneer.git /home/moneer
+cd /home/moneer && python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 # 2) .env على الخادم (غير متتبَّع): انسخ .env.example واملأ SECRET_KEY وDEBUG=False وALLOWED_HOSTS
 #    وDB_* ومفاتيح النماذج GEMINI_API_KEY وOPENAI_API_KEY، واجعل المهام تعمل بعامل مستقل:

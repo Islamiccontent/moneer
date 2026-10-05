@@ -8,9 +8,9 @@ Wants=network-online.target
 Type=simple
 User=root
 Group=www-data
-WorkingDirectory=/home/moneer-testing-env
+WorkingDirectory=/home/moneer
 # manage.py يقرأ .env من جذر المشروع؛ يلزم فيه TASKS_BACKEND=django_tasks_db.DatabaseBackend
-ExecStart=/home/moneer-testing-env/.venv/bin/python manage.py db_worker --no-reload --no-startup-delay
+ExecStart=/home/moneer/.venv/bin/python manage.py db_worker --no-reload --no-startup-delay
 Restart=always
 RestartSec=5
 # SIGTERM ينهي العامل بعد إتمام المهمة الجارية؛ المهلة دقيقتان لأن استدعاء النموذج قد يطول
