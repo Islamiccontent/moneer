@@ -454,13 +454,13 @@ class ResolveCitationsTests(TestCase):
 
 
 class UiLabelTests(TestCase):
-    """تسميات العرض: التقديم وُحِّد تحت «إسناد»، والإحالة صارت «عزو»."""
+    """تسميات العرض: التقديم والخاتمة تحت «نص عام»، والإحالة صارت «عزو»."""
 
-    def test_quotation_leadin_is_labelled_isnad(self):
+    def test_quotation_leadin_is_labelled_general_text(self):
         from classify.services.moneer_ui import attribution_label
 
-        self.assertEqual(attribution_label("قال الله تعالى:"), "إسناد")
-        self.assertEqual(attribution_label("عن أبي هريرة رضي الله عنه قال:"), "إسناد")
+        self.assertEqual(attribution_label("قال الله تعالى:"), "نص عام")
+        self.assertEqual(attribution_label("عن أبي هريرة رضي الله عنه قال:"), "نص عام")
         self.assertEqual(attribution_label("رواه الترمذي وصححه الألباني"), "تخريج")
 
     def test_citation_tag_is_azw(self):
@@ -470,7 +470,7 @@ class UiLabelTests(TestCase):
         units = to_ui_segments([Segment("citation", "[البقرة: 153].", para=1)])
         self.assertEqual(units[0]["tagLabel"], "عزو")
 
-    def test_khatima_title_gets_its_own_tag(self):
+    def test_khatima_title_is_labelled_general_text(self):
         from classify.services.classifier import Segment
         from classify.services.moneer_ui import to_ui_segments
 
@@ -481,7 +481,7 @@ class UiLabelTests(TestCase):
                 Segment("title", "خاتمة الكتاب", level=2, para=3),
             ]
         )
-        self.assertEqual([u["tagLabel"] for u in units], ["عنوان", "خاتمة", "خاتمة"])
+        self.assertEqual([u["tagLabel"] for u in units], ["عنوان", "نص عام", "نص عام"])
 
     def test_empty_aya_brackets_are_stripped_from_display(self):
         from classify.services.classifier import Segment

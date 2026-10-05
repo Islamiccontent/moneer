@@ -16,8 +16,8 @@ _KHATIMA = re.compile(r"^(?:ال)?خاتمة\b")
 
 
 def title_label(text: str) -> str:
-    """وسم وحدة العنوان في الواجهة: «خاتمة» للقسم الختامي و«عنوان» لما سواه."""
-    return "خاتمة" if _KHATIMA.match((text or "").strip()) else "عنوان"
+    """وسم وحدة العنوان في الواجهة: القسم الختامي «نص عام» وما سواه «عنوان»."""
+    return "نص عام" if _KHATIMA.match((text or "").strip()) else "عنوان"
 
 
 _TAKHRIJ = re.compile(
@@ -77,10 +77,10 @@ def _terms(seg) -> list[dict]:
 
 
 def attribution_label(text: str) -> str:
-    """«تخريج» لعزو الحديث إلى مصدره، و«إسناد» لصيغ الرواية وتمهيد الاقتباس."""
+    """«تخريج» لعزو الحديث إلى مصدره، وصيغ الرواية وتمهيد الاقتباس «نص عام»."""
     if _TAKHRIJ.search(text or ""):
         return "تخريج"
-    return "إسناد"
+    return "نص عام"
 
 
 def variant_warning(note: str) -> str:

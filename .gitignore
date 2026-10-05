@@ -191,3 +191,21 @@ staticfiles/
 
 # ملفات استيراد محلية غير متتبَّعة: ملفات xlsx لترجمات القرآن
 /imports/
+
+# إعدادات Claude Code المحلية (launch.json وsettings.local.json)
+.claude/
+
+# ملفات Markdown: لا يُتتبَّع منها إلا README.md
+*.md
+!/README.md
+
+# ملفات محلية للتطوير فقط: بيانات دخول، ومخرجات تصدير في جذر المشروع
+*.local.txt
+/*.docx
+/*.pdf
+/*.xlsx
+
+# ملفات النظام
+Thumbs.db
+desktop.ini
+.DS_Store

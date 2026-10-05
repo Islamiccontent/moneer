@@ -1019,7 +1019,7 @@ class TranslateApiTests(TranslationFixture):
         self.assertTrue(all(not s["en"] for s in data["segments"]))
         lead = next(s for s in data["segments"] if s.get("lead"))
         self.assertIn("قال الله تعالى", lead["ar"])
-        self.assertEqual(lead["tagLabel"], "إسناد")
+        self.assertEqual(lead["tagLabel"], "نص عام")
 
         response = self.post_mocked(
             "/api/translate/run/", {"doc_id": data["doc_id"], "target": "English"}
