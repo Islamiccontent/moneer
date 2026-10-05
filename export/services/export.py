@@ -21,6 +21,25 @@ CONTENT_TYPES = {
 }
 
 
+# تخطيط ملف Word من واجهة التصدير: يُطبَّق فوق خيارات تنسيق اللغة
+LAYOUTS = {
+    "translation": {
+        "exclude_arabic_aya": True,
+        "include_arabic_hadith": False,
+        "include_arabic_naqhara": False,
+        "include_arabic_paragraph": False,
+    },
+    "sequential": {
+        "exclude_arabic_aya": False,
+        "split_arabic_aya": True,
+        "include_arabic_hadith": True,
+        "split_arabic_hadith": True,
+        "include_arabic_naqhara": True,
+        "include_arabic_paragraph": True,
+    },
+}
+
+
 class ExportError(Exception):
     """تعذّر التصدير: نوع ملف غير مدعوم أو لا تنسيق للغة."""
 
@@ -55,13 +74,16 @@ def book_tag(document_translation, prefs):
     return tag
 
 
-def export_translation(document_translation, *, export_format=None, kind="docx"):
+def export_translation(document_translation, *, export_format=None, kind="docx", layout=None):
     """يولّد ملف الترجمة ويعيده ``ExportResult``؛ التنسيق الافتراضي للغة إن لم يُمرَّر تنسيق.
 
-    ``xlsx`` جدول مراجعة لا يحتاج تنسيق تصدير؛ ``docx`` و``pdf`` كتاب بتنسيق اللغة.
+    ``xlsx`` جدول مراجعة لا يحتاج تنسيق تصدير؛ ``docx`` و``pdf`` كتاب بتنسيق اللغة، و``layout``
+    (من ``LAYOUTS``) يحدد ظهور النص العربي فوق خيارات التنسيق.
     """
     if kind not in KINDS:
         raise ExportError(f"نوع ملف غير مدعوم: {kind}")
+    if layout is not None and layout not in LAYOUTS:
+        raise ExportError(f"تخطيط غير مدعوم: {layout}")
     if kind == "xlsx":
         content, rows, missing = build_xlsx(document_translation)
         return ExportResult(
@@ -77,7 +99,7 @@ def export_translation(document_translation, *, export_format=None, kind="docx")
         raise ExportError(
             f"لا تنسيق تصدير افتراضي للغة {language}؛ أنشئ واحداً أو شغّل ensure_default_formats."
         )
-    prefs = export_format.preferences()
+    prefs = {**export_format.preferences(), **LAYOUTS.get(layout, {})}
     rows, missing = build_rows(
         document_translation, include_untranslatable=prefs["include_untranslatable"]
     )

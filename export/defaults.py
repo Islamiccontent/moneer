@@ -155,6 +155,10 @@ def defaults_for(direction):
         "include_arabic_naqhara": False,
         **_font("arabic_naqhara", ARABIC_FONT, 11, "Bold", color="custom", rgb=("24", "118", "0")),
         "arabic_naqhara_alignment": "الضبط",
+        # النص العربي قبل ترجمة الفقرات والعناوين والآثار (التخطيط الثنائي المتتابع)
+        "include_arabic_paragraph": False,
+        **_font("arabic_paragraph", "Traditional Arabic", 12),
+        "arabic_paragraph_alignment": "الضبط",
     }
     for level, size in ((1, 16), (2, 14), (3, 12)):
         options.update(_font(f"heading_{level}", text_font, size, "Bold", style="Normal"))

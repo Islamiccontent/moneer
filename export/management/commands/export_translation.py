@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 from content.models import DocumentTranslation
 from export.models import ExportFormat
-from export.services.export import KINDS, ExportError, export_translation
+from export.services.export import KINDS, LAYOUTS, ExportError, export_translation
 
 
 class Command(BaseCommand):
@@ -19,6 +19,9 @@ class Command(BaseCommand):
         parser.add_argument("--format", type=int, dest="export_format", help="معرّف تنسيق التصدير.")
         parser.add_argument(
             "--kind", choices=KINDS, default="docx", help="نوع الملف (الافتراضي docx)."
+        )
+        parser.add_argument(
+            "--layout", choices=sorted(LAYOUTS), help="تخطيط Word: الترجمة فقط أو ثنائي متتابع."
         )
         parser.add_argument(
             "--output",
@@ -42,7 +45,10 @@ class Command(BaseCommand):
                 raise CommandError(f"لا تنسيق بالمعرّف {options['export_format']}.") from exc
         try:
             result = export_translation(
-                document_translation, export_format=export_format, kind=options["kind"]
+                document_translation,
+                export_format=export_format,
+                kind=options["kind"],
+                layout=options["layout"],
             )
         except ExportError as exc:
             raise CommandError(str(exc)) from exc

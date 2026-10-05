@@ -194,6 +194,33 @@ class TranslationDocxBuilder:
         """يلحق نصاً بالفقرة الجارية مع مسافة فاصلة إن لم تكن فارغة."""
         return self.paragraph.AppendText(text if not self.paragraph.Text else f" {text}")
 
+    def arabic_paragraph(self, text, alignment=None, *, bold=False):
+        """فقرة النص العربي قبل ترجمته في التخطيط الثنائي المتتابع (include_arabic_paragraph)."""
+        paragraph = self.section.AddParagraph()
+        run = paragraph.AppendText(text)
+        self.box(paragraph, "paragraph")
+        self.align(paragraph, alignment or self.p["arabic_paragraph_alignment"], rtl=True)
+        self.spacing(paragraph, "paragraph")
+        self.font(run, "arabic_paragraph", bidi=True)
+        if bold:
+            run.CharacterFormat.Bold = True
+        self.paragraph = None
+        return paragraph
+
+    @staticmethod
+    def is_prose(row):
+        return row["type"] in ("paragraph", "listparagraph") and row["sub_type"] == "normal"
+
+    def prose_run(self, index):
+        """صفوف النثر المتتالية من ``index`` في المجموعة نفسها: يُكتب عربيها فقرةً واحدة."""
+        group = self.rows[index]["split_group"]
+        run = []
+        for row in self.rows[index:]:
+            if not self.is_prose(row) or row["split_group"] != group:
+                break
+            run.append(row)
+        return run
+
     @staticmethod
     def first_paragraph(container):
         """فقرة للكتابة في رأس أو تذييل: الفارغة التي ينشئها Spire تلقائياً إن وُجدت، وإلا جديدة."""
@@ -289,6 +316,8 @@ class TranslationDocxBuilder:
         p = self.p
         level = HEADING_LEVEL[row["tag"]]
         prefix = f"heading_{level}"
+        if p["include_arabic_paragraph"]:
+            self.arabic_paragraph(row["original_text"], p[f"{prefix}_alignment"], bold=True)
         paragraph = self.section.AddParagraph()
         run = paragraph.AppendText(row["translation"])
         paragraph.ApplyStyle(HEADINGS[row["tag"]])
@@ -311,7 +340,20 @@ class TranslationDocxBuilder:
             return self.row_hadith(index, row)
         if sub == "athar":
             return self.row_athar(index, row)
-        if row["splitted"] == 0 or row["split_group"] != self.split_group or self.paragraph is None:
+        previous = self.rows[index - 1] if index else None
+        opens_run = (
+            previous is None
+            or not self.is_prose(previous)
+            or previous["split_group"] != row["split_group"]
+            or self.paragraph is None
+        )
+        if self.p["include_arabic_paragraph"] and opens_run:
+            self.arabic_paragraph(" ".join(r["original_text"] for r in self.prose_run(index)))
+            self.split_group = row["split_group"]
+            self.new_paragraph()
+        elif (
+            row["splitted"] == 0 or row["split_group"] != self.split_group or self.paragraph is None
+        ):
             self.split_group = row["split_group"]
             self.new_paragraph()
         run = self.append(row["translation"])
@@ -385,7 +427,12 @@ class TranslationDocxBuilder:
 
     def row_athar(self, index, row):
         p = self.p
-        if self.paragraph is None or row["split_group"] != self.split_group:
+        if p["include_arabic_paragraph"]:
+            self.arabic_paragraph(row["original_text"])
+            self.new_paragraph()
+            self.spacing(self.paragraph, "athar")
+            self.split_group = row["split_group"]
+        elif self.paragraph is None or row["split_group"] != self.split_group:
             self.new_paragraph()
             self.spacing(self.paragraph, "athar")
             self.split_group = row["split_group"]

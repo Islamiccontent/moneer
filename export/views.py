@@ -1,4 +1,4 @@
-"""تنزيل آني لملف الترجمة من /export/<id>/<docx|pdf|xlsx>/؛ ?format=<id> يختار تنسيقاً آخر."""
+"""تنزيل آني لملف الترجمة من /export/<id>/<docx|pdf|xlsx>/؛ ?format=<id> و?layout=<تخطيط>."""
 
 import io
 
@@ -26,7 +26,12 @@ def download(request, pk, kind):
             ExportFormat, pk=int(format_id), language=document_translation.target_language
         )
     try:
-        result = export_translation(document_translation, export_format=export_format, kind=kind)
+        result = export_translation(
+            document_translation,
+            export_format=export_format,
+            kind=kind,
+            layout=request.GET.get("layout") or None,
+        )
     except ExportError as exc:
         return HttpResponse(str(exc), status=400, content_type="text/plain; charset=utf-8")
     return FileResponse(

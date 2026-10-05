@@ -346,6 +346,32 @@ class DocxExportTests(ExportTestCase):
         with self.assertRaises(ExportError):
             export_translation(self.dt, kind="odt")
 
+    def test_translation_layout_drops_all_arabic(self):
+        result = export_translation(self.dt, layout="translation")
+        paragraphs, _ = read_docx(write(result.content, "translation.docx"))
+        body = "\n".join(text for _, text in paragraphs)
+        self.assertNotIn("قُلْ هُوَ اللَّهُ أَحَدٌ", body)
+        self.assertNotIn("نحمده ونستعينه", body)
+        self.assertIn("Say: He is Allah, the One (1)", body)
+
+    def test_sequential_layout_puts_the_arabic_before_each_translation(self):
+        result = export_translation(self.dt, layout="sequential")
+        paragraphs, _ = read_docx(write(result.content, "sequential.docx"))
+        texts = [text for _, text in paragraphs]
+
+        def at(fragment):
+            return next(i for i, text in enumerate(texts) if fragment in text)
+
+        heading = paragraphs.index(("Heading1", "Khutbah Title"))  # لا عنوان صفحة الغلاف
+        self.assertEqual(texts[heading - 1], "عنوان الخطبة")
+        self.assertLess(at("نحمده ونستعينه"), at("We praise Him."))
+        self.assertLess(at("قُلْ هُوَ اللَّهُ أَحَدٌ"), at("Say: He is Allah"))
+        self.assertLess(at("إنما الأعمال بالنيات"), at("Deeds are by intentions."))
+
+    def test_unknown_layout_raises(self):
+        with self.assertRaises(ExportError):
+            export_translation(self.dt, layout="side-by-side")
+
 
 class XlsxExportTests(ExportTestCase):
     @staticmethod
@@ -397,6 +423,10 @@ class DownloadViewTests(ExportTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], CONTENT_TYPES["pdf"])
         self.assertEqual(b"".join(response.streaming_content)[:5], b"%PDF-")
+
+    def test_layout_comes_from_the_url(self):
+        self.assertEqual(self.client.get(self.url() + "?layout=sequential").status_code, 200)
+        self.assertEqual(self.client.get(self.url() + "?layout=side-by-side").status_code, 400)
 
     def test_xlsx_download(self):
         response = self.client.get(self.url("xlsx"))
