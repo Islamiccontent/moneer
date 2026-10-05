@@ -15,7 +15,7 @@ _KIND_LABELS = {
     "quran": "آية",
     "hadith": "حديث",
     "athar": "أثر",
-    "term": "مصطلح",
+    "term": "نص عام",  # الجملة ذات المصطلح نصٌّ عام كما في الواجهة
     "citation": "عزو",
 }
 _TYPE_LABELS = {"ayah": "آية", "hadith": "حديث", "athar": "أثر"}
