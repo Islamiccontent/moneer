@@ -109,6 +109,65 @@ def peel_quran_units(segments) -> list:
     return out
 
 
+HADITH_LEADIN = re.compile(r"^(?P<lead>[^:：]{3,160}?[:：])\s*(?P<rest>\S.*)$", re.S)
+LEADIN_MAX_WORDS = 14
+
+
+def peel_hadith_leadins(segments) -> list:
+    """يفصل صيغة التقديم («وقال النبي ﷺ:») عن حديثٍ التصق بها بلا علامات تنصيص.
+
+    ما بعد النقطتين يُقطَّع جملاً ويُصنَّف كلٌّ منها بسياق التقديم، ولا يُقبل التفصيل إلا إذا
+    أظهر حديثاً أو آية بالفهرس؛ والحديث الذي طوبق مع تقديمه يُطابَق نصُّه وحده من جديد.
+    """
+    from classify.services.classifier import (
+        ATTRIBUTION,
+        HADITH_SIGNAL,
+        Segment,
+        _classify_unit,
+    )
+    from classify.services.normalizer import light
+    from classify.services.splitter import _split_by_rules
+
+    hadith = get_matchers()[1]
+    out = []
+    for seg in segments:
+        m = HADITH_LEADIN.match(seg.content.strip())
+        lead = m.group("lead").strip() if m else ""
+        if (
+            seg.kind not in ("attribution", "text", "term", "hadith")
+            or not lead
+            or len(lead.split()) > LEADIN_MAX_WORDS
+            or not ATTRIBUTION.search(light(lead))
+        ):
+            out.append(seg)
+            continue
+        rest = m.group("rest").strip()
+        lead_seg = Segment("attribution", lead, note="صيغة الإسناد", para=seg.para, level=seg.level)
+        if seg.kind == "hadith":
+            match = hadith.match(rest.strip('«»"“” '))
+            if match and match.score >= HADITH_SIGNAL:
+                score = match.score
+                seg.content, seg.source, seg.score = rest, match.source, score
+                seg.note = "مطابقة تامة" if score >= 0.95 else f"مطابقة {int(score * 100)}%"
+                out += [lead_seg, seg]
+            else:
+                out.append(seg)
+            continue
+        units = _split_by_rules(rest) or [rest]
+        pieces, prev = [], lead_seg
+        for i, unit in enumerate(units):
+            context = units[i - 1] if i else lead
+            nxt = units[i + 1] if i + 1 < len(units) else ""
+            prev = _classify_unit(unit, context, False, prev, nxt)
+            prev.para, prev.level = seg.para, seg.level
+            pieces.append(prev)
+        if any(piece.kind in ("hadith", "quran") for piece in pieces):
+            out += [lead_seg, *pieces]
+        else:
+            out.append(seg)
+    return out
+
+
 STANDALONE_CITATION = re.compile(
     r"^[\[(]\s*(?P<surah>[^\][()\d:]{1,25}?)\s*[:：]\s*(?P<ayah>\d{1,3})\s*[\])]\s*[.،؟!]?\s*$"
 )
@@ -490,8 +549,11 @@ def run(paragraphs, progress=None):
     reviewer.mark_headings(segments, paragraphs)
     segments = split_trailing_leadins(segments)
     segments = peel_quran_units(segments)
+    segments = peel_hadith_leadins(segments)
     step("طبقة BERT (تحميل النموذج عند أول طلب)", 30)
     bert_layer.enrich(segments)
+    # BERT قد يفصل ما بعد الآية المقوّسة («﴾، وقال النبي: …») فيُعاد فصل التقديم عن الحديث
+    segments = peel_hadith_leadins(segments)
     step("مراجعة Gemini", 60)
     reviewer.review(
         segments,

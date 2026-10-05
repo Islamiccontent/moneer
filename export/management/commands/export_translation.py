@@ -1,4 +1,4 @@
-"""تصدير ترجمة مستند إلى ملف Word أو PDF من سطر الأوامر آنياً بلا تسجيل في القاعدة."""
+"""تصدير ترجمة مستند إلى ملف Word أو PDF أو Excel من سطر الأوامر آنياً بلا تسجيل في القاعدة."""
 
 from pathlib import Path
 
@@ -10,7 +10,7 @@ from export.services.export import KINDS, ExportError, export_translation
 
 
 class Command(BaseCommand):
-    help = "يصدّر ترجمة مستند إلى DOCX أو PDF بتنسيق اللغة الافتراضي أو تنسيق محدد."
+    help = "يصدّر ترجمة مستند إلى DOCX أو PDF بتنسيق اللغة الافتراضي أو تنسيق محدد، أو XLSX."
 
     def add_arguments(self, parser):
         parser.add_argument(

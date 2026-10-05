@@ -894,3 +894,97 @@ class ShortBracketedVersesSplitTests(TestCase):
         segs = pipeline.run(extract_text("﴿وَالْعَصْرِ إِنَّ الْإِنْسَانَ لَفِي خُسْرٍ﴾."))
         ayas = [s for s in segs if s.kind == "quran"]
         self.assertEqual([s.source for s in ayas], ["سورة العصر — 1", "سورة العصر — 2"])
+
+
+class HadithLeadinTests(TestCase):
+    """تقديمٌ التصق بحديثٍ بلا علامات تنصيص يُفصل عنه، ويُطابَق نصُّ الحديث وحده."""
+
+    def setUp(self):
+        from types import SimpleNamespace
+        from unittest import mock
+
+        from classify import pipeline
+        from classify.services import classifier, matchers
+        from classify.services.normalizer import normalize
+
+        hadith_text = normalize("الأعمال بالنيات")
+
+        class FakeHadith:
+            index = SimpleNamespace(records=[{"text": "إنما الأعمال بالنيات"}])
+
+            def match(self, text):
+                n = normalize(text)
+                if hadith_text not in n:
+                    return None
+                if "قال" in n:
+                    return matchers.Match("hadith", "سنن أبي داود — 2201", 0.94, {})
+                return matchers.Match("hadith", "صحيح البخاري — 1", 1.0, {})
+
+        quran, _hadith, glossary = matchers.get_matchers()
+        fake = (quran, FakeHadith(), glossary)
+        for module in (pipeline, classifier):
+            patcher = mock.patch.object(module, "get_matchers", lambda: fake)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def peel(self, kind, content, **fields):
+        from classify import pipeline
+        from classify.services.classifier import Segment
+
+        return pipeline.peel_hadith_leadins([Segment(kind, content, para=1, **fields)])
+
+    def test_unquoted_hadith_after_a_leadin_is_peeled_with_the_next_sentence(self):
+        out = self.peel("attribution", "وقال النبي: إنما الأعمال بالنيات. فالصبر عبادة قلبية.")
+        self.assertEqual([s.kind for s in out[:2]], ["attribution", "hadith"])
+        self.assertEqual(out[0].content, "وقال النبي:")
+        self.assertEqual(out[1].content, "إنما الأعمال بالنيات.")
+        self.assertEqual(out[1].source, "صحيح البخاري — 1")
+        self.assertEqual(out[2].content, "فالصبر عبادة قلبية.")
+        self.assertTrue(all(s.para == 1 for s in out))
+
+    def test_hadith_matched_with_its_leadin_is_rematched_alone(self):
+        out = self.peel(
+            "hadith",
+            "قال رسول الله صلى الله عليه وسلم: إنما الأعمال بالنيات.",
+            source="سنن أبي داود — 2201",
+            score=0.94,
+        )
+        self.assertEqual([s.kind for s in out], ["attribution", "hadith"])
+        self.assertEqual(out[0].content, "قال رسول الله صلى الله عليه وسلم:")
+        self.assertEqual((out[1].source, out[1].note), ("صحيح البخاري — 1", "مطابقة تامة"))
+
+    def test_leadin_without_scripture_after_it_is_left_whole(self):
+        text = "قال ابن القيم رحمه الله: الصبر حبس النفس عن الجزع."
+        out = self.peel("attribution", text)
+        self.assertEqual([(s.kind, s.content) for s in out], [("attribution", text)])
+
+    def test_bare_leadin_is_untouched(self):
+        out = self.peel("attribution", "وقال النبي ﷺ:")
+        self.assertEqual([(s.kind, s.content) for s in out], [("attribution", "وقال النبي ﷺ:")])
+
+
+class ClosedQuoteBoundaryTests(TestCase):
+    """اقتباسٌ مغلق تليه علامة وقف حدُّ جملة ولو ضمّ المصنّفُ المتعلَّم ما بعده إليه."""
+
+    def test_closed_quote_then_stop_ends_the_sentence(self):
+        from classify.services.splitter import _split_after_closed_quotes
+
+        units = _split_after_closed_quotes(["«إنما الأعمال بالنيات وإنما». فالصبر عبادة قلبية."])
+        self.assertEqual(units, ["«إنما الأعمال بالنيات وإنما».", "فالصبر عبادة قلبية."])
+
+    def test_quote_without_stop_or_at_the_end_is_kept(self):
+        from classify.services.splitter import _split_after_closed_quotes
+
+        units = ["«إنما الأعمال بالنيات» رواه البخاري.", "وقال: «الدين النصيحة»."]
+        self.assertEqual(_split_after_closed_quotes(units), units)
+
+    def test_user_text_keeps_the_quoted_hadith_apart(self):
+        from classify.services.splitter import split_sentences
+
+        text = (
+            "قال الله تعالى: ﴿إِنَّ اللَّهَ مَعَ الصَّابِرِينَ﴾، وقال النبي : «إنما الأعمال بالنيات وإنما». "
+            "فالصبر عبادة قلبية تقوم على التسليم لقضاء الله."
+        )
+        units = split_sentences(text)
+        self.assertIn("«إنما الأعمال بالنيات وإنما».", units)
+        self.assertEqual(units[-1], "فالصبر عبادة قلبية تقوم على التسليم لقضاء الله.")

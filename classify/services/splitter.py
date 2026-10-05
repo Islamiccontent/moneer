@@ -218,13 +218,31 @@ _BARE = re.compile(r"\s+")
 def split_sentences(text: str, tag: str = "p") -> list[str]:
     """يقطّع بالمصنّف المتعلَّم إن وُجد وإلا بالقواعد اليدوية، ويرفض ناتجاً لا يعيد بناء النص."""
     if os.environ.get("BOUNDARY_MODEL", "1") == "1":
-        learned = _attach_lead_commas(boundary.split(text, tag))
+        learned = _split_after_closed_quotes(_attach_lead_commas(boundary.split(text, tag)))
         if learned and reconstructs(text, learned):
             return learned
     rules = _split_by_rules(text)
     if rules and reconstructs(text, rules):
         return rules
     return [text.strip()] if text.strip() else []
+
+
+QUOTE_THEN_STOP = re.compile(r"[»”]\s*[.!؟?]+(?=\s+\S)")
+
+
+def _split_after_closed_quotes(units: list[str] | None) -> list[str] | None:
+    """اقتباسٌ مغلق تليه علامة وقف («…».) حدُّ جملةٍ قاطع ولو فات المصنّف المتعلَّم."""
+    if not units:
+        return units
+    out: list[str] = []
+    for u in units:
+        start = 0
+        for m in QUOTE_THEN_STOP.finditer(u):
+            out.append(u[start : m.end()].strip())
+            start = m.end()
+        if u[start:].strip():
+            out.append(u[start:].strip())
+    return [u for u in out if u]
 
 
 def _attach_lead_commas(units: list[str] | None) -> list[str] | None:

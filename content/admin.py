@@ -128,9 +128,10 @@ class DocumentTranslationAdmin(admin.ModelAdmin):
         if obj.pk is None:
             return "—"
         return format_html(
-            '<a href="{}">DOCX</a> · <a href="{}">PDF</a>',
+            '<a href="{}">DOCX</a> · <a href="{}">PDF</a> · <a href="{}">XLSX</a>',
             reverse("export:download", args=[obj.pk, "docx"]),
             reverse("export:download", args=[obj.pk, "pdf"]),
+            reverse("export:download", args=[obj.pk, "xlsx"]),
         )
 
 

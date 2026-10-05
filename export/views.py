@@ -1,4 +1,4 @@
-"""تنزيل آني لملف الترجمة من /export/<id>/docx/ أو /pdf/؛ ?format=<id> يختار تنسيقاً آخر."""
+"""تنزيل آني لملف الترجمة من /export/<id>/<docx|pdf|xlsx>/؛ ?format=<id> يختار تنسيقاً آخر."""
 
 import io
 

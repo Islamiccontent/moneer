@@ -11,11 +11,13 @@ from export.models import ExportFormat
 
 from .docx_builder import TranslationDocxBuilder
 from .rows import build_rows
+from .xlsx_builder import build_xlsx
 
-KINDS = ("docx", "pdf")
+KINDS = ("docx", "pdf", "xlsx")
 CONTENT_TYPES = {
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "pdf": "application/pdf",
+    "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 }
 
 
@@ -54,9 +56,21 @@ def book_tag(document_translation, prefs):
 
 
 def export_translation(document_translation, *, export_format=None, kind="docx"):
-    """يولّد ملف الترجمة ويعيده ``ExportResult``؛ التنسيق الافتراضي للغة إن لم يُمرَّر تنسيق."""
+    """يولّد ملف الترجمة ويعيده ``ExportResult``؛ التنسيق الافتراضي للغة إن لم يُمرَّر تنسيق.
+
+    ``xlsx`` جدول مراجعة لا يحتاج تنسيق تصدير؛ ``docx`` و``pdf`` كتاب بتنسيق اللغة.
+    """
     if kind not in KINDS:
         raise ExportError(f"نوع ملف غير مدعوم: {kind}")
+    if kind == "xlsx":
+        content, rows, missing = build_xlsx(document_translation)
+        return ExportResult(
+            content=content,
+            file_name=file_name(document_translation, kind),
+            kind=kind,
+            rows=rows,
+            missing=missing,
+        )
     language = document_translation.target_language
     export_format = export_format or default_format_for(language)
     if export_format is None:

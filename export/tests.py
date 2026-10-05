@@ -347,6 +347,37 @@ class DocxExportTests(ExportTestCase):
             export_translation(self.dt, kind="odt")
 
 
+class XlsxExportTests(ExportTestCase):
+    @staticmethod
+    def read(content):
+        from io import BytesIO
+
+        from openpyxl import load_workbook
+
+        return list(load_workbook(BytesIO(content)).active.iter_rows(values_only=True))
+
+    def test_xlsx_lists_every_phrase_with_its_type_translation_and_status(self):
+        result = export_translation(self.dt, kind="xlsx")
+        rows = self.read(result.content)
+        self.assertEqual(rows[0], ("#", "النوع", "النص الأصلي", "الترجمة", "الحالة"))
+        self.assertEqual(len(rows) - 1, len(self.phrases))
+        by_text = {row[2]: row for row in rows[1:]}
+        self.assertEqual(
+            by_text["عنوان الخطبة"][1:], ("عنوان", "عنوان الخطبة", "Khutbah Title", "مقترحة آلياً")
+        )
+        self.assertEqual(by_text["﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾"][1], "آية")
+        self.assertEqual(by_text["[1] نص الهامش"][1], "هامش")
+        self.assertFalse(by_text["[الإخلاص: 1]"][3])
+        self.assertEqual(by_text["[الإخلاص: 1]"][4], "يُنقل كما هو")
+        self.assertEqual(by_text["جملة بلا ترجمة"][4], "بلا ترجمة")
+        self.assertEqual((result.rows, result.missing), (len(self.phrases), 1))
+        self.assertTrue(result.file_name.endswith(".xlsx"))
+
+    def test_xlsx_needs_no_export_format(self):
+        ExportFormat.objects.all().delete()
+        self.assertEqual(export_translation(self.dt, kind="xlsx").kind, "xlsx")
+
+
 class DownloadViewTests(ExportTestCase):
     def url(self, kind="docx", pk=None):
         return reverse("export:download", args=[pk or self.dt.pk, kind])
@@ -366,6 +397,13 @@ class DownloadViewTests(ExportTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], CONTENT_TYPES["pdf"])
         self.assertEqual(b"".join(response.streaming_content)[:5], b"%PDF-")
+
+    def test_xlsx_download(self):
+        response = self.client.get(self.url("xlsx"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], CONTENT_TYPES["xlsx"])
+        self.assertIn(".xlsx", response["Content-Disposition"])
+        self.assertEqual(b"".join(response.streaming_content)[:2], b"PK")
 
     def test_specific_format_must_belong_to_the_translation_language(self):
         other = ExportFormat.objects.create(
@@ -451,6 +489,7 @@ class AdminTests(ExportTestCase):
         response = self.client.get(reverse("admin:content_documenttranslation_changelist"))
         self.assertContains(response, f"/export/{self.dt.pk}/docx/")
         self.assertContains(response, f"/export/{self.dt.pk}/pdf/")
+        self.assertContains(response, f"/export/{self.dt.pk}/xlsx/")
         response = self.client.get(
             reverse("admin:content_documenttranslation_change", args=[self.dt.pk])
         )
