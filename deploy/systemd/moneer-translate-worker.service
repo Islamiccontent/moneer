@@ -1,0 +1,25 @@
+# عامل المهام الخلفية لمُنير (django.tasks db_worker)؛ عدّل User/Group وWorkingDirectory ومسار python قبل النسخ إلى /etc/systemd/system/.
+[Unit]
+Description=moneer translate worker (django.tasks db_worker)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=www-data
+WorkingDirectory=/home/moneer-testing-env
+# manage.py يقرأ .env من جذر المشروع؛ يلزم فيه TASKS_BACKEND=django_tasks_db.DatabaseBackend
+ExecStart=/home/moneer-testing-env/.venv/bin/python manage.py db_worker --no-reload --no-startup-delay
+Restart=always
+RestartSec=5
+# SIGTERM ينهي العامل بعد إتمام المهمة الجارية؛ المهلة دقيقتان لأن استدعاء النموذج قد يطول
+KillSignal=SIGTERM
+TimeoutStopSec=120
+Environment=PYTHONUNBUFFERED=1
+# السجلات: journalctl -u moneer-translate-worker -f
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

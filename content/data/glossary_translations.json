@@ -1,0 +1,4828 @@
+{
+ "_about": "مداخل المعجم التي لها مقابل إنجليزي، لتعبئة جدول GLOSSARY",
+ "_source": "term_translations_en (31-3-2026) مدموجًا في glossary.json",
+ "_fields": {
+  "ar": "المدخل العربي — unique",
+  "en": "المقابل الأول (primary_translation) من ذاكرة الترجمة",
+  "category": "term=مصطلح يُرَدّ لمقابله | person=عَلَم يُنقحَر | place=مكان | divine_name=اسم وصفة | sect=فرقة | attribute=صفة",
+  "en_agreement": {
+   "count": "كم مرة وردت هذه الترجمة بعينها",
+   "total": "إجمالي ورودات المدخل في الذاكرة",
+   "strong": "true إذا total>=3 و count/total>=0.6 — يُعتمد آليًا؛ و false يحتاج اعتماد مختص قبل أن يُسمى موحّدًا"
+  }
+ },
+ "count": 480,
+ "strong": 169,
+ "entries": [
+  {
+   "ar": "أهل السنة والجماعة",
+   "en": "Ahl-us-Sunnah wa al-Jamā‘ah",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الدعوة إلى الله",
+   "en": "calling to Allah",
+   "category": "term",
+   "en_agreement": {
+    "count": 37,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "توحيد الأسماء والصفات",
+   "en": "Tawhīd al-Asmā’ wa as-Sifāt",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 3,
+    "total": 18,
+    "strong": false
+   }
+  },
+  {
+   "ar": "آيات الله",
+   "en": "signs of Allah",
+   "category": "term",
+   "en_agreement": {
+    "count": 23,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "آية الكرسي",
+   "en": "verse of Al-Kursi",
+   "category": "term",
+   "en_agreement": {
+    "count": 13,
+    "total": 48,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أحكام شرعية",
+   "en": "Shariah rulings",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أدلة شرعية",
+   "en": "Shar‘i proofs",
+   "category": "term",
+   "en_agreement": {
+    "count": 5,
+    "total": 30,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أصول الدين",
+   "en": "fundamentals of religion",
+   "category": "term",
+   "en_agreement": {
+    "count": 7,
+    "total": 33,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أصول الفقه",
+   "en": "Usūl al-Fiqh",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 47,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أمهات المؤمنين",
+   "en": "Mothers of the Believers",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 33,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أهل البيت",
+   "en": "Prophet's household",
+   "category": "term",
+   "en_agreement": {
+    "count": 6,
+    "total": 53,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أهل العلم",
+   "en": "scholars",
+   "category": "term",
+   "en_agreement": {
+    "count": 61,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أهل الكتاب",
+   "en": "People of the Book",
+   "category": "sect",
+   "en_agreement": {
+    "count": 67,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أيام التشريق",
+   "en": "days of Tashrīq",
+   "category": "term",
+   "en_agreement": {
+    "count": 39,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "اتباع الهوى",
+   "en": "following personal desires",
+   "category": "term",
+   "en_agreement": {
+    "count": 8,
+    "total": 35,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الإيمان بالرسل",
+   "en": "belief in Messengers",
+   "category": "term",
+   "en_agreement": {
+    "count": 34,
+    "total": 45,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الإيمان بالقدر",
+   "en": "belief in destiny",
+   "category": "term",
+   "en_agreement": {
+    "count": 32,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الإيمان بالكتب",
+   "en": "belief in scriptures",
+   "category": "term",
+   "en_agreement": {
+    "count": 13,
+    "total": 51,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الإيمان بالملائكة",
+   "en": "belief in angels",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 45,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الحجر الأسود",
+   "en": "Black Stone",
+   "category": "term",
+   "en_agreement": {
+    "count": 86,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الحديث القدسي",
+   "en": "Qudsi Hadīth",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 32,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الصراط المستقيم",
+   "en": "straight path",
+   "category": "term",
+   "en_agreement": {
+    "count": 56,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "المدينة النبوية",
+   "en": "Madinah",
+   "category": "place",
+   "en_agreement": {
+    "count": 16,
+    "total": 37,
+    "strong": false
+   }
+  },
+  {
+   "ar": "المسجد الأقصى",
+   "en": "Al-Aqsa Mosque",
+   "category": "place",
+   "en_agreement": {
+    "count": 13,
+    "total": 31,
+    "strong": false
+   }
+  },
+  {
+   "ar": "المسجد الحرام",
+   "en": "Sacred Mosque",
+   "category": "term",
+   "en_agreement": {
+    "count": 72,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "اليوم الآخر",
+   "en": "Last Day",
+   "category": "term",
+   "en_agreement": {
+    "count": 176,
+    "total": 180,
+    "strong": true
+   }
+  },
+  {
+   "ar": "بر الوالدين",
+   "en": "dutifulness to parents",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بيت المقدس",
+   "en": "Jerusalem",
+   "category": "term",
+   "en_agreement": {
+    "count": 40,
+    "total": 69,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ترك الصلاة",
+   "en": "abandonment of prayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "توحيد الألوهية",
+   "en": "Tawhīd of ’Ulūhiyyah",
+   "category": "term",
+   "en_agreement": {
+    "count": 4,
+    "total": 35,
+    "strong": false
+   }
+  },
+  {
+   "ar": "توحيد الربوبية",
+   "en": "Tawhīd Ar-Rubūbiyyah",
+   "category": "term",
+   "en_agreement": {
+    "count": 7,
+    "total": 44,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حديث صحيح",
+   "en": "authentic Hadīth",
+   "category": "term",
+   "en_agreement": {
+    "count": 46,
+    "total": 68,
+    "strong": true
+   }
+  },
+  {
+   "ar": "حسن الخلق",
+   "en": "good manners",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "زكاة الفطر",
+   "en": "Zakat al-Fitr",
+   "category": "term",
+   "en_agreement": {
+    "count": 45,
+    "total": 66,
+    "strong": true
+   }
+  },
+  {
+   "ar": "زيارة القبور",
+   "en": "visiting graves",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 43,
+    "strong": true
+   }
+  },
+  {
+   "ar": "سجود السهو",
+   "en": "prostration of forgetfulness",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 63,
+    "strong": true
+   }
+  },
+  {
+   "ar": "شرب الخمر",
+   "en": "drinking alcohol",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 73,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شعب الإيمان",
+   "en": "branches of faith",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 25,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شهادة الزور",
+   "en": "false testimony",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 31,
+    "strong": true
+   }
+  },
+  {
+   "ar": "شهر رمضان",
+   "en": "month of Ramadan",
+   "category": "term",
+   "en_agreement": {
+    "count": 47,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "صلاة التطوع",
+   "en": "voluntary prayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 21,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صلاة الجماعة",
+   "en": "congregational prayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 70,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صلاة الجمعة",
+   "en": "Friday prayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صلاة الجنازة",
+   "en": "funeral prayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 37,
+    "total": 39,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صلة الرحم",
+   "en": "maintaining ties of kinship",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 62,
+    "strong": false
+   }
+  },
+  {
+   "ar": "طلب العلم",
+   "en": "seeking knowledge",
+   "category": "term",
+   "en_agreement": {
+    "count": 23,
+    "total": 66,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عذاب القبر",
+   "en": "punishment of the grave",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عقوق الوالدين",
+   "en": "undutifulness to parents",
+   "category": "term",
+   "en_agreement": {
+    "count": 11,
+    "total": 27,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عيادة المريض",
+   "en": "visiting the sick",
+   "category": "term",
+   "en_agreement": {
+    "count": 29,
+    "total": 42,
+    "strong": true
+   }
+  },
+  {
+   "ar": "فتنة القبر",
+   "en": "trial of the grave",
+   "category": "term",
+   "en_agreement": {
+    "count": 12,
+    "total": 27,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قضاء الحاجة",
+   "en": "relieving oneself",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قيام الليل",
+   "en": "Qiyām al-Layl",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 73,
+    "strong": false
+   }
+  },
+  {
+   "ar": "كفر أصغر",
+   "en": "minor Kufr",
+   "category": "term",
+   "en_agreement": {
+    "count": 6,
+    "total": 13,
+    "strong": false
+   }
+  },
+  {
+   "ar": "كفر أكبر",
+   "en": "major disbelief",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 31,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ليلة القدر",
+   "en": "Night of Decree",
+   "category": "term",
+   "en_agreement": {
+    "count": 33,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "متفق عليه",
+   "en": "narrated by Al-Bukhāri and Muslim",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مـحظورات الإحرام",
+   "en": "forbidden acts during Ihrām",
+   "category": "term",
+   "en_agreement": {
+    "count": 7,
+    "total": 40,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مقاصد الشريعة",
+   "en": "objectives of Shariah",
+   "category": "term",
+   "en_agreement": {
+    "count": 5,
+    "total": 12,
+    "strong": false
+   }
+  },
+  {
+   "ar": "يوم الجمعة",
+   "en": "Friday",
+   "category": "term",
+   "en_agreement": {
+    "count": 78,
+    "total": 91,
+    "strong": true
+   }
+  },
+  {
+   "ar": "يوم النحر",
+   "en": "Day of Nahr",
+   "category": "term",
+   "en_agreement": {
+    "count": 39,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "يوم عرفة",
+   "en": "Day of ‘Arafah",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "آية",
+   "en": "verse",
+   "category": "term",
+   "en_agreement": {
+    "count": 77,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أثر",
+   "en": "tradition",
+   "category": "term",
+   "en_agreement": {
+    "count": 20,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أجر",
+   "en": "reward",
+   "category": "term",
+   "en_agreement": {
+    "count": 76,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أخلاق",
+   "en": "morals",
+   "category": "term",
+   "en_agreement": {
+    "count": 50,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أدب",
+   "en": "politeness",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أركان",
+   "en": "pillars",
+   "category": "term",
+   "en_agreement": {
+    "count": 65,
+    "total": 82,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أصل",
+   "en": "principle",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 74,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أصنام",
+   "en": "idols",
+   "category": "term",
+   "en_agreement": {
+    "count": 71,
+    "total": 78,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أضحية",
+   "en": "Ud-hiyah",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أعراب",
+   "en": "Bedouins",
+   "category": "term",
+   "en_agreement": {
+    "count": 48,
+    "total": 72,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أمة",
+   "en": "Ummah",
+   "category": "term",
+   "en_agreement": {
+    "count": 45,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أنبياء",
+   "en": "prophets",
+   "category": "term",
+   "en_agreement": {
+    "count": 61,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "أنعام",
+   "en": "livestock",
+   "category": "term",
+   "en_agreement": {
+    "count": 33,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أولياء",
+   "en": "allies of Allah",
+   "category": "term",
+   "en_agreement": {
+    "count": 9,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "أيمان",
+   "en": "faith",
+   "category": "term",
+   "en_agreement": {
+    "count": 66,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "إباحة",
+   "en": "permissibility",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 53,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إثم",
+   "en": "sin",
+   "category": "term",
+   "en_agreement": {
+    "count": 74,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "إجماع",
+   "en": "consensus",
+   "category": "term",
+   "en_agreement": {
+    "count": 47,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إحرام",
+   "en": "Ihrām",
+   "category": "term",
+   "en_agreement": {
+    "count": 51,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إحكام",
+   "en": "rulings",
+   "category": "term",
+   "en_agreement": {
+    "count": 60,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "إخلاص",
+   "en": "sincerity",
+   "category": "term",
+   "en_agreement": {
+    "count": 56,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "إسراف",
+   "en": "extravagance",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 60,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إسناد",
+   "en": "Isnād",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إفتاء",
+   "en": "Iftā’",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 34,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إفطار",
+   "en": "breaking the fast",
+   "category": "term",
+   "en_agreement": {
+    "count": 20,
+    "total": 56,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إقامة",
+   "en": "Iqāmah",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 92,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إقرار",
+   "en": "affirmation",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إكراه",
+   "en": "compulsion",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 44,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إلحاد",
+   "en": "atheism",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 72,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إمارة",
+   "en": "leadership",
+   "category": "term",
+   "en_agreement": {
+    "count": 16,
+    "total": 42,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إمام",
+   "en": "Imam",
+   "category": "term",
+   "en_agreement": {
+    "count": 48,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إمامة",
+   "en": "leadership",
+   "category": "term",
+   "en_agreement": {
+    "count": 23,
+    "total": 71,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إمامية",
+   "en": "Imamiyyah",
+   "category": "sect",
+   "en_agreement": {
+    "count": 7,
+    "total": 27,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إنابة",
+   "en": "turning in repentance",
+   "category": "term",
+   "en_agreement": {
+    "count": 3,
+    "total": 34,
+    "strong": false
+   }
+  },
+  {
+   "ar": "إنجيل",
+   "en": "Gospel",
+   "category": "term",
+   "en_agreement": {
+    "count": 60,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "إنكار",
+   "en": "denial",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ابتلاء",
+   "en": "trials",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 36,
+    "strong": false
+   }
+  },
+  {
+   "ar": "اجتهاد",
+   "en": "personal reasoning",
+   "category": "term",
+   "en_agreement": {
+    "count": 11,
+    "total": 57,
+    "strong": false
+   }
+  },
+  {
+   "ar": "استجمار",
+   "en": "Istijmār",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 44,
+    "strong": false
+   }
+  },
+  {
+   "ar": "استحباب",
+   "en": "recommended",
+   "category": "term",
+   "en_agreement": {
+    "count": 59,
+    "total": 93,
+    "strong": true
+   }
+  },
+  {
+   "ar": "استطاعة",
+   "en": "ability",
+   "category": "term",
+   "en_agreement": {
+    "count": 43,
+    "total": 61,
+    "strong": true
+   }
+  },
+  {
+   "ar": "استعاذة",
+   "en": "seeking refuge",
+   "category": "term",
+   "en_agreement": {
+    "count": 38,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "استعانة",
+   "en": "seeking help",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 73,
+    "strong": false
+   }
+  },
+  {
+   "ar": "استغاثة",
+   "en": "seeking help",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "استغفار",
+   "en": "seeking forgiveness",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الآخر",
+   "en": "al-Ākhir",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 1,
+    "total": 2,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الأحد",
+   "en": "One",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 14,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الأول",
+   "en": "first",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 58,
+    "total": 82,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الإحسان",
+   "en": "kindness",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الإسلام",
+   "en": "Islam",
+   "category": "term",
+   "en_agreement": {
+    "count": 82,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الإله",
+   "en": "God",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 54,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الإيمان",
+   "en": "faith",
+   "category": "term",
+   "en_agreement": {
+    "count": 51,
+    "total": 79,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الباطن",
+   "en": "Hidden",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 11,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "البر",
+   "en": "righteousness",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 25,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "البصير",
+   "en": "All-Seeing",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 30,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "التواب",
+   "en": "Accepting of Repentance",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 14,
+    "total": 61,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الجبار",
+   "en": "Compeller",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 22,
+    "total": 51,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الجنة",
+   "en": "Paradise",
+   "category": "term",
+   "en_agreement": {
+    "count": 91,
+    "total": 92,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الحجر",
+   "en": "stone",
+   "category": "place",
+   "en_agreement": {
+    "count": 31,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الحق",
+   "en": "truth",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 64,
+    "total": 91,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الحكم",
+   "en": "ruling",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 25,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الحكيم",
+   "en": "All-Wise",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 45,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الحميد",
+   "en": "Praiseworthy",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 15,
+    "total": 44,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الحي",
+   "en": "Ever-Living",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 32,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الحياء",
+   "en": "modesty",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 53,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الخالق",
+   "en": "Creator",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 76,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الخبير",
+   "en": "All-Aware",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 32,
+    "total": 52,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الخلق",
+   "en": "creation",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 31,
+    "total": 92,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الرب",
+   "en": "Lord",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 83,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الربوبية",
+   "en": "lordship",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 45,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الرحمة",
+   "en": "mercy",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 81,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الرحمن",
+   "en": "Rahmān",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 44,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الرحيم",
+   "en": "Most Merciful",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 57,
+    "total": 81,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الرزاق",
+   "en": "Razzāq",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 16,
+    "total": 62,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الرزق",
+   "en": "sustenance",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 43,
+    "total": 90,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الرسول",
+   "en": "Messenger",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 90,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الرضا",
+   "en": "contentment",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 30,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الزكاة",
+   "en": "Zakah",
+   "category": "term",
+   "en_agreement": {
+    "count": 70,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "السلام",
+   "en": "peace",
+   "category": "term",
+   "en_agreement": {
+    "count": 63,
+    "total": 79,
+    "strong": true
+   }
+  },
+  {
+   "ar": "السميع",
+   "en": "All-Hearing",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 71,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الشريعة",
+   "en": "Shariah",
+   "category": "term",
+   "en_agreement": {
+    "count": 80,
+    "total": 92,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الشكر",
+   "en": "gratitude",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 38,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الصبر",
+   "en": "patience",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 64,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الصراط",
+   "en": "path",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 74,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الصفا",
+   "en": "Safa",
+   "category": "place",
+   "en_agreement": {
+    "count": 51,
+    "total": 82,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الصفات",
+   "en": "attributes",
+   "category": "term",
+   "en_agreement": {
+    "count": 46,
+    "total": 72,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الصمد",
+   "en": "Eternal Refuge",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 28,
+    "total": 40,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الصوم",
+   "en": "fasting",
+   "category": "term",
+   "en_agreement": {
+    "count": 84,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "الظاهر",
+   "en": "outward",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 19,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "العرش",
+   "en": "Throne",
+   "category": "term",
+   "en_agreement": {
+    "count": 83,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "العزيز",
+   "en": "All-Mighty",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 46,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "العظيم",
+   "en": "great",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 56,
+    "total": 89,
+    "strong": true
+   }
+  },
+  {
+   "ar": "العفو",
+   "en": "pardon",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 29,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "العلم",
+   "en": "knowledge",
+   "category": "term",
+   "en_agreement": {
+    "count": 73,
+    "total": 94,
+    "strong": true
+   }
+  },
+  {
+   "ar": "العلي",
+   "en": "Most High",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 45,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "العليم",
+   "en": "All-Knowing",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 58,
+    "total": 75,
+    "strong": true
+   }
+  },
+  {
+   "ar": "العين",
+   "en": "eye",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 24,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الغفور",
+   "en": "Most Forgiving",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 34,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الغني",
+   "en": "Self-Sufficient",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 21,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "القادر",
+   "en": "Qādir",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 16,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "القبض",
+   "en": "taking possession",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 7,
+    "total": 64,
+    "strong": false
+   }
+  },
+  {
+   "ar": "القدرة",
+   "en": "ability",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 45,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "القدوس",
+   "en": "Most Holy",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 19,
+    "total": 37,
+    "strong": false
+   }
+  },
+  {
+   "ar": "القرآن",
+   "en": "Qur'an",
+   "category": "term",
+   "en_agreement": {
+    "count": 86,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "القيوم",
+   "en": "All-Sustaining",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 25,
+    "total": 60,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الكبير",
+   "en": "great",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 14,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "اللات",
+   "en": "Al-Lāt",
+   "category": "place",
+   "en_agreement": {
+    "count": 20,
+    "total": 37,
+    "strong": false
+   }
+  },
+  {
+   "ar": "اللطيف",
+   "en": "Subtle",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 15,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الله",
+   "en": "Allah",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 87,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "المحبة",
+   "en": "love",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 81,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "المروة",
+   "en": "Marwah",
+   "category": "place",
+   "en_agreement": {
+    "count": 65,
+    "total": 74,
+    "strong": true
+   }
+  },
+  {
+   "ar": "المشيئة",
+   "en": "will",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 37,
+    "total": 51,
+    "strong": true
+   }
+  },
+  {
+   "ar": "المصور",
+   "en": "Fashioner",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 13,
+    "total": 28,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الملك",
+   "en": "King",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 25,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "المولى",
+   "en": "Allah",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 31,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الواحد",
+   "en": "One",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 44,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الوتر",
+   "en": "Witr",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 40,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "الولي",
+   "en": "guardian",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 38,
+    "total": 75,
+    "strong": false
+   }
+  },
+  {
+   "ar": "باطل",
+   "en": "falsehood",
+   "category": "term",
+   "en_agreement": {
+    "count": 43,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بدعة",
+   "en": "religious innovation",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "براءة",
+   "en": "disavowal",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 70,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بعث",
+   "en": "resurrection",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "بغي",
+   "en": "transgression",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 68,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بلاغ",
+   "en": "message",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 47,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بلوغ",
+   "en": "puberty",
+   "category": "term",
+   "en_agreement": {
+    "count": 51,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بوذية",
+   "en": "Buddhism",
+   "category": "sect",
+   "en_agreement": {
+    "count": 26,
+    "total": 32,
+    "strong": true
+   }
+  },
+  {
+   "ar": "بول",
+   "en": "urine",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 91,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بيت",
+   "en": "House",
+   "category": "term",
+   "en_agreement": {
+    "count": 37,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بيع",
+   "en": "sale",
+   "category": "term",
+   "en_agreement": {
+    "count": 27,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "بيعة",
+   "en": "pledge of allegiance",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 39,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تأويل",
+   "en": "interpretation",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تابع",
+   "en": "Tābi‘is",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تبديل",
+   "en": "alteration",
+   "category": "term",
+   "en_agreement": {
+    "count": 32,
+    "total": 61,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تبليغ",
+   "en": "conveying",
+   "category": "term",
+   "en_agreement": {
+    "count": 9,
+    "total": 23,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تثليث",
+   "en": "Trinity",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 56,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تحريف",
+   "en": "distortion",
+   "category": "term",
+   "en_agreement": {
+    "count": 46,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تحريم",
+   "en": "prohibition",
+   "category": "term",
+   "en_agreement": {
+    "count": 47,
+    "total": 74,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تحميد",
+   "en": "praising",
+   "category": "term",
+   "en_agreement": {
+    "count": 8,
+    "total": 42,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تحية",
+   "en": "greetings",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 51,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تخريج",
+   "en": "Takhrīj",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 33,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ترجيح",
+   "en": "giving preference",
+   "category": "term",
+   "en_agreement": {
+    "count": 5,
+    "total": 30,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تركة",
+   "en": "inheritance",
+   "category": "term",
+   "en_agreement": {
+    "count": 16,
+    "total": 32,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تزكية",
+   "en": "recommendation",
+   "category": "term",
+   "en_agreement": {
+    "count": 4,
+    "total": 14,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تسبيح",
+   "en": "glorifying Allah",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تسمية",
+   "en": "mentioning Allah's name",
+   "category": "term",
+   "en_agreement": {
+    "count": 13,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تصديق",
+   "en": "belief",
+   "category": "term",
+   "en_agreement": {
+    "count": 49,
+    "total": 71,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تعطيل",
+   "en": "negation",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تـقليد",
+   "en": "imitation",
+   "category": "term",
+   "en_agreement": {
+    "count": 19,
+    "total": 33,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تـقية",
+   "en": "Taqiyyah",
+   "category": "term",
+   "en_agreement": {
+    "count": 7,
+    "total": 19,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تفريط",
+   "en": "negligence",
+   "category": "term",
+   "en_agreement": {
+    "count": 43,
+    "total": 69,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تفسير",
+   "en": "Tafsīr",
+   "category": "term",
+   "en_agreement": {
+    "count": 61,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تقصير",
+   "en": "negligence",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تقوى",
+   "en": "piety",
+   "category": "term",
+   "en_agreement": {
+    "count": 62,
+    "total": 83,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تكبير",
+   "en": "Takbīr",
+   "category": "term",
+   "en_agreement": {
+    "count": 45,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تكفير",
+   "en": "expiation",
+   "category": "term",
+   "en_agreement": {
+    "count": 6,
+    "total": 30,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تكليف",
+   "en": "assignment",
+   "category": "term",
+   "en_agreement": {
+    "count": 11,
+    "total": 71,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تكييف",
+   "en": "asking how",
+   "category": "term",
+   "en_agreement": {
+    "count": 33,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تلاوة",
+   "en": "recitation",
+   "category": "term",
+   "en_agreement": {
+    "count": 68,
+    "total": 82,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تنزيل",
+   "en": "revelation",
+   "category": "term",
+   "en_agreement": {
+    "count": 11,
+    "total": 23,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تهليل",
+   "en": "Tahlīl",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 31,
+    "strong": false
+   }
+  },
+  {
+   "ar": "تواضع",
+   "en": "humbleness",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "توبة",
+   "en": "repentance",
+   "category": "term",
+   "en_agreement": {
+    "count": 68,
+    "total": 93,
+    "strong": true
+   }
+  },
+  {
+   "ar": "توحيد",
+   "en": "Tawhīd",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "توراة",
+   "en": "Torah",
+   "category": "term",
+   "en_agreement": {
+    "count": 59,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تيسير",
+   "en": "facilitation",
+   "category": "term",
+   "en_agreement": {
+    "count": 33,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ثواب",
+   "en": "reward",
+   "category": "term",
+   "en_agreement": {
+    "count": 61,
+    "total": 81,
+    "strong": true
+   }
+  },
+  {
+   "ar": "جبار",
+   "en": "Compeller",
+   "category": "term",
+   "en_agreement": {
+    "count": 22,
+    "total": 51,
+    "strong": false
+   }
+  },
+  {
+   "ar": "جبريل",
+   "en": "Gabriel",
+   "category": "term",
+   "en_agreement": {
+    "count": 37,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "جزية",
+   "en": "Jizyah",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "جنازة",
+   "en": "funerals",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "جناية",
+   "en": "crimes",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 23,
+    "strong": true
+   }
+  },
+  {
+   "ar": "جنب",
+   "en": "side",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "جهاد",
+   "en": "Jihad",
+   "category": "term",
+   "en_agreement": {
+    "count": 81,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "جهمية",
+   "en": "Jahmiyyah",
+   "category": "sect",
+   "en_agreement": {
+    "count": 44,
+    "total": 67,
+    "strong": true
+   }
+  },
+  {
+   "ar": "جهنم",
+   "en": "Hell",
+   "category": "term",
+   "en_agreement": {
+    "count": 63,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "حجاب",
+   "en": "Hijāb",
+   "category": "attribute",
+   "en_agreement": {
+    "count": 19,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حجر",
+   "en": "stone",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حدث",
+   "en": "ritual impurity",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حديث",
+   "en": "Hadīth",
+   "category": "term",
+   "en_agreement": {
+    "count": 50,
+    "total": 91,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حرام",
+   "en": "Sacred",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حساب",
+   "en": "reckoning",
+   "category": "term",
+   "en_agreement": {
+    "count": 50,
+    "total": 83,
+    "strong": true
+   }
+  },
+  {
+   "ar": "حسد",
+   "en": "envy",
+   "category": "term",
+   "en_agreement": {
+    "count": 81,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "حشر",
+   "en": "gathering",
+   "category": "term",
+   "en_agreement": {
+    "count": 11,
+    "total": 34,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حكم",
+   "en": "ruling",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حلف",
+   "en": "swearing",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حلق",
+   "en": "shaving",
+   "category": "term",
+   "en_agreement": {
+    "count": 39,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حلم",
+   "en": "forbearance",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حمد",
+   "en": "praise",
+   "category": "term",
+   "en_agreement": {
+    "count": 78,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "حوض",
+   "en": "Cistern",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 73,
+    "strong": false
+   }
+  },
+  {
+   "ar": "حياء",
+   "en": "modesty",
+   "category": "term",
+   "en_agreement": {
+    "count": 53,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "حيلة",
+   "en": "tricks",
+   "category": "term",
+   "en_agreement": {
+    "count": 4,
+    "total": 22,
+    "strong": false
+   }
+  },
+  {
+   "ar": "خشوع",
+   "en": "humility",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "خشية",
+   "en": "fear",
+   "category": "term",
+   "en_agreement": {
+    "count": 13,
+    "total": 62,
+    "strong": false
+   }
+  },
+  {
+   "ar": "خلاء",
+   "en": "bathroom",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "خلق",
+   "en": "creation",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 92,
+    "strong": false
+   }
+  },
+  {
+   "ar": "خمس",
+   "en": "five",
+   "category": "term",
+   "en_agreement": {
+    "count": 65,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "خوارج",
+   "en": "Kharijites",
+   "category": "sect",
+   "en_agreement": {
+    "count": 41,
+    "total": 75,
+    "strong": false
+   }
+  },
+  {
+   "ar": "خوف",
+   "en": "fear",
+   "category": "term",
+   "en_agreement": {
+    "count": 70,
+    "total": 89,
+    "strong": true
+   }
+  },
+  {
+   "ar": "خيار",
+   "en": "option",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "دجال",
+   "en": "Anti-Christ",
+   "category": "term",
+   "en_agreement": {
+    "count": 48,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "دعاء",
+   "en": "supplication",
+   "category": "term",
+   "en_agreement": {
+    "count": 73,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "دعوة",
+   "en": "call",
+   "category": "term",
+   "en_agreement": {
+    "count": 23,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "دين",
+   "en": "religion",
+   "category": "term",
+   "en_agreement": {
+    "count": 56,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ذبح",
+   "en": "slaughtering",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ذكاة",
+   "en": "animal slaughter",
+   "category": "term",
+   "en_agreement": {
+    "count": 19,
+    "total": 46,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ذكر",
+   "en": "Dhikr",
+   "category": "term",
+   "en_agreement": {
+    "count": 32,
+    "total": 90,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رافضة",
+   "en": "Raafidah",
+   "category": "sect",
+   "en_agreement": {
+    "count": 15,
+    "total": 75,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ربا",
+   "en": "usury",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رجاء",
+   "en": "hope",
+   "category": "term",
+   "en_agreement": {
+    "count": 66,
+    "total": 83,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رجعة",
+   "en": "Raj‘ah",
+   "category": "term",
+   "en_agreement": {
+    "count": 6,
+    "total": 30,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رجم",
+   "en": "stoning",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 40,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رحم",
+   "en": "kinship",
+   "category": "term",
+   "en_agreement": {
+    "count": 27,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رحمة",
+   "en": "mercy",
+   "category": "term",
+   "en_agreement": {
+    "count": 81,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رخصة",
+   "en": "concession",
+   "category": "term",
+   "en_agreement": {
+    "count": 47,
+    "total": 75,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ردة",
+   "en": "apostasy",
+   "category": "term",
+   "en_agreement": {
+    "count": 48,
+    "total": 53,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رزق",
+   "en": "sustenance",
+   "category": "term",
+   "en_agreement": {
+    "count": 43,
+    "total": 90,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رسالة",
+   "en": "message",
+   "category": "term",
+   "en_agreement": {
+    "count": 40,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رسول",
+   "en": "Messenger",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 90,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رشوة",
+   "en": "bribery",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 31,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رضا",
+   "en": "contentment",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رضاع",
+   "en": "breastfeeding",
+   "category": "term",
+   "en_agreement": {
+    "count": 54,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رفق",
+   "en": "gentleness",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رقبة",
+   "en": "slaves",
+   "category": "term",
+   "en_agreement": {
+    "count": 8,
+    "total": 40,
+    "strong": false
+   }
+  },
+  {
+   "ar": "رقية",
+   "en": "Ruqyah",
+   "category": "term",
+   "en_agreement": {
+    "count": 45,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ركن",
+   "en": "pillar",
+   "category": "term",
+   "en_agreement": {
+    "count": 74,
+    "total": 91,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ركوع",
+   "en": "bowing",
+   "category": "term",
+   "en_agreement": {
+    "count": 62,
+    "total": 89,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رمضان",
+   "en": "Ramadan",
+   "category": "term",
+   "en_agreement": {
+    "count": 92,
+    "total": 95,
+    "strong": true
+   }
+  },
+  {
+   "ar": "رياء",
+   "en": "ostentation",
+   "category": "term",
+   "en_agreement": {
+    "count": 27,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "زكاة",
+   "en": "Zakah",
+   "category": "term",
+   "en_agreement": {
+    "count": 70,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "زهد",
+   "en": "asceticism",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "زوال",
+   "en": "noon",
+   "category": "term",
+   "en_agreement": {
+    "count": 22,
+    "total": 74,
+    "strong": false
+   }
+  },
+  {
+   "ar": "سحر",
+   "en": "magic",
+   "category": "term",
+   "en_agreement": {
+    "count": 64,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "سرقة",
+   "en": "theft",
+   "category": "term",
+   "en_agreement": {
+    "count": 54,
+    "total": 77,
+    "strong": true
+   }
+  },
+  {
+   "ar": "سفر",
+   "en": "travel",
+   "category": "term",
+   "en_agreement": {
+    "count": 47,
+    "total": 90,
+    "strong": false
+   }
+  },
+  {
+   "ar": "سكينة",
+   "en": "tranquility",
+   "category": "term",
+   "en_agreement": {
+    "count": 48,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "سلف",
+   "en": "predecessors",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "سنة",
+   "en": "Sunnah",
+   "category": "term",
+   "en_agreement": {
+    "count": 89,
+    "total": 91,
+    "strong": true
+   }
+  },
+  {
+   "ar": "سورة",
+   "en": "Surat",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "سيرة",
+   "en": "biography",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 61,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شراء",
+   "en": "buying",
+   "category": "term",
+   "en_agreement": {
+    "count": 27,
+    "total": 64,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شرط",
+   "en": "condition",
+   "category": "term",
+   "en_agreement": {
+    "count": 34,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شركة",
+   "en": "partnership",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 26,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شفاعة",
+   "en": "intercession",
+   "category": "term",
+   "en_agreement": {
+    "count": 78,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "شكر",
+   "en": "gratitude",
+   "category": "term",
+   "en_agreement": {
+    "count": 38,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شهادة",
+   "en": "testimony",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شهوة",
+   "en": "desires",
+   "category": "term",
+   "en_agreement": {
+    "count": 49,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شوال",
+   "en": "Shawwāl",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 56,
+    "strong": true
+   }
+  },
+  {
+   "ar": "شيطان",
+   "en": "Satan",
+   "category": "term",
+   "en_agreement": {
+    "count": 50,
+    "total": 94,
+    "strong": false
+   }
+  },
+  {
+   "ar": "شيعة",
+   "en": "Shia",
+   "category": "sect",
+   "en_agreement": {
+    "count": 29,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "صاع",
+   "en": "Sā‘",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "صبح",
+   "en": "Fajr",
+   "category": "term",
+   "en_agreement": {
+    "count": 34,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "صحابي",
+   "en": "Companion",
+   "category": "term",
+   "en_agreement": {
+    "count": 71,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صدقة",
+   "en": "charity",
+   "category": "term",
+   "en_agreement": {
+    "count": 86,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صغائر",
+   "en": "minor sins",
+   "category": "term",
+   "en_agreement": {
+    "count": 34,
+    "total": 37,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صفا",
+   "en": "Safa",
+   "category": "term",
+   "en_agreement": {
+    "count": 51,
+    "total": 82,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صلاة",
+   "en": "prayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 75,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صلح",
+   "en": "reconciliation",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "صيد",
+   "en": "hunting",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ضرورة",
+   "en": "necessity",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ضمان",
+   "en": "guarantee",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 46,
+    "strong": true
+   }
+  },
+  {
+   "ar": "طاعة",
+   "en": "obedience",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "طلاق",
+   "en": "divorce",
+   "category": "term",
+   "en_agreement": {
+    "count": 84,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "طمأنينة",
+   "en": "tranquility",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "طهارة",
+   "en": "purification",
+   "category": "term",
+   "en_agreement": {
+    "count": 39,
+    "total": 91,
+    "strong": false
+   }
+  },
+  {
+   "ar": "طهر",
+   "en": "purity",
+   "category": "term",
+   "en_agreement": {
+    "count": 49,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "طواف",
+   "en": "Tawāf",
+   "category": "term",
+   "en_agreement": {
+    "count": 67,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "طيب",
+   "en": "good things",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "طيرة",
+   "en": "belief in evil omens",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 63,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ظاهر",
+   "en": "outward",
+   "category": "term",
+   "en_agreement": {
+    "count": 19,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ظلم",
+   "en": "injustice",
+   "category": "term",
+   "en_agreement": {
+    "count": 33,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عالم",
+   "en": "scholars",
+   "category": "term",
+   "en_agreement": {
+    "count": 78,
+    "total": 89,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عبادة",
+   "en": "worship",
+   "category": "term",
+   "en_agreement": {
+    "count": 71,
+    "total": 93,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عبد",
+   "en": "person",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عبودية",
+   "en": "servitude",
+   "category": "term",
+   "en_agreement": {
+    "count": 43,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عدالة",
+   "en": "justice",
+   "category": "term",
+   "en_agreement": {
+    "count": 29,
+    "total": 53,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عدل",
+   "en": "justice",
+   "category": "term",
+   "en_agreement": {
+    "count": 65,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عرض",
+   "en": "honor",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 64,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عرف",
+   "en": "custom",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 63,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عرفات",
+   "en": "‘Arafāt",
+   "category": "place",
+   "en_agreement": {
+    "count": 30,
+    "total": 64,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عشاء",
+   "en": "‘Ishā’",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عصمة",
+   "en": "protection",
+   "category": "term",
+   "en_agreement": {
+    "count": 11,
+    "total": 40,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عـموم",
+   "en": "general",
+   "category": "term",
+   "en_agreement": {
+    "count": 20,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عفو",
+   "en": "pardon",
+   "category": "term",
+   "en_agreement": {
+    "count": 29,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عقاب",
+   "en": "punishment",
+   "category": "term",
+   "en_agreement": {
+    "count": 70,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عقد",
+   "en": "contract",
+   "category": "term",
+   "en_agreement": {
+    "count": 55,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عقل",
+   "en": "reason",
+   "category": "term",
+   "en_agreement": {
+    "count": 29,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عقوبة",
+   "en": "punishment",
+   "category": "term",
+   "en_agreement": {
+    "count": 79,
+    "total": 82,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عقيدة",
+   "en": "creed",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "علة",
+   "en": "reason",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 77,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عمرة",
+   "en": "‘Umrah",
+   "category": "term",
+   "en_agreement": {
+    "count": 72,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عورة",
+   "en": "‘awrah",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 74,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عوض",
+   "en": "compensation",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 74,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عيد",
+   "en": "two Eids",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "عين",
+   "en": "eye",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غائب",
+   "en": "unseen",
+   "category": "term",
+   "en_agreement": {
+    "count": 79,
+    "total": 91,
+    "strong": true
+   }
+  },
+  {
+   "ar": "غائط",
+   "en": "feces",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غرر",
+   "en": "uncertainty",
+   "category": "term",
+   "en_agreement": {
+    "count": 19,
+    "total": 37,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غزو",
+   "en": "battle",
+   "category": "term",
+   "en_agreement": {
+    "count": 16,
+    "total": 50,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غسل",
+   "en": "ritual bath",
+   "category": "term",
+   "en_agreement": {
+    "count": 40,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غفلة",
+   "en": "heedlessness",
+   "category": "term",
+   "en_agreement": {
+    "count": 45,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غلـو",
+   "en": "extremism",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غنـى",
+   "en": "Self-Sufficient",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غنيمة",
+   "en": "spoils of war",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 48,
+    "strong": false
+   }
+  },
+  {
+   "ar": "غيبة",
+   "en": "backbiting",
+   "category": "term",
+   "en_agreement": {
+    "count": 61,
+    "total": 90,
+    "strong": true
+   }
+  },
+  {
+   "ar": "فاحشة",
+   "en": "immorality",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 71,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فاسق",
+   "en": "rebellious",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 22,
+    "strong": true
+   }
+  },
+  {
+   "ar": "فتنة",
+   "en": "trials",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فتوى",
+   "en": "fatwa",
+   "category": "term",
+   "en_agreement": {
+    "count": 29,
+    "total": 55,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فرض",
+   "en": "obligatory",
+   "category": "term",
+   "en_agreement": {
+    "count": 22,
+    "total": 74,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فرع",
+   "en": "descendants",
+   "category": "term",
+   "en_agreement": {
+    "count": 19,
+    "total": 44,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فرقة",
+   "en": "sect",
+   "category": "term",
+   "en_agreement": {
+    "count": 44,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فساد",
+   "en": "corruption",
+   "category": "term",
+   "en_agreement": {
+    "count": 53,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "فسق.",
+   "en": "disobedience",
+   "category": "term",
+   "en_agreement": {
+    "count": 9,
+    "total": 39,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فطرة",
+   "en": "natural disposition",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 75,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فقه",
+   "en": "Fiqh",
+   "category": "term",
+   "en_agreement": {
+    "count": 41,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "فقير",
+   "en": "poor",
+   "category": "term",
+   "en_agreement": {
+    "count": 66,
+    "total": 79,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قائم",
+   "en": "one who abides by",
+   "category": "divine_name",
+   "en_agreement": {
+    "count": 6,
+    "total": 66,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قاضي",
+   "en": "judge",
+   "category": "term",
+   "en_agreement": {
+    "count": 69,
+    "total": 78,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قبر",
+   "en": "grave",
+   "category": "term",
+   "en_agreement": {
+    "count": 84,
+    "total": 89,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قبض",
+   "en": "taking possession",
+   "category": "term",
+   "en_agreement": {
+    "count": 7,
+    "total": 64,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قبلة",
+   "en": "Qiblah",
+   "category": "term",
+   "en_agreement": {
+    "count": 60,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قتال",
+   "en": "fighting",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 81,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قتل",
+   "en": "killing",
+   "category": "term",
+   "en_agreement": {
+    "count": 46,
+    "total": 74,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قدر",
+   "en": "destiny",
+   "category": "term",
+   "en_agreement": {
+    "count": 22,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قربة",
+   "en": "waterskin",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قرض",
+   "en": "loan",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 36,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قرينة",
+   "en": "circumstantial evidence",
+   "category": "term",
+   "en_agreement": {
+    "count": 5,
+    "total": 39,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قسط",
+   "en": "justice",
+   "category": "term",
+   "en_agreement": {
+    "count": 66,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قسم",
+   "en": "category",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قصاص",
+   "en": "legal retribution",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قضاء",
+   "en": "divine decree",
+   "category": "term",
+   "en_agreement": {
+    "count": 12,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قطع",
+   "en": "cutting",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "قمار",
+   "en": "gambling",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 33,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قياس",
+   "en": "analogy",
+   "category": "term",
+   "en_agreement": {
+    "count": 57,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "قيام",
+   "en": "standing",
+   "category": "term",
+   "en_agreement": {
+    "count": 37,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "كاهن",
+   "en": "soothsayer",
+   "category": "term",
+   "en_agreement": {
+    "count": 34,
+    "total": 67,
+    "strong": false
+   }
+  },
+  {
+   "ar": "كبر",
+   "en": "arrogance",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "كتب",
+   "en": "Kutub",
+   "category": "term",
+   "en_agreement": {
+    "count": 46,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "كذب",
+   "en": "lying",
+   "category": "term",
+   "en_agreement": {
+    "count": 63,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "كراهة",
+   "en": "disliked",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "كفارة",
+   "en": "expiation",
+   "category": "term",
+   "en_agreement": {
+    "count": 54,
+    "total": 76,
+    "strong": true
+   }
+  },
+  {
+   "ar": "كفر",
+   "en": "disbelief",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "كهانة",
+   "en": "divination",
+   "category": "term",
+   "en_agreement": {
+    "count": 28,
+    "total": 71,
+    "strong": false
+   }
+  },
+  {
+   "ar": "لعن",
+   "en": "curse",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مباح",
+   "en": "permissible",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 58,
+    "strong": true
+   }
+  },
+  {
+   "ar": "متشابه",
+   "en": "ambiguous",
+   "category": "term",
+   "en_agreement": {
+    "count": 10,
+    "total": 29,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مجتهد",
+   "en": "mujtahid",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 43,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مجوس",
+   "en": "Magians",
+   "category": "sect",
+   "en_agreement": {
+    "count": 26,
+    "total": 59,
+    "strong": false
+   }
+  },
+  {
+   "ar": "محبة",
+   "en": "love",
+   "category": "term",
+   "en_agreement": {
+    "count": 81,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "محدث",
+   "en": "person in a state of ritual impurity",
+   "category": "term",
+   "en_agreement": {
+    "count": 5,
+    "total": 35,
+    "strong": false
+   }
+  },
+  {
+   "ar": "محرم",
+   "en": "prohibited",
+   "category": "term",
+   "en_agreement": {
+    "count": 12,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مذهب",
+   "en": "doctrine",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مزدلفة",
+   "en": "Muzdalifah",
+   "category": "term",
+   "en_agreement": {
+    "count": 77,
+    "total": 77,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مسجد",
+   "en": "mosque",
+   "category": "term",
+   "en_agreement": {
+    "count": 52,
+    "total": 81,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مسكين",
+   "en": "needy",
+   "category": "term",
+   "en_agreement": {
+    "count": 64,
+    "total": 92,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مشقة",
+   "en": "hardship",
+   "category": "term",
+   "en_agreement": {
+    "count": 55,
+    "total": 81,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مشيئة",
+   "en": "will",
+   "category": "term",
+   "en_agreement": {
+    "count": 37,
+    "total": 51,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مصحف",
+   "en": "Mus'haf",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مضغة",
+   "en": "lump of flesh",
+   "category": "term",
+   "en_agreement": {
+    "count": 20,
+    "total": 63,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مضمضة",
+   "en": "rinsing the mouth",
+   "category": "term",
+   "en_agreement": {
+    "count": 41,
+    "total": 70,
+    "strong": false
+   }
+  },
+  {
+   "ar": "معاملة",
+   "en": "transactions",
+   "category": "term",
+   "en_agreement": {
+    "count": 55,
+    "total": 79,
+    "strong": true
+   }
+  },
+  {
+   "ar": "معتزلة",
+   "en": "Mu‘tazilites",
+   "category": "sect",
+   "en_agreement": {
+    "count": 21,
+    "total": 68,
+    "strong": false
+   }
+  },
+  {
+   "ar": "معجزة",
+   "en": "miracles",
+   "category": "term",
+   "en_agreement": {
+    "count": 75,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "معروف",
+   "en": "good",
+   "category": "term",
+   "en_agreement": {
+    "count": 17,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "معصية",
+   "en": "sins",
+   "category": "term",
+   "en_agreement": {
+    "count": 60,
+    "total": 83,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مكة",
+   "en": "Makkah",
+   "category": "place",
+   "en_agreement": {
+    "count": 79,
+    "total": 80,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مكروه",
+   "en": "disliked",
+   "category": "term",
+   "en_agreement": {
+    "count": 34,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مكلف",
+   "en": "person",
+   "category": "term",
+   "en_agreement": {
+    "count": 12,
+    "total": 66,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ملائكة",
+   "en": "angels",
+   "category": "term",
+   "en_agreement": {
+    "count": 86,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ملة",
+   "en": "fold of Islam",
+   "category": "term",
+   "en_agreement": {
+    "count": 38,
+    "total": 78,
+    "strong": false
+   }
+  },
+  {
+   "ar": "منبر",
+   "en": "pulpit",
+   "category": "term",
+   "en_agreement": {
+    "count": 84,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "منكر",
+   "en": "evil",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 85,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مني",
+   "en": "Mina",
+   "category": "term",
+   "en_agreement": {
+    "count": 90,
+    "total": 92,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مهر",
+   "en": "dowry",
+   "category": "term",
+   "en_agreement": {
+    "count": 70,
+    "total": 81,
+    "strong": true
+   }
+  },
+  {
+   "ar": "مواقيت",
+   "en": "Miqāts",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 68,
+    "strong": false
+   }
+  },
+  {
+   "ar": "موالاة",
+   "en": "loyalty",
+   "category": "term",
+   "en_agreement": {
+    "count": 14,
+    "total": 61,
+    "strong": false
+   }
+  },
+  {
+   "ar": "مولـى",
+   "en": "Allah",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ميت",
+   "en": "deceased",
+   "category": "term",
+   "en_agreement": {
+    "count": 41,
+    "total": 88,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ميزان",
+   "en": "Scale",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ميسر",
+   "en": "gambling",
+   "category": "term",
+   "en_agreement": {
+    "count": 32,
+    "total": 50,
+    "strong": true
+   }
+  },
+  {
+   "ar": "نبوة",
+   "en": "prophethood",
+   "category": "term",
+   "en_agreement": {
+    "count": 38,
+    "total": 76,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نبي",
+   "en": "Prophet",
+   "category": "term",
+   "en_agreement": {
+    "count": 83,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "نذر",
+   "en": "vow",
+   "category": "term",
+   "en_agreement": {
+    "count": 56,
+    "total": 85,
+    "strong": true
+   }
+  },
+  {
+   "ar": "نسب",
+   "en": "lineage",
+   "category": "term",
+   "en_agreement": {
+    "count": 38,
+    "total": 75,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نصاب",
+   "en": "Nisāb",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 50,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نصرانية",
+   "en": "Christianity",
+   "category": "sect",
+   "en_agreement": {
+    "count": 62,
+    "total": 91,
+    "strong": true
+   }
+  },
+  {
+   "ar": "نصيحة",
+   "en": "advice",
+   "category": "term",
+   "en_agreement": {
+    "count": 29,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نطفة",
+   "en": "sperm-drop",
+   "category": "term",
+   "en_agreement": {
+    "count": 36,
+    "total": 70,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نـفل",
+   "en": "supererogatory",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 32,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نفاس",
+   "en": "postpartum bleeding",
+   "category": "term",
+   "en_agreement": {
+    "count": 30,
+    "total": 87,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نفس",
+   "en": "soul",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 83,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نكاح",
+   "en": "marriage",
+   "category": "term",
+   "en_agreement": {
+    "count": 73,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "نميمة",
+   "en": "malicious gossip",
+   "category": "term",
+   "en_agreement": {
+    "count": 21,
+    "total": 69,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نهي",
+   "en": "prohibited",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 89,
+    "strong": false
+   }
+  },
+  {
+   "ar": "نياحة",
+   "en": "wailing",
+   "category": "term",
+   "en_agreement": {
+    "count": 58,
+    "total": 63,
+    "strong": true
+   }
+  },
+  {
+   "ar": "نيـة",
+   "en": "intention",
+   "category": "term",
+   "en_agreement": {
+    "count": 84,
+    "total": 89,
+    "strong": true
+   }
+  },
+  {
+   "ar": "هبة",
+   "en": "gift",
+   "category": "term",
+   "en_agreement": {
+    "count": 24,
+    "total": 50,
+    "strong": false
+   }
+  },
+  {
+   "ar": "هجرة",
+   "en": "Hijrah",
+   "category": "term",
+   "en_agreement": {
+    "count": 42,
+    "total": 82,
+    "strong": false
+   }
+  },
+  {
+   "ar": "هدى",
+   "en": "guidance",
+   "category": "term",
+   "en_agreement": {
+    "count": 83,
+    "total": 88,
+    "strong": true
+   }
+  },
+  {
+   "ar": "هوى",
+   "en": "desires",
+   "category": "term",
+   "en_agreement": {
+    "count": 22,
+    "total": 81,
+    "strong": false
+   }
+  },
+  {
+   "ar": "واجب",
+   "en": "should",
+   "category": "term",
+   "en_agreement": {
+    "count": 15,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "وجوب",
+   "en": "obligatory",
+   "category": "term",
+   "en_agreement": {
+    "count": 32,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "وديعة",
+   "en": "deposit",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 25,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ورع",
+   "en": "piety",
+   "category": "term",
+   "en_agreement": {
+    "count": 9,
+    "total": 39,
+    "strong": false
+   }
+  },
+  {
+   "ar": "وسوسة",
+   "en": "whispering",
+   "category": "term",
+   "en_agreement": {
+    "count": 13,
+    "total": 27,
+    "strong": false
+   }
+  },
+  {
+   "ar": "وسيلة",
+   "en": "means",
+   "category": "term",
+   "en_agreement": {
+    "count": 26,
+    "total": 80,
+    "strong": false
+   }
+  },
+  {
+   "ar": "وصية",
+   "en": "advice",
+   "category": "term",
+   "en_agreement": {
+    "count": 25,
+    "total": 84,
+    "strong": false
+   }
+  },
+  {
+   "ar": "وضوء",
+   "en": "ablution",
+   "category": "term",
+   "en_agreement": {
+    "count": 78,
+    "total": 86,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ولاء",
+   "en": "allegiance",
+   "category": "term",
+   "en_agreement": {
+    "count": 22,
+    "total": 73,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ولاية",
+   "en": "authority",
+   "category": "term",
+   "en_agreement": {
+    "count": 18,
+    "total": 65,
+    "strong": false
+   }
+  },
+  {
+   "ar": "ولي",
+   "en": "guardian",
+   "category": "term",
+   "en_agreement": {
+    "count": 38,
+    "total": 75,
+    "strong": false
+   }
+  },
+  {
+   "ar": "يتيم",
+   "en": "orphan",
+   "category": "term",
+   "en_agreement": {
+    "count": 69,
+    "total": 87,
+    "strong": true
+   }
+  },
+  {
+   "ar": "يقين",
+   "en": "certainty",
+   "category": "term",
+   "en_agreement": {
+    "count": 39,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "يمين",
+   "en": "oath",
+   "category": "term",
+   "en_agreement": {
+    "count": 31,
+    "total": 86,
+    "strong": false
+   }
+  },
+  {
+   "ar": "يهودية",
+   "en": "Judaism",
+   "category": "sect",
+   "en_agreement": {
+    "count": 31,
+    "total": 48,
+    "strong": true
+   }
+  },
+  {
+   "ar": "صبر",
+   "en": "patience",
+   "category": "term",
+   "en_agreement": {
+    "count": 64,
+    "total": 84,
+    "strong": true
+   }
+  },
+  {
+   "ar": "ميراث",
+   "en": "inheritance",
+   "category": "term",
+   "en_agreement": {
+    "count": 69,
+    "total": 76,
+    "strong": true
+   }
+  },
+  {
+   "ar": "عتكاف",
+   "en": "I‘tikāf",
+   "category": "term",
+   "en_agreement": {
+    "count": 35,
+    "total": 47,
+    "strong": true
+   }
+  },
+  {
+   "ar": "تيمم",
+   "en": "dry ablution",
+   "category": "term",
+   "en_agreement": {
+    "count": 32,
+    "total": 79,
+    "strong": false
+   }
+  },
+  {
+   "ar": "توكل",
+   "en": "Tawakkul",
+   "category": "term",
+   "en_agreement": {
+    "count": 1,
+    "total": 1,
+    "strong": false
+   }
+  }
+ ]
+}

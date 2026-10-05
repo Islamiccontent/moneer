@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مُنير — المحتوى المحفوظ</title>
+<style>
+  :root { --blue: #2464EC; --ink: #070B1A; --muted: #64748B; --line: #E3E8F4; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F5F7FC; color: var(--ink);
+         font-family: "Segoe UI", system-ui, -apple-system, sans-serif; }
+  header { background: #fff; border-bottom: 1px solid var(--line); padding: 18px 28px;
+           display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  header h1 { font-size: 20px; margin: 0; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  .actions a { color: var(--blue); text-decoration: none; font-weight: 700; font-size: 14px;
+               border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; background: #fff; }
+  main { max-width: 980px; margin: 26px auto; padding: 0 20px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px;
+          margin-bottom: 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+          box-shadow: 0 2px 10px rgba(7,11,26,.04); }
+  .card .grow { flex: 1; min-width: 220px; }
+  .title { font-weight: 800; font-size: 16.5px; text-decoration: none; color: var(--ink); }
+  .title:hover { color: var(--blue); }
+  .meta { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+  .chip { display: inline-block; border-radius: 999px; padding: 5px 13px; font-size: 12.5px; font-weight: 800; }
+  .stage-plain { background: #F1F5F9; color: #475569; }
+  .stage-busy  { background: #EFF6FF; color: #1D4ED8; }
+  .stage-review{ background: #FFF7ED; color: #B45309; }
+  .stage-done  { background: #ECFDF5; color: #047857; }
+  .langs { color: var(--muted); font-size: 12px; margin-top: 4px; }
+  .links a { color: var(--blue); text-decoration: none; font-size: 13px; font-weight: 700; margin-inline-start: 14px; }
+  .empty, .error { text-align: center; color: var(--muted); padding: 60px 0; font-size: 15px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>المحتوى المحفوظ</h1>
+    <div class="sub">كل نصٍّ له رابط دائم يفتح على مرحلته الفعلية</div>
+  </div>
+  <div class="actions"><a href="/translate/">+ مشروع جديد</a></div>
+</header>
+<main id="list"><div class="empty">جارٍ التحميل…</div></main>
+<script>
+  // لون شارة المرحلة من لفظها — المصدر الوحيد للحالة هو الخادم
+  function stageClass(stage) {
+    if (stage.includes("جارية") || stage.includes("انتظار")) return "stage-busy";
+    if (stage.includes("مراجعة")) return "stage-review";
+    if (stage.includes("معتمد")) return "stage-done";
+    return "stage-plain";
+  }
+  fetch("/api/translate/documents/")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var root = document.getElementById("list");
+      var docs = (data && data.documents) || [];
+      if (!docs.length) { root.innerHTML = '<div class="empty">لا محتوى محفوظاً بعد — ابدأ برفع نص من «مشروع جديد».</div>'; return; }
+      root.innerHTML = "";
+      docs.forEach(function (d) {
+        var card = document.createElement("div");
+        card.className = "card";
+        var langs = d.translations.map(function (t) { return t.language + ": " + t.status; }).join(" · ");
+        card.innerHTML =
+          '<div class="grow">' +
+            '<a class="title" href="' + d.url + '"></a>' +
+            '<div class="meta"></div>' +
+            (langs ? '<div class="langs"></div>' : "") +
+          "</div>" +
+          '<span class="chip ' + stageClass(d.stage) + '"></span>' +
+          '<span class="links"><a href="' + d.url + '">فتح</a><a href="' + d.json_url + '">JSON</a></span>';
+        card.querySelector(".title").textContent = d.title;
+        card.querySelector(".meta").textContent = d.source + " · " + d.phrases + " عبارة";
+        if (langs) card.querySelector(".langs").textContent = langs;
+        card.querySelector(".chip").textContent = d.stage;
+        root.appendChild(card);
+      });
+    })
+    .catch(function () {
+      document.getElementById("list").innerHTML = '<div class="error">تعذّر تحميل القائمة — تأكد أن الخادم يعمل.</div>';
+    });
+</script>
+</body>
+</html>

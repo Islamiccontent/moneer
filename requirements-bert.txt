@@ -1,0 +1,7 @@
+# طبقة BERT الاختيارية لتطبيق classify على المعالج بلا GPU؛ بعد التثبيت اضبط BERT_LAYER=1 وBERT_DIR في .env
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1+cpu
+transformers==5.18.0
+tokenizers==0.23.2
+numpy==2.5.3
+PyYAML==6.0.3

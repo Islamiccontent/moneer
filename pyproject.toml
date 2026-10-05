@@ -1,0 +1,26 @@
+[project]
+name = "moneer"
+version = "0.1.0"
+description = "مُنير (moneer): منصة إنشاء وترجمة المحتوى الإسلامي بدعم الذكاء الاصطناعي"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [".venv", "staticfiles"]
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "UP", "B", "C4", "SIM", "DJ"]
+
+[tool.ruff.lint.per-file-ignores]
+"*/migrations/*" = ["E501", "I001"]
+"translate/services/quran_extract.py" = ["E501"]
+"translate/services/term_match.py" = ["E501"]
+"translate/services/text_translate.py" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["moneer", "core", "users", "pages"]
+
+[tool.ruff.format]
+quote-style = "double"
