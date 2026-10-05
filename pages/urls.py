@@ -12,6 +12,7 @@ urlpatterns = [
     path("translate/documents/", views.documents_page, name="documents"),
     path("translate/documents/<int:pk>/", views.translate_page, name="document"),
     path("translate/documents/<int:pk>/<slug:stage>/", views.translate_page, name="document_stage"),
+    path("assets/<path:path>", views.asset, name="asset"),
     *[
         path(name, views.root_file, {"name": name}, name=f"root-{name}")
         for name in views.ROOT_FILES

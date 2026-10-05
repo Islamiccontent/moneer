@@ -1,0 +1,4 @@
+/* صفحات التطبيق: نص الآيات بخط Amiri Quran */
+@font-face{font-family:'Amiri Quran';src:url('../fonts/amiri-quran.woff2') format('woff2');font-display:swap}
+div[style*='rgb(14, 159, 110)'] span[style*='ThmanyahText']{font-family:'Amiri Quran','ThmanyahText',serif !important;font-size:21px !important;line-height:2.3 !important}
+textarea{font-family:'Amiri Quran','ThmanyahText',serif !important;font-size:19px !important;line-height:2.2 !important}
