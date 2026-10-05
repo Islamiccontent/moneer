@@ -406,12 +406,8 @@ def chain_quran_sequence(segments) -> list:
                 note, score = "آيات متتابعة أُجيزت بالمصحف", 1.0
                 if diff:
                     note, score = bert_layer._note_variant({"diff": diff}), 0.9
+                # الآية بكلماتها كما كُتبت: قوسا الأصل يبقيان على أول الآيات وآخرها ولا يُضاف غيرهما
                 content = " ".join(tokens[first_tok : last_tok + 1])
-                if any("﴿" in run[x].content for x in range(u0, v0)):
-                    core = content.replace("﴿", "").replace("﴾", "").strip()
-                    tail = _TRAILING_PUNCT.search(core)
-                    cut = tail.start() if tail else len(core)
-                    content = f"﴿{core[:cut].strip()}﴾{core[cut:]}"
                 out.append(
                     Segment(
                         "quran",
@@ -428,9 +424,6 @@ def chain_quran_sequence(segments) -> list:
 
 
 _AYAH_NUMBERS = re.compile(r"[\s ]*[٠-٩0-9]+[\s ]*")
-
-
-_TRAILING_PUNCT = re.compile(r"[\s.،؛:!؟?]+$")
 
 
 def rescue_short_ayas(segments) -> int:

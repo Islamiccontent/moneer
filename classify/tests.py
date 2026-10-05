@@ -831,8 +831,11 @@ class BracketedMultiVerseSplitTests(TestCase):
         )
         ayas = [s for s in pipeline.run(extract_text(text)) if s.kind == "quran"]
         self.assertEqual([s.source for s in ayas], [f"سورة العصر — {n}" for n in (1, 2, 3)])
-        self.assertEqual(ayas[0].content, "﴿وَالْعَصْرِ﴾")
-        self.assertTrue(ayas[2].content.endswith("﴾."))
+        # قوسا الأصل وحدهما: الفاتح على أول الآيات والخاتم على آخرها، بلا أقواس مضافة
+        self.assertEqual(ayas[0].content, "﴿وَالْعَصْرِ")
+        self.assertEqual(ayas[1].content, "إِنَّ الْإِنْسَانَ لَفِي خُسْرٍ")
+        self.assertTrue(ayas[2].content.startswith("إِلَّا"))
+        self.assertTrue(ayas[2].content.endswith("بِالصَّبْرِ﴾."))
 
 
 class TermSurfaceTests(TestCase):
