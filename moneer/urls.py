@@ -1,4 +1,4 @@
-"""مسارات المشروع: الصفحة الرئيسية على / ولوحة الإدارة على /admin/ وتطبيقا classify وtranslate."""
+"""مسارات المشروع: الرئيسية على / والإدارة على /admin/ وتطبيقات classify وtranslate وexport."""
 
 from django.contrib import admin
 from django.urls import include, path
@@ -11,5 +11,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("classify.urls")),
     path("", include("translate.urls")),
+    path("export/", include("export.urls")),
     path("", include("pages.urls")),
 ]

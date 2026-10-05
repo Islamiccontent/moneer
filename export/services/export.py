@@ -1,0 +1,86 @@
+"""تصدير آني لترجمة مستند: اختيار التنسيق وبناء الصفوف وتوليد الملف في الذاكرة بلا تخزين."""
+
+import re
+import tempfile
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from django.utils import timezone
+
+from export.models import ExportFormat
+
+from .docx_builder import TranslationDocxBuilder
+from .rows import build_rows
+
+KINDS = ("docx", "pdf")
+CONTENT_TYPES = {
+    "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "pdf": "application/pdf",
+}
+
+
+class ExportError(Exception):
+    """تعذّر التصدير: نوع ملف غير مدعوم أو لا تنسيق للغة."""
+
+
+@dataclass
+class ExportResult:
+    """الملف المولَّد وبياناته."""
+
+    content: bytes
+    file_name: str
+    kind: str
+    rows: int  # الجمل المصدَّرة
+    missing: int  # جمل قابلة للترجمة بلا ترجمة فأُسقطت
+    stats: dict = field(default_factory=dict)  # إحصاء الحواشي من المولّد
+
+
+def default_format_for(language):
+    return ExportFormat.objects.filter(language=language, is_default=True).first()
+
+
+def file_name(document_translation, kind):
+    language = document_translation.target_language
+    title = re.sub(r"[\\/:*?\"<>|]+", " ", document_translation.document.title).strip()
+    return f"{title} - {language.name} [{language.iso_code}{document_translation.pk}].{kind}"
+
+
+def book_tag(document_translation, prefs):
+    language = document_translation.target_language
+    tag = f"{language.iso_code}{document_translation.pk}"
+    if prefs["include_date_first_page"]:
+        tag += f" - {timezone.localdate():%d/%m/%Y}"
+    return tag
+
+
+def export_translation(document_translation, *, export_format=None, kind="docx"):
+    """يولّد ملف الترجمة ويعيده ``ExportResult``؛ التنسيق الافتراضي للغة إن لم يُمرَّر تنسيق."""
+    if kind not in KINDS:
+        raise ExportError(f"نوع ملف غير مدعوم: {kind}")
+    language = document_translation.target_language
+    export_format = export_format or default_format_for(language)
+    if export_format is None:
+        raise ExportError(
+            f"لا تنسيق تصدير افتراضي للغة {language}؛ أنشئ واحداً أو شغّل ensure_default_formats."
+        )
+    prefs = export_format.preferences()
+    rows, missing = build_rows(
+        document_translation, include_untranslatable=prefs["include_untranslatable"]
+    )
+    builder = TranslationDocxBuilder(
+        rows,
+        arabic_title=document_translation.document.title,
+        prefs=prefs,
+        book_tag=book_tag(document_translation, prefs),
+    )
+    builder.build()
+    with tempfile.TemporaryDirectory() as tmp:
+        content = builder.save(Path(tmp) / f"export.{kind}", kind).read_bytes()
+    return ExportResult(
+        content=content,
+        file_name=file_name(document_translation, kind),
+        kind=kind,
+        rows=len(rows),
+        missing=len(missing),
+        stats=builder.stats,
+    )

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "content",
     "classify",
     "translate",
+    "export",
     "pages",
 ]
 
@@ -142,3 +143,6 @@ TASKS = {
         "BACKEND": env("TASKS_BACKEND", "django.tasks.backends.immediate.ImmediateBackend"),
     }
 }
+
+# مفتاح ترخيص Spire.Doc لتطبيق export؛ بدونه تعمل نسخة التقييم ويظهر تحذيرها في الملف
+SPIRE_DOC_KEY = env("SPIRE_DOC_KEY", "")

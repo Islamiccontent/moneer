@@ -32,6 +32,7 @@ python -c "from django.core.management.utils import get_random_secret_key as k; 
 #    ضع الناتج في SECRET_KEY داخل .env، واضبط DB_PASSWORD و DB_PORT
 #    (DB_PORT = منفذ عنقود PostgreSQL 17 لديك؛ الافتراضي في المثال 5434)
 #    ولتشغيل الترجمة: GEMINI_API_KEY و OPENAI_API_KEY
+#    وللتصدير اختيارياً SPIRE_DOC_KEY
 
 # 4) تجهيز قاعدة البيانات (idempotent؛ يسأل عن أي قيمة ناقصة في .env ويعرض حفظها)
 ./scripts/db/provision.sh
@@ -46,6 +47,8 @@ python manage.py import_languages
 python manage.py import_quran_ayat
 python manage.py import_quran_keys
 python manage.py import_quran_translations
+#    (اختياري) تنسيق تصدير افتراضي لكل لغة
+python manage.py ensure_default_formats
 
 # 6) المشرف الأول (بالبريد الإلكتروني)
 python manage.py createsuperuser
@@ -62,6 +65,8 @@ python manage.py runserver
 لا يُفرض تسجيل الدخول على أي صفحة؛ الدخول مطلوب للوحة admin فقط.
 
 الترجمة تعمل في الخلفية: إضافة لغة هدف لمستند من admin تُطلق ترجمته، والكنس الدوري `python manage.py translate_pending` من cron يستأنف ما لم يكتمل. في الإنتاج يُضبط `TASKS_BACKEND=django_tasks_db.DatabaseBackend` ويعمل العامل `python manage.py db_worker` خدمةً مستقلة.
+
+التصدير آني بلا تخزين: روابط DOCX وPDF في admin «ترجمات المستندات» (المسار `/export/<id>/docx/`)، أو `python manage.py export_translation <id> --output ملف.docx`.
 
 ## الفحوصات قبل الدمج
 
@@ -95,6 +100,7 @@ cp .env.example .env && nano .env
 .venv/bin/python manage.py import_quran_ayat
 .venv/bin/python manage.py import_quran_keys
 .venv/bin/python manage.py import_quran_translations
+.venv/bin/python manage.py ensure_default_formats
 
 # 4) عامل المهام: خدمة systemd من الملف الجاهز deploy/systemd/moneer-translate-worker.service
 sudo cp deploy/systemd/moneer-translate-worker.service /etc/systemd/system/
@@ -126,6 +132,7 @@ sudo chmod 644 /etc/cron.d/moneer-translate-pending
 | `core` | البيانات المرجعية المشتركة: `Language` (رمز ISO، الاسم بالعربية والإنجليزية، الاتجاه) مع اللغات الأولية عبر data migration، والقائمة الكاملة عبر `manage.py import_languages` من ICADB |
 | `content` | المحتوى العربي بعد التقطيع والتصنيف: المستندات والعبارات وتحليلها والمعجم الموحّد، وترجمة كل مستند إلى لغات هدف جملةً جملة؛ أمر `manage.py import_glossary` |
 | `translate` | الترجمة في الخلفية على `django.tasks`: الآيات من الترجمة المعتمدة لموسوعة القرآن الكريم بعد مطابقتها بالرسمين واستخلاصها بـ gpt-5-nano، وبقية النصوص بـ Gemini على طريقة ترجمان؛ يكتب في `content.PhraseTranslation`. الأوامر: `import_quran_ayat`، `import_quran_keys`، `import_quran_translations`، `translate_pending` |
+| `export` | تصدير ترجمة المستند إلى DOCX وPDF بـ Spire.Doc بمنطق لوحة تنسيق الكتب، وتنسيق افتراضي لكل لغة (`ExportFormat`)؛ تصدير آني بلا تخزين من روابط admin أو `/export/<id>/docx/`. الأوامر: `ensure_default_formats`، `export_translation` |
 | `users` | نموذج المستخدم المخصّص: البريد الإلكتروني معرّف الدخول، `full_name`، `preferred_language`؛ admin مخصّص |
 | `pages` | الصفحات العامة: تخدم `index.html` على `/` كما هو بايتاً بايت مع ملفات الجذر (الأيقونات، `site.webmanifest`، `og.jpg`) |
 

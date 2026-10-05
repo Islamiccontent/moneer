@@ -14,3 +14,6 @@ et_xmlfile==2.0.0
 # backend المهام الخلفية بقاعدة البيانات لإطار django.tasks (الإنتاج)
 django-tasks-db==0.13.0
 django-stubs-ext==6.1.1
+# توليد DOCX/PDF لتطبيق export
+spire-doc==14.9.1
+plum-dispatch==1.7.4

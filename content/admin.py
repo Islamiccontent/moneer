@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
 from .models import (
     Document,
@@ -111,13 +113,25 @@ class DocumentTranslationAdmin(admin.ModelAdmin):
         "reviewer",
         "approved_at",
         "created_at",
+        "export_links",
     )
     list_filter = ("status", "target_language")
     search_fields = ("document__title", "target_language__name", "target_language__name_en")
     autocomplete_fields = ("document", "target_language", "reviewer", "approved_by", "created_by")
     date_hierarchy = "created_at"
-    readonly_fields = ("created_at", "updated_at")
+    readonly_fields = ("export_links", "created_at", "updated_at")
     inlines = (PhraseTranslationInline,)
+
+    @admin.display(description="تصدير")
+    def export_links(self, obj):
+        """تنزيل آني من تطبيق export بتنسيق اللغة الافتراضي."""
+        if obj.pk is None:
+            return "—"
+        return format_html(
+            '<a href="{}">DOCX</a> · <a href="{}">PDF</a>',
+            reverse("export:download", args=[obj.pk, "docx"]),
+            reverse("export:download", args=[obj.pk, "pdf"]),
+        )
 
 
 @admin.register(PhraseTranslation)
