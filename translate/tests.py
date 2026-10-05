@@ -1006,15 +1006,9 @@ class TranslateApiTests(TranslationFixture):
 
     def test_api_classifies_then_translates_in_two_phases(self):
         text = "قال الله تعالى: ﴿مَالِكِ يَوْمِ الدِّينِ﴾. والصبر خير معين للمؤمن في الشدائد كلها."
-        with override_settings(TASKS=IMMEDIATE_TASKS):
-            response = self.post_mocked("/api/translate/", {"text": text, "target": "English"})
+        response = self.post_mocked("/api/translate/", {"text": text, "target": "English"})
         self.assertEqual(response.status_code, 200)
         data = response.json()
-        self.assertEqual(data["status"], "done")
-        self.assertEqual(
-            self.client.get("/api/segment/progress/", {"job": data["job_id"]}).json()["doc_id"],
-            data["doc_id"],
-        )
         kinds = [s["k"] for s in data["segments"]]
         self.assertIn("aya", kinds)
         self.assertTrue(all(not s["en"] for s in data["segments"]))
@@ -1069,6 +1063,7 @@ class TranslateApiTests(TranslationFixture):
         query = {"doc_id": self.document.pk, "after": self.dt_fr.pk, "task_id": run["task_id"]}
         live = self.client.get("/api/translate/progress/", query).json()
         self.assertFalse(live["finished"])
+        self.assertGreaterEqual(live["queued_for"], 0)
         self.assertEqual(live["translation_id"], run["translation_id"])
         self.assertEqual((live["done"], live["total"]), (1, 4))
         self.assertEqual(live["rows"], {"2": "Praise for the blessing of Islam"})
