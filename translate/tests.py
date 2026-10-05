@@ -67,10 +67,12 @@ class TranslateUrlsTests(SimpleTestCase):
         self.assertEqual(reverse("pages:translate"), "/translate/")
         self.assertEqual(reverse("translate:api_translate"), "/api/translate/")
 
-    def test_home_serves_the_bundle_byte_for_byte(self):
+    def test_home_starts_at_upload_and_documents_serve_the_page(self):
         from pages.views import TRANSLATE_PAGE
 
-        response = self.client.get("/translate/")
+        home = self.client.get("/translate/")
+        self.assertRedirects(home, "/classify/", fetch_redirect_response=False)
+        response = self.client.get("/translate/documents/7/review/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/html; charset=utf-8")
         self.assertEqual(b"".join(response.streaming_content), TRANSLATE_PAGE.read_bytes())

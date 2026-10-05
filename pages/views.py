@@ -1,13 +1,31 @@
-"""الصفحات العامة: index.html وملفات الجذر وحزم الواجهة في pages/html تُخدم كما هي."""
+"""الصفحات العامة: index.html وملفات الجذر وصفحات pages/html كما هي، وأصولها من pages/assets."""
 
 from pathlib import Path
 
 from django.conf import settings
 from django.http import FileResponse, Http404
+from django.shortcuts import redirect
 from django.views.decorators.http import require_safe
+from django.views.static import serve
 
 HOME_FILE = "index.html"
 HTML_DIR = Path(__file__).resolve().parent / "html"
+ASSETS_DIR = Path(__file__).resolve().parent / "assets"
+ASSET_TYPES = {
+    ".css": "text/css; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".woff2": "font/woff2",
+    ".png": "image/png",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+}
+# الخطوط والصور نادراً ما تتغير؛ الأنماط والسكربت يُتحقَّق منها كل مرة (304 إن لم تتغير)
+ASSET_CACHE = {
+    ".woff2": "public, max-age=604800",
+    ".png": "public, max-age=604800",
+    ".webp": "public, max-age=604800",
+    ".svg": "public, max-age=604800",
+}
 CLASSIFY_PAGE = HTML_DIR / "classify.html"
 TRANSLATE_PAGE = HTML_DIR / "translate.html"
 DOCUMENTS_PAGE = HTML_DIR / "documents.html"
@@ -53,8 +71,22 @@ def classify_page(request, pk=None):
 
 @require_safe
 def translate_page(request, pk=None, stage=None):
-    """صفحة الترجمة كما هي؛ الرابط الدائم /translate/documents/<pk>/ يخدم الحزمة نفسها."""
+    """صفحة الترجمة لمستند محفوظ؛ بلا مستند يبدأ المشروع من الرفع في /classify/."""
+    if pk is None:
+        return redirect("pages:classify")
     return FileResponse(TRANSLATE_PAGE.open("rb"), content_type="text/html; charset=utf-8")
+
+
+@require_safe
+def asset(request, path):
+    """خطوط الصفحات وصورها وأنماطها ومشغّل قوالبها من pages/assets، بلا collectstatic."""
+    suffix = Path(path).suffix.lower()
+    if suffix not in ASSET_TYPES:
+        raise Http404(path)
+    response = serve(request, path, document_root=ASSETS_DIR)
+    response.headers["Content-Type"] = ASSET_TYPES[suffix]
+    response.headers["Cache-Control"] = ASSET_CACHE.get(suffix, "no-cache")
+    return response
 
 
 @require_safe
