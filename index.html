@@ -3,7 +3,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- الصفحة تُحرَّر هنا مباشرة؛ الخطوط والصور والأنماط ومشغّل القوالب في pages/assets -->
-<style>x-dc{display:none}</style>
+<style>x-dc{display:none}
+#page-loader{position:fixed;inset:0;z-index:9999;background:#070B1A;transition:opacity .4s ease}
+#page-loader svg{display:block;width:100%;height:100%}
+#page-loader.done{opacity:0;pointer-events:none}</style>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="stylesheet" href="/assets/css/moneer.css">
 <script>window.__resources = {"r10": "/assets/img/moneer-logo.png", "r0": "/assets/img/quranenc.svg", "r1": "/assets/img/hadeethenc.webp", "r6": "/assets/img/haramain.svg", "r9": "/assets/img/icadb.svg", "r8": "/assets/img/islamiccontent.png", "r4": "/assets/img/islamhouse.svg", "r5": "/assets/img/byenah.png", "r2": "/assets/img/terminologyenc.png", "r7": "/assets/img/rowad.png", "r3": "/assets/img/islamenc.png"};</script>
@@ -30,6 +33,8 @@
 <meta name="twitter:image" content="https://moneer.ai/og.png">
 </head>
 <body>
+<!-- شاشة التحميل: الشعار حتى تُرسم الصفحة؛ يُخفيها componentDidMount -->
+<div id="page-loader" aria-hidden="true"><svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#2464EC" stop-opacity=".55"></stop><stop offset="1" stop-color="#2464EC" stop-opacity="0"></stop></radialGradient><style>@keyframes sp{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.18);opacity:.9}}@keyframes lg{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes ring{0%{r:210;opacity:.5}100%{r:330;opacity:0}}.p{transform-origin:600px 400px;animation:sp 2.4s ease-in-out infinite}.l{animation:lg 2.4s ease-in-out infinite}.r{animation:ring 2.4s ease-out infinite}</style></defs><rect width="1200" height="800" fill="#070B1A"></rect><circle class="p" cx="600" cy="400" r="300" fill="url(#g)"></circle><circle class="r" cx="600" cy="400" r="210" fill="none" stroke="#4FD1FF" stroke-width="2"></circle><image class="l" href="/assets/img/moneer-logo-white.png" x="467" y="270" width="266" height="260"></image></svg></div>
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -571,6 +576,8 @@ class Component extends DCLogic {
     this.demo = setInterval(() => this.tickDemo(), 55);
     window.addEventListener('scroll', this.onScroll, { passive: true }); this.onScroll();
     this.bootHero();
+    const loader = document.getElementById('page-loader');
+    if (loader) { loader.classList.add('done'); setTimeout(() => loader.remove(), 450); }
   }
   componentWillUnmount() { clearInterval(this.demo); clearTimeout(this.bootT); window.removeEventListener('scroll', this.onScroll); this.stopHero(); }
 
