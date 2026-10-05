@@ -1035,6 +1035,8 @@ class TranslateApiTests(TranslationFixture):
         self.assertTrue(any(s["en"] == "Gemini text" for s in prose))
         live = self.client.get("/api/translate/progress/").json()
         self.assertIn("Gemini text", live["rows"].values())
+        aya_index = str(done["segments"].index(aya))
+        self.assertEqual(live["sources"][aya_index], {"src": "الترجمة المعتمدة", "locked": True})
         document = Document.objects.get(pk=done["doc_id"])
         self.assertEqual(
             DocumentTranslation.objects.get(pk=done["translation_id"]).document, document
@@ -1162,6 +1164,39 @@ class DocumentBrowsingApiTests(TranslationFixture):
         self.assertEqual(pipeline._term_pairs(self.text, self.french), [("الإسلام", "L'islam")])
         self.assertEqual(pipeline._term_pairs(self.text, self.english), [("الإسلام", "Islam")])
 
+    def test_verified_terms_are_shown_from_the_glossary(self):
+        from translate.services import moneer_ui, term_match
+
+        def unit(k, en):
+            islam = {"w": "الإسلام", "en": "Islam", "def": "", "tr": ""}
+            return {"k": k, "en": en, "ai": True, "terms": [islam]}
+
+        segments = [
+            unit("term", "The blessing of Islam."),
+            unit("term", "A blessing."),
+            unit("hadith", "Islam is built on five."),
+        ]
+        term_match.prune_unmatched(segments)
+        moneer_ui.mark_approved_terms(segments)
+        self.assertFalse(segments[0]["ai"])
+        self.assertEqual(segments[0]["src"], moneer_ui.GLOSSARY_SOURCE)
+        self.assertTrue(segments[1]["ai"])
+        self.assertTrue(segments[2]["ai"])
+
+    def test_live_source_marks_approved_ayat_and_terms(self):
+        from translate.services.moneer_ui import GLOSSARY_SOURCE, QURAN_SOURCE, live_source
+
+        self.assertEqual(
+            live_source(self.full, "EN", "quran_extract", self.english),
+            {"src": QURAN_SOURCE, "locked": True},
+        )
+        self.assertEqual(live_source(self.unmatched, "No ayah", "quran_fallback", self.english), {})
+        self.assertEqual(
+            live_source(self.text, "Praise for the blessing of Islam", "text", self.english),
+            {"src": GLOSSARY_SOURCE},
+        )
+        self.assertEqual(live_source(self.text, "Praise for blessings", "text", self.english), {})
+
     def test_prefixed_term_surface_is_the_full_word(self):
         from translate.services.moneer_ui import _surface
 
@@ -1169,3 +1204,79 @@ class DocumentBrowsingApiTests(TranslationFixture):
         self.assertEqual(_surface("ويقترن بالتوكل والتقوى.", "تقوى"), "والتقوى")
         self.assertEqual(_surface("فَالتَّقْوَى خَيْرُ زَادٍ.", "تقوى"), "فَالتَّقْوَى")
         self.assertEqual(_surface("زكاة الفطر واجبة.", "زكاة الفطر"), "زكاة الفطر")
+
+
+class ApproveApiTests(TranslationFixture):
+    """زر «اعتماد» في المراجعة: يحفظ نص المراجع وحالته، ويُلغى، ويبقى بعد إعادة فتح المستند."""
+
+    def setUp(self):
+        self.row = PhraseTranslation.objects.create(
+            document_translation=self.dt_fr,
+            phrase=self.text,
+            ai_translation="Louange",
+            translation="Louange",
+            status=PhraseTranslation.Status.SUGGESTED,
+        )
+
+    def approve(self, phrase_id, approved="1", text=""):
+        payload = {"translation_id": self.dt_fr.pk, "phrase_id": phrase_id, "approved": approved}
+        return self.client.post("/api/translate/approve/", {**payload, "text": text})
+
+    def test_approve_saves_reviewer_text_and_who_approved(self):
+        reviewer = User.objects.create_user("rev@example.com", "x", full_name="مراجع")
+        self.client.force_login(reviewer)
+        response = self.approve(self.text.pk, text="Louange à Allah")
+        self.assertEqual(response.status_code, 200)
+        self.row.refresh_from_db()
+        self.assertEqual(self.row.status, PhraseTranslation.Status.APPROVED)
+        self.assertEqual(self.row.translation, "Louange à Allah")
+        self.assertEqual(self.row.ai_translation, "Louange")
+        self.assertEqual(self.row.approved_by, reviewer)
+        self.assertEqual(self.row.edited_by, reviewer)
+        self.assertIsNotNone(self.row.approved_at)
+
+    def test_approval_survives_reopening_the_document(self):
+        self.approve(self.text.pk, text="Louange à Allah")
+        with mock.patch.object(llm, "gemini_generate", return_value="{}"):
+            data = self.client.get(f"/api/translate/documents/{self.document.pk}/").json()
+        self.assertEqual(data["translation_id"], self.dt_fr.pk)
+        rows = {s["id"]: s for s in data["segments"]}
+        self.assertTrue(rows[self.text.pk]["approved"])
+        self.assertEqual(rows[self.text.pk]["en"], "Louange à Allah")
+        self.assertFalse(rows[self.full.pk]["approved"])
+
+    def test_unapprove_returns_the_row_to_suggested(self):
+        self.approve(self.text.pk, text="Louange")
+        response = self.approve(self.text.pk, approved="0")
+        self.assertFalse(response.json()["approved"])
+        self.row.refresh_from_db()
+        self.assertEqual(self.row.status, PhraseTranslation.Status.SUGGESTED)
+        self.assertIsNone(self.row.approved_at)
+
+    def test_empty_translation_cannot_be_approved(self):
+        response = self.approve(self.full.pk)
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(PhraseTranslation.objects.filter(phrase=self.full).exists())
+
+    def test_untranslatable_phrase_is_approved_as_is_and_cleared_on_unapprove(self):
+        self.approve(self.fixed.pk)
+        row = PhraseTranslation.objects.get(document_translation=self.dt_fr, phrase=self.fixed)
+        self.assertEqual(row.translation, self.fixed.text)
+        self.assertEqual(row.status, PhraseTranslation.Status.APPROVED)
+        self.approve(self.fixed.pk, approved="0")
+        self.assertFalse(PhraseTranslation.objects.filter(phrase=self.fixed).exists())
+
+    def test_phrase_outside_the_translated_document_is_404(self):
+        other = Document.objects.create(title="مستند آخر", kind=Document.Kind.KHUTBAH)
+        stranger = Phrase.objects.create(
+            document=other,
+            content_type=ContentTypeLookup.objects.get(code="text"),
+            group_id=1,
+            group_order=1,
+            text="نص من مستند آخر",
+        )
+        self.assertEqual(self.approve(stranger.pk, text="x").status_code, 404)
+        self.assertEqual(self.approve("missing", text="x").status_code, 404)
+
+    def test_approve_rejects_get(self):
+        self.assertEqual(self.client.get("/api/translate/approve/").status_code, 405)

@@ -4,13 +4,14 @@ from pathlib import Path
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 
 from classify import pipeline as classify_pipeline
 from classify import progress
 from classify.services.splitter import DocumentError, extract_docx, extract_text
-from content.models import Document, DocumentTranslation
+from content.models import Document, DocumentTranslation, PhraseTranslation
 from core.models import Language
 from translate import pipeline as translate_pipeline
 from translate.services import moneer_ui, term_match
@@ -25,6 +26,7 @@ LANG_BY_LABEL = {
 }
 
 _live_rows: dict[int, str] = {}
+_live_sources: dict[int, dict] = {}
 
 
 def _language_or_error(target):
@@ -52,6 +54,7 @@ def api_translate(request):
     text = (request.POST.get("text") or "").strip()
     title = (request.POST.get("title") or "").strip()
     _live_rows.clear()
+    _live_sources.clear()
     progress.report("قراءة الملف", 3)
     try:
         if f:
@@ -106,19 +109,29 @@ def api_translate_run(request):
         )
     }
     _live_rows.clear()
+    _live_sources.clear()
+
+    def on_result(phrase, text, method):
+        i = order[phrase.pk]
+        source = moneer_ui.live_source(phrase, text, method, language)
+        if source:
+            _live_sources[i] = source
+        _live_rows[i] = text
+
     progress.report("الترجمة", 2)
     summary = translate_pipeline.translate_document(
         translation,
         on_progress=lambda done, total: progress.report(
             f"الترجمة ({done}/{total})", 2 + round(done / max(total, 1) * 94)
         ),
-        on_result=lambda phrase, text: _live_rows.__setitem__(order[phrase.pk], text),
+        on_result=on_result,
     )
     segments = moneer_ui.to_ui_segments(document, translation)
     if language.iso_code.lower() != "en":
         progress.report("مطابقة المصطلحات", 98)
         term_match.localize_terms(segments, language)
     term_match.prune_unmatched(segments)
+    moneer_ui.mark_approved_terms(segments)
     progress.report("اكتمل", 100)
     return JsonResponse(
         {
@@ -132,8 +145,10 @@ def api_translate_run(request):
 
 @require_safe
 def api_translate_progress(request):
-    """أحدث مرحلة جارية + الجمل المترجمة فور اكتمالها (``rows``: فهرس ← نص)."""
-    return JsonResponse({**progress.snapshot(), "rows": dict(_live_rows)})
+    """أحدث مرحلة جارية + الجمل المترجمة فور اكتمالها (``rows``) ومصدرها المعتمد (``sources``)."""
+    return JsonResponse(
+        {**progress.snapshot(), "rows": dict(_live_rows), "sources": dict(_live_sources)}
+    )
 
 
 @require_safe
@@ -190,6 +205,7 @@ def api_document(request, pk):
     if latest and latest.target_language.iso_code.lower() != "en":
         term_match.localize_terms(segments, latest.target_language)
     term_match.prune_unmatched(segments)
+    moneer_ui.mark_approved_terms(segments)
     return JsonResponse(
         {
             "doc_id": document.pk,
@@ -198,6 +214,38 @@ def api_document(request, pk):
             "stage": _stage_of(document),
             "target_language": latest.target_language.name if latest else "",
             "target_iso": latest.target_language.iso_code.lower() if latest else "",
+            "translation_id": latest.pk if latest else None,
             "segments": segments,
         }
     )
+
+
+@csrf_exempt
+@require_POST
+def api_translate_approve(request):
+    """اعتماد ترجمة جملة بنص المراجع أو إلغاؤه؛ ما لا يُترجم يُعتمد بنصه الأصلي إن لم يُكتب له نص."""
+    translation = get_object_or_404(DocumentTranslation, pk=request.POST.get("translation_id"))
+    phrase = get_object_or_404(translation.document.phrases, pk=request.POST.get("phrase_id"))
+    row = PhraseTranslation.objects.filter(document_translation=translation, phrase=phrase).first()
+    user = request.user if request.user.is_authenticated else None
+
+    if request.POST.get("approved") != "1":
+        if row and not phrase.translatable:
+            row.delete()
+            row = None
+        elif row and row.status == PhraseTranslation.Status.APPROVED:
+            row.status = PhraseTranslation.Status.SUGGESTED
+            row.approved_by, row.approved_at = None, None
+            row.save(update_fields=["status", "approved_by", "approved_at", "updated_at"])
+        return JsonResponse({"phrase_id": phrase.pk, "approved": False})
+
+    text = (request.POST.get("text") or "").strip() or ("" if phrase.translatable else phrase.text)
+    if not text:
+        return JsonResponse({"error": "لا تُعتمد ترجمة فارغة."}, status=400)
+    row = row or PhraseTranslation(document_translation=translation, phrase=phrase)
+    if text != row.translation:
+        row.translation, row.edited_by = text, user
+    row.status = PhraseTranslation.Status.APPROVED
+    row.approved_by, row.approved_at = user, timezone.now()
+    row.save()
+    return JsonResponse({"phrase_id": phrase.pk, "approved": True, "translation": text})

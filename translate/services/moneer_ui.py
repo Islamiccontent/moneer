@@ -13,6 +13,7 @@ from classify.services.moneer_ui import (
 )
 from content.models import GlossaryTranslation, PhraseTranslation
 from translate.models import QuranTranslationKey
+from translate.pipeline import _term_pairs
 
 _KIND = {
     "quran": "aya",
@@ -20,6 +21,10 @@ _KIND = {
     "athar": "athar",
     "term": "term",
 }
+
+QURAN_SOURCE = "الترجمة المعتمدة"
+GLOSSARY_SOURCE = "معجم المصطلحات"
+_NO_TERM_SOURCE = ("quran", "hadith", "athar", "citation")
 
 
 def _terms(phrase, language=None, text=None) -> list[dict]:
@@ -69,12 +74,14 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
         reason_code = (analysis.reason_code or "") if analysis else ""
         row = translations.get(phrase.pk)
         en = (row.translation or "") if row else ""
+        approved = bool(row) and row.status == PhraseTranslation.Status.APPROVED
         ar = _EMPTY_AYA_BRACKETS.sub("", phrase.text).strip()
 
         if kind == "heading":
             part = ar
             out.append(
                 {
+                    "id": phrase.pk,
                     "k": "text",
                     "ar": ar,
                     "en": en,
@@ -85,11 +92,13 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
                     "gen": True,
                     "part": part,
                     "tagLabel": title_label(phrase.text),
+                    "approved": approved,
                 }
             )
             continue
 
         unit = {
+            "id": phrase.pk,
             "k": _KIND.get(kind, "text"),
             "ar": ar,
             "en": en,
@@ -99,6 +108,7 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
             "ai": True,
             "gen": False,
             "part": part,
+            "approved": approved,
         }
         if kind == "quran":
             locked = approved_source and bool(en)
@@ -106,7 +116,7 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
             unit.update(
                 ai=not locked,
                 locked=locked,
-                src="الترجمة المعتمدة" if locked else "ترجمة مُنير",
+                src=QURAN_SOURCE if locked else "ترجمة مُنير",
                 warn=variant,
                 warnText=variant_warning("") if variant else "",
             )
@@ -115,7 +125,8 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
         elif kind == "attribution":
             unit.update(lead=True, tagLabel=attribution_label(phrase.text))
         elif kind == "citation":
-            unit.update(tagLabel="عزو", en="", conf="100%")
+            reviewed = en if approved and en != phrase.text else ""
+            unit.update(tagLabel="عزو", en=reviewed, conf="100%")
         else:
             unit.update(gen=True)
         if kind not in ("quran", "citation"):
@@ -128,3 +139,23 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
                 unit["terms"] = terms
         out.append(unit)
     return out
+
+
+def mark_approved_terms(segments: list[dict]) -> None:
+    """بعد prune_unmatched: ما ثبت مقابل مصطلحه في ترجمته يُعرض معتمداً ويبقى قابلاً للتحرير."""
+    for seg in segments:
+        if seg["k"] in ("term", "text") and seg.get("en") and seg.get("terms"):
+            seg.update(ai=False, src=GLOSSARY_SOURCE)
+
+
+def live_source(phrase, text, method, language) -> dict:
+    """مصدر الجملة فور ترجمتها للبث: الآية من الترجمة المعتمدة مقفلة، وما ورد فيه مصطلح معتمد."""
+    if method == "quran_extract":
+        return {"src": QURAN_SOURCE, "locked": True}
+    analysis = getattr(phrase, "analysis", None)
+    if analysis and analysis.kind in _NO_TERM_SOURCE:
+        return {}
+    low = text.lower()
+    if any(eq and eq.lower() in low for _ar, eq in _term_pairs(phrase, language)):
+        return {"src": GLOSSARY_SOURCE}
+    return {}

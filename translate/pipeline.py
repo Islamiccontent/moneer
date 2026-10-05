@@ -116,7 +116,7 @@ def translate_document(
         if dry_run or text is None:
             continue
         if on_result:
-            on_result(phrase, text)
+            on_result(phrase, text, method)
         PhraseTranslation.objects.update_or_create(
             document_translation=document_translation,
             phrase=phrase,
