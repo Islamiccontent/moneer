@@ -69,6 +69,20 @@
       <span style="position:absolute;top:{{ tipArrowTop }};bottom:{{ tipArrowBottom }};left:{{ tipAx }};margin-left:-7px;border:7px solid transparent;border-top-color:{{ tipArrowColorTop }};border-bottom-color:{{ tipArrowColorBottom }}"></span>
     </div>
   </sc-if>
+  <!-- تحذير قبل تعديل المعتمد بتصميم النظام بدل نافذة المتصفح -->
+  <sc-if value="{{ warnOn }}" hint-placeholder-val="{{ false }}">
+    <div sc-camel-on-click="{{ warnNo }}" style="position:fixed;inset:0;z-index:1000;background:rgba(7,11,26,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:mlIn .2s ease both">
+      <div dir="rtl" role="alertdialog" aria-modal="true" sc-camel-on-click="{{ warnStay }}" style="width:100%;max-width:440px;background:#fff;border:1px solid #E3E8F4;border-radius:24px;padding:28px 26px 22px;box-shadow:0 30px 80px rgba(7,11,26,.25);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+        <span style="width:58px;height:58px;border-radius:50%;background:#FFF7ED;border:1px solid #FDE2B8;display:grid;place-items:center;font-size:26px;color:#D97706">⚠</span>
+        <h3 style="margin:0;font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:24px;color:#070B1A">{{ warnTitle }}</h3>
+        <p style="margin:0;font-size:15px;line-height:1.8;color:#64748B;font-weight:600">{{ warnText }}</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;width:100%">
+          <button type="button" sc-camel-on-click="{{ warnYes }}" style="flex:1 1 160px;background:#D97706;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(217,119,6,.3)" style-hover="background:#B45309">متابعة التعديل</button>
+          <button type="button" sc-camel-on-click="{{ warnNo }}" style="flex:1 1 120px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;color:#0F172A" style-hover="background:#F5F7FC">إلغاء</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
   <header data-m="app-header" style="background:#fff;border-bottom:1px solid #E3E8F4;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:5">
     <div data-m="app-brand" style="display:flex;align-items:center;gap:12px">
       <button sc-camel-on-click="{{ goLanding }}" style="background:transparent;border:0;padding:0;display:block"><img src="/assets/img/moneer-logo.png" alt="مُنير" style="height:40px;width:auto;display:block"></button>
@@ -904,6 +918,12 @@ class Component extends DCLogic {
     this.later(poll, 900);
   };
   // حقل المراجعة يأخذ ارتفاع محتواه عند التركيز والكتابة، ويُخفى تلميح المصطلح
+  // تحذيرات تعديل المعتمد بالترتيب؛ كل تحذير يُؤكَّد مرة واحدة لكل صف، ثم يُنفَّذ التعديل
+  askWarn(steps, i, done) {
+    if (!steps.length) { this.setState({ warn: null }); done(); return; }
+    const [step, ...rest] = steps;
+    this.setState({ warn: { ...step, yes: () => this.setState({ [step.ack]: { ...(this.state[step.ack] || {}), [i]: true } }, () => this.askWarn(rest, i, done)) } });
+  }
   growField(i, field) {
     const css = getComputedStyle(field), line = parseFloat(css.lineHeight) || 25.6;
     const pad = (parseFloat(css.paddingTop) || 0) + (parseFloat(css.paddingBottom) || 0);
@@ -1049,19 +1069,16 @@ class Component extends DCLogic {
         fieldBg: locked ? (edited ? '#FFFBEB' : '#F0FDF6') : '#F8FAFF', fieldBorder: locked ? (edited ? '#FDE2B8' : '#A7F3D0') : '#C7D5F5',
         border: ok ? '#A7F3D0' : '#E3E8F4', approveBg: ok ? '#0E9F6E' : '#EFF6FF', approveFg: ok ? '#fff' : '#2464EC', approveLabel: ok ? '✓ معتمد' : 'اعتماد',
         onEdit: (e) => {
-          const val = e.target.value;
-          if (locked && !(S.ackEdit || {})[i]) {
-            if (!confirm('تنبيه: أنت تعدّل الآن على ترجمة معتمدة من الذاكرة. هل تريد المتابعة؟')) { e.target.value = enText; return; }
-            this.setState({ ackEdit: { ...(S.ackEdit || {}), [i]: true } });
-          }
+          const val = e.target.value, field = e.target, steps = [];
+          if (locked && !(S.ackEdit || {})[i]) steps.push({ ack: 'ackEdit', title: 'تعديل ترجمة معتمدة', text: 'أنت تعدّل الآن على ترجمة معتمدة من الذاكرة، وسيحتاج الصف إلى اعتماد جديد. هل تريد المتابعة؟' });
           if (s.terms && s.terms.length && !(S.ackTerm || {})[i]) {
             const broken = s.terms.find(tm => tm.en && enText.toLowerCase().includes(tm.en.toLowerCase()) && !val.toLowerCase().includes(tm.en.toLowerCase()));
-            if (broken) {
-              if (!confirm('تنبيه: هذا التعديل يغيّر مقابل مصطلح معتمد («' + broken.en + '»). هل تريد المتابعة؟')) { e.target.value = enText; return; }
-              this.setState({ ackTerm: { ...(S.ackTerm || {}), [i]: true } });
-            }
+            if (broken) steps.push({ ack: 'ackTerm', title: 'تغيير مصطلح معتمد', text: 'هذا التعديل يغيّر مقابل المصطلح المعتمد «' + broken.en + '». هل تريد المتابعة؟' });
           }
-          this.setState({ edits: { ...S.edits, [i]: val } }); this.growField(i, e.target);
+          const apply = () => { this.setState({ edits: { ...this.state.edits, [i]: val } }); this.growField(i, field); };
+          if (!steps.length) { apply(); return; }
+          field.value = enText; field.blur();
+          this.askWarn(steps, i, () => { apply(); setTimeout(() => { const f = document.querySelector('textarea[data-row=r' + i + ']'); if (f) { f.focus(); f.setSelectionRange(f.value.length, f.value.length); } }, 0); });
         },
         onApprove: () => this.approveRow(i, !ok) };
     });
@@ -1095,6 +1112,8 @@ class Component extends DCLogic {
     const uploadPct = (S.uploading && S.upload >= 100 && S.srvStage) ? ((S.srvPct || 0) + '%') : (S.upload + '%');
     return {
       isLanding: S.screen === 'landing', isApp: S.screen === 'app',
+      warnOn: !!S.warn, warnTitle: S.warn ? S.warn.title : '', warnText: S.warn ? S.warn.text : '',
+      warnYes: () => S.warn && S.warn.yes(), warnNo: () => this.setState({ warn: null }), warnStay: (e) => e.stopPropagation(),
       tipOn: !!S.tip, tipX: S.tip ? S.tip.x + 'px' : '0px', tipTop: S.tip && S.tip.top != null ? S.tip.top + 'px' : 'auto', tipBottom: S.tip && S.tip.bottom != null ? S.tip.bottom + 'px' : 'auto', tipAx: S.tip ? S.tip.ax + 'px' : '50%', tipArrowTop: S.tip && S.tip.above ? '100%' : 'auto', tipArrowBottom: S.tip && S.tip.above ? 'auto' : '100%', tipArrowColorTop: S.tip && S.tip.above ? '#070B1A' : 'transparent', tipArrowColorBottom: S.tip && S.tip.above ? 'transparent' : '#070B1A', tipEn: S.tip ? S.tip.en : '', tipDef: S.tip ? S.tip.def : '', tipTr: S.tip ? S.tip.tr : '', tipHasTr: !!(S.tip && S.tip.tr),
       langOpen: !!S.langOpen, toggleLangs: () => this.setState({ langOpen: !this.state.langOpen, langQuery: '' }), langQuery: S.langQuery || '', onLangSearch: (e) => this.setState({ langQuery: e.target.value }),
       startApp: this.startApp, goLanding: this.goLanding, restart: this.restart, pickFile: this.pickFile,
