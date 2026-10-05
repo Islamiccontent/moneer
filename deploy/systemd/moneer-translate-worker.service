@@ -7,6 +7,7 @@ Wants=network-online.target
 [Service]
 Type=simple
 User=root
+Group=www-data
 WorkingDirectory=/home/moneer
 # manage.py يقرأ .env من جذر المشروع؛ يلزم فيه TASKS_BACKEND=django_tasks_db.DatabaseBackend
 ExecStart=/home/moneer/.venv/bin/python manage.py db_worker --no-reload --no-startup-delay
