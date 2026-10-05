@@ -3,12 +3,15 @@ from io import StringIO
 
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from content.models import Document, Glossary, Phrase, PhraseAnalysis, PhraseTerm, derive_phrase_id
 
 os.environ["LLM_REVIEW"] = "0"
 os.environ["LLM_HEADINGS"] = "0"
+
+IMMEDIATE_TASKS = {"default": {"BACKEND": "django.tasks.backends.immediate.ImmediateBackend"}}
+DUMMY_TASKS = {"default": {"BACKEND": "django.tasks.backends.dummy.DummyBackend"}}
 
 SAMPLE_TEXT = """الإخلاص في العمل
 
@@ -86,6 +89,7 @@ class ClassifyDocumentCommandTests(TestCase):
             run(file="لا-وجود-له.docx")
 
 
+@override_settings(TASKS=IMMEDIATE_TASKS)
 class ClassifyPagesTests(TestCase):
     """صفحات /classify: الواجهة كما هي، والواجهة البرمجية، والتصديران من content."""
 
@@ -120,6 +124,45 @@ class ClassifyPagesTests(TestCase):
     def test_api_segment_without_input_is_rejected(self):
         response = self.client.post("/api/segment/", {})
         self.assertEqual(response.status_code, 400)
+
+    @override_settings(TASKS=DUMMY_TASKS)
+    def test_api_segment_returns_a_job_and_progress_follows_it(self):
+        from django.tasks import default_task_backend
+
+        from classify import tasks
+
+        default_task_backend.clear()
+        job = self.client.post("/api/segment/", {"text": SAMPLE_TEXT, "title": "نص الواجهة"}).json()
+        self.assertEqual(job["status"], "queued")
+        self.assertNotIn("doc_id", job)
+        self.assertFalse(Document.objects.filter(title="نص الواجهة").exists())
+
+        tasks.segment_document_task.func(*default_task_backend.results[0].args)
+        live = self.client.get("/api/segment/progress/", {"job": job["job_id"]}).json()
+        self.assertEqual((live["status"], live["stage"], live["pct"]), ("done", "اكتمل", 100))
+        self.assertTrue(Document.objects.filter(pk=live["doc_id"], title="نص الواجهة").exists())
+        self.assertIn("aya", {segment["k"] for segment in live["segments"]})
+        self.assertTrue(live["json_url"].startswith("/classify/documents/"))
+
+    def test_failed_segmentation_is_reported_on_the_job(self):
+        from unittest import mock
+
+        from classify import pipeline
+
+        with (
+            mock.patch.object(pipeline, "run", side_effect=RuntimeError("boom")),
+            self.assertLogs("classify.tasks", "ERROR"),
+        ):
+            job = self.client.post("/api/segment/", {"text": SAMPLE_TEXT}).json()
+        self.assertEqual(job["status"], "failed")
+        self.assertTrue(job["error"])
+        self.assertFalse(Document.objects.exists())
+
+    def test_progress_needs_a_known_numeric_job(self):
+        url = "/api/segment/progress/"
+        self.assertEqual(self.client.get(url, {"job": 999999}).status_code, 404)
+        self.assertEqual(self.client.get(url, {"job": "x"}).status_code, 400)
+        self.assertEqual(set(self.client.get(url).json()), {"stage", "pct"})
 
     def test_document_json_rebuilds_the_contract_from_content(self):
         doc_id = self.client.post(

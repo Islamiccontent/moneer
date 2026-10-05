@@ -9,8 +9,8 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 
-from classify import pipeline, progress
-from classify.services import moneer_ui
+from classify import pipeline, progress, tasks
+from classify.models import SegmentationJob
 from classify.services.exporter import to_xlsx
 from classify.services.payload import build_payload
 from classify.services.splitter import DocumentError, extract_docx, extract_text
@@ -20,7 +20,10 @@ from content.models import Document
 @csrf_exempt
 @require_POST
 def api_segment(request):
-    """ملف (file) أو نص (text) ← تصنيف وحفظ في content؛ معفاة من CSRF لأن الحزمة بلا رمز."""
+    """ملف (file) أو نص (text) ← مهمة تقطيع في الخلفية تحفظ في content؛ بلا CSRF لأن الحزمة بلا رمز.
+
+    القراءة تتم في الطلب (أخطاء الملف تُرد فوراً)، والتقطيع في المهمة؛ تتابعها الواجهة من /progress/.
+    """
     f = request.FILES.get("file")
     text = (request.POST.get("text") or "").strip()
     title = (request.POST.get("title") or "").strip()
@@ -41,29 +44,21 @@ def api_segment(request):
     if not paragraphs:
         return JsonResponse({"error": "لم يُعثر على نص."}, status=400)
 
-    segments = pipeline.run(paragraphs, progress=progress.report)
-    progress.report("الحفظ في القاعدة", 96)
-    document, _payload = pipeline.save_document(
-        pipeline.unique_title(title), Document.Kind.ARTICLE, source_file_name, segments
-    )
-    progress.report("اكتمل", 100)
-    return JsonResponse(
-        {
-            "doc_id": document.pk,
-            "title": document.title,
-            "segments": moneer_ui.to_ui_segments(segments),
-            "json_url": f"/classify/documents/{document.pk}.json?download=1",
-            "xlsx_url": f"/classify/documents/{document.pk}/export.xlsx",
-            "result_url": f"/admin/content/document/{document.pk}/change/",
-        },
-        json_dumps_params={"ensure_ascii": False},
-    )
+    job = tasks.start(title, source_file_name, paragraphs)
+    return JsonResponse(job.payload(), json_dumps_params={"ensure_ascii": False})
 
 
 @require_safe
 def api_progress(request):
-    """أحدث مرحلة جارية ونسبتها — يسألها شريط الواجهة أثناء المعالجة."""
-    return JsonResponse(progress.snapshot(), json_dumps_params={"ensure_ascii": False})
+    """حالة مهمة التقطيع ``?job=`` ومرحلتها، أو أحدث مرحلة في ذاكرة هذه العملية بلا ``job``."""
+    if not request.GET.get("job"):
+        return JsonResponse(progress.snapshot(), json_dumps_params={"ensure_ascii": False})
+    try:
+        job_id = int(request.GET["job"])
+    except ValueError:
+        return JsonResponse({"error": "job رقم."}, status=400)
+    job = get_object_or_404(SegmentationJob, pk=job_id)
+    return JsonResponse(job.payload(), json_dumps_params={"ensure_ascii": False})
 
 
 @require_safe

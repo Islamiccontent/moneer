@@ -1005,15 +1005,16 @@ class TranslateApiTests(TranslationFixture):
             return self.client.post(url, payload)
 
     def test_api_classifies_then_translates_in_two_phases(self):
-        response = self.post_mocked(
-            "/api/translate/",
-            {
-                "text": "قال الله تعالى: ﴿مَالِكِ يَوْمِ الدِّينِ﴾. والصبر خير معين للمؤمن في الشدائد كلها.",
-                "target": "English",
-            },
-        )
+        text = "قال الله تعالى: ﴿مَالِكِ يَوْمِ الدِّينِ﴾. والصبر خير معين للمؤمن في الشدائد كلها."
+        with override_settings(TASKS=IMMEDIATE_TASKS):
+            response = self.post_mocked("/api/translate/", {"text": text, "target": "English"})
         self.assertEqual(response.status_code, 200)
         data = response.json()
+        self.assertEqual(data["status"], "done")
+        self.assertEqual(
+            self.client.get("/api/segment/progress/", {"job": data["job_id"]}).json()["doc_id"],
+            data["doc_id"],
+        )
         kinds = [s["k"] for s in data["segments"]]
         self.assertIn("aya", kinds)
         self.assertTrue(all(not s["en"] for s in data["segments"]))
@@ -1021,26 +1022,86 @@ class TranslateApiTests(TranslationFixture):
         self.assertIn("قال الله تعالى", lead["ar"])
         self.assertEqual(lead["tagLabel"], "نص عام")
 
-        response = self.post_mocked(
-            "/api/translate/run/", {"doc_id": data["doc_id"], "target": "English"}
-        )
+        with override_settings(TASKS=IMMEDIATE_TASKS, GEMINI_API_KEY="test-key"):
+            response = self.post_mocked(
+                "/api/translate/run/", {"doc_id": data["doc_id"], "target": "English"}
+            )
         self.assertEqual(response.status_code, 200)
-        done = response.json()
-        self.assertEqual(done["failed"], 0)
+        run = response.json()
+        self.assertTrue(run["finished"])
+        self.assertTrue(run["task_id"])
+        live = self.client.get("/api/translate/progress/", {"doc_id": run["doc_id"]}).json()
+        self.assertTrue(live["finished"])
+        self.assertEqual(live["translation_id"], run["translation_id"])
+        self.assertEqual(live["done"], live["total"])
+        self.assertIn("Gemini text", live["rows"].values())
+
+        done = self.client.get(f"/api/translate/documents/{run['doc_id']}/").json()
         aya = next(s for s in done["segments"] if s["k"] == "aya")
         self.assertTrue(aya["locked"])
         self.assertFalse(aya["ai"])
         self.assertEqual(aya["en"], "EN extracted")
         prose = [s for s in done["segments"] if s["k"] == "text" and s.get("en")]
         self.assertTrue(any(s["en"] == "Gemini text" for s in prose))
-        live = self.client.get("/api/translate/progress/").json()
-        self.assertIn("Gemini text", live["rows"].values())
         aya_index = str(done["segments"].index(aya))
         self.assertEqual(live["sources"][aya_index], {"src": "الترجمة المعتمدة", "locked": True})
-        document = Document.objects.get(pk=done["doc_id"])
+        document = Document.objects.get(pk=run["doc_id"])
         self.assertEqual(
-            DocumentTranslation.objects.get(pk=done["translation_id"]).document, document
+            DocumentTranslation.objects.get(pk=run["translation_id"]).document, document
         )
+
+    @override_settings(TASKS=DUMMY_TASKS, GEMINI_API_KEY="test-key")
+    def test_run_returns_at_once_and_progress_reads_the_database(self):
+        self.dt_en.delete()
+        default_task_backend.clear()
+        response = self.client.post(
+            "/api/translate/run/", {"doc_id": self.document.pk, "target": "English"}
+        )
+        run = response.json()
+        self.assertFalse(run["finished"])
+        self.assertEqual([r.args for r in default_task_backend.results], [[run["translation_id"]]])
+        PhraseTranslation.objects.create(
+            document_translation_id=run["translation_id"],
+            phrase=self.text,
+            translation="Praise for the blessing of Islam",
+            status=PhraseTranslation.Status.SUGGESTED,
+        )
+        query = {"doc_id": self.document.pk, "after": self.dt_fr.pk, "task_id": run["task_id"]}
+        live = self.client.get("/api/translate/progress/", query).json()
+        self.assertFalse(live["finished"])
+        self.assertEqual(live["translation_id"], run["translation_id"])
+        self.assertEqual((live["done"], live["total"]), (1, 4))
+        self.assertEqual(live["rows"], {"2": "Praise for the blessing of Islam"})
+        self.assertEqual(live["sources"], {"2": {"src": "معجم المصطلحات"}})
+
+    @override_settings(GEMINI_API_KEY="test-key")
+    def test_run_for_an_already_translated_language_is_refused(self):
+        response = self.client.post(
+            "/api/translate/run/", {"doc_id": self.document.pk, "target": "English"}
+        )
+        self.assertEqual(response.status_code, 409)
+        self.assertIn("error", response.json())
+
+    @override_settings(GEMINI_API_KEY="")
+    def test_run_without_a_model_key_is_refused(self):
+        response = self.client.post(
+            "/api/translate/run/", {"doc_id": self.document.pk, "target": "English"}
+        )
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("Gemini", response.json()["error"])
+
+    def test_progress_waits_for_a_translation_newer_than_after(self):
+        query = {"doc_id": self.document.pk, "after": self.dt_fr.pk}
+        live = self.client.get("/api/translate/progress/", query).json()
+        self.assertTrue(live["waiting"])
+        self.assertFalse(live["finished"])
+
+    def test_progress_without_a_document_reports_the_classification_stage(self):
+        self.assertEqual(set(self.client.get("/api/translate/progress/").json()), {"stage", "pct"})
+
+    def test_progress_rejects_non_numeric_ids(self):
+        response = self.client.get("/api/translate/progress/", {"doc_id": "x"})
+        self.assertEqual(response.status_code, 400)
 
     def test_api_rejects_an_unknown_language(self):
         response = self.post_mocked("/api/translate/", {"text": "نص قصير.", "target": "Klingon"})
@@ -1183,19 +1244,29 @@ class DocumentBrowsingApiTests(TranslationFixture):
         self.assertTrue(segments[1]["ai"])
         self.assertTrue(segments[2]["ai"])
 
-    def test_live_source_marks_approved_ayat_and_terms(self):
-        from translate.services.moneer_ui import GLOSSARY_SOURCE, QURAN_SOURCE, live_source
+    def test_translation_progress_marks_sources_like_the_final_view(self):
+        from translate.services.moneer_ui import GLOSSARY_SOURCE, QURAN_SOURCE, translation_progress
 
-        self.assertEqual(
-            live_source(self.full, "EN", "quran_extract", self.english),
-            {"src": QURAN_SOURCE, "locked": True},
+        for dt in (self.dt_en, self.dt_fr):
+            rows = [(self.full, "A"), (self.text, "The blessing of Islam")]
+            for phrase, text in rows:
+                PhraseTranslation.objects.create(
+                    document_translation=dt, phrase=phrase, translation=text
+                )
+        PhraseTranslation.objects.create(
+            document_translation=self.dt_en, phrase=self.part, translation="Day of Judgement"
         )
-        self.assertEqual(live_source(self.unmatched, "No ayah", "quran_fallback", self.english), {})
+        english = translation_progress(self.dt_en)
+        self.assertEqual((english["done"], english["total"]), (3, 4))
         self.assertEqual(
-            live_source(self.text, "Praise for the blessing of Islam", "text", self.english),
-            {"src": GLOSSARY_SOURCE},
+            english["sources"],
+            {
+                0: {"src": QURAN_SOURCE, "locked": True},
+                1: {"src": QURAN_SOURCE, "locked": True},
+                2: {"src": GLOSSARY_SOURCE},
+            },
         )
-        self.assertEqual(live_source(self.text, "Praise for blessings", "text", self.english), {})
+        self.assertEqual(translation_progress(self.dt_fr)["sources"], {})
 
     def test_prefixed_term_surface_is_the_full_word(self):
         from translate.services.moneer_ui import _surface

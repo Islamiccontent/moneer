@@ -4,16 +4,17 @@ from pathlib import Path
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from django.tasks.exceptions import TaskException
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST, require_safe
 
-from classify import pipeline as classify_pipeline
 from classify import progress
+from classify import tasks as classify_tasks
 from classify.services.splitter import DocumentError, extract_docx, extract_text
 from content.models import Document, DocumentTranslation, PhraseTranslation
 from core.models import Language
-from translate import pipeline as translate_pipeline
+from translate import tasks
 from translate.services import moneer_ui, term_match
 
 LANG_BY_LABEL = {
@@ -24,9 +25,6 @@ LANG_BY_LABEL = {
     "اردو": "ur",
     "Español": "es",
 }
-
-_live_rows: dict[int, str] = {}
-_live_sources: dict[int, dict] = {}
 
 
 def _language_or_error(target):
@@ -44,7 +42,10 @@ def _language_or_error(target):
 @csrf_exempt
 @require_POST
 def api_translate(request):
-    """المرحلة الأولى: ملف أو نص ← تصنيف وحفظ ← وحدات بلا ترجمة؛ target يُتحقق منه مبكراً."""
+    """المرحلة الأولى: ملف أو نص ← مهمة تقطيع في الخلفية (كـ /api/segment/)؛ target يُتحقق منه مبكراً.
+
+    تتابعها الواجهة من /api/segment/progress/?job= ثم تجلب الوحدات من /api/translate/documents/.
+    """
     target = (request.POST.get("target") or "English").strip()
     _language, error = _language_or_error(target)
     if error:
@@ -53,8 +54,6 @@ def api_translate(request):
     f = request.FILES.get("file")
     text = (request.POST.get("text") or "").strip()
     title = (request.POST.get("title") or "").strip()
-    _live_rows.clear()
-    _live_sources.clear()
     progress.report("قراءة الملف", 3)
     try:
         if f:
@@ -72,82 +71,85 @@ def api_translate(request):
     if not paragraphs:
         return JsonResponse({"error": "لم يُعثر على نص."}, status=400)
 
-    segments = classify_pipeline.run(paragraphs, progress=progress.report)
-    progress.report("الحفظ في القاعدة", 96)
-    document, _payload = classify_pipeline.save_document(
-        classify_pipeline.unique_title(title), Document.Kind.ARTICLE, source_name, segments
-    )
-    progress.report("اكتمل", 100)
-    return JsonResponse(
-        {
-            "doc_id": document.pk,
-            "title": document.title,
-            "segments": moneer_ui.to_ui_segments(document),
-        }
-    )
+    job = classify_tasks.start(title, source_name, paragraphs)
+    payload = job.payload()
+    if job.document_id:
+        payload["segments"] = moneer_ui.to_ui_segments(job.document)
+    return JsonResponse(payload)
 
 
 @csrf_exempt
 @require_POST
 def api_translate_run(request):
-    """المرحلة الثانية: ``doc_id`` + ``target`` ← ترجمة المستند ← الوحدات بترجماتها."""
+    """المرحلة الثانية: ``doc_id`` + ``target`` ← مهمة ترجمة في الخلفية؛ تقدّمها من /progress/.
+
+    لا تُترجم الجمل داخل الطلب: طلب طويل يقطعه الوكيل العكسي في الإنتاج (504) والترجمة جارية.
+    """
     target = (request.POST.get("target") or "English").strip()
     language, error = _language_or_error(target)
     if error:
         return error
     document = get_object_or_404(Document, pk=request.POST.get("doc_id"))
+    if not tasks.can_translate():
+        return JsonResponse({"error": "الترجمة غير متاحة: مفتاح Gemini غير مضبوط."}, status=503)
+    if document.translations.filter(target_language=language).exists():
+        return JsonResponse({"error": "للمستند ترجمة بهذه اللغة من قبل."}, status=409)
 
     translation = DocumentTranslation.objects.create(
         document=document,
         target_language=language,
         status=DocumentTranslation.Status.TRANSLATING,
     )
-    order = {
-        pk: i
-        for i, pk in enumerate(
-            document.phrases.order_by("group_id", "group_order").values_list("phrase_id", flat=True)
-        )
-    }
-    _live_rows.clear()
-    _live_sources.clear()
-
-    def on_result(phrase, text, method):
-        i = order[phrase.pk]
-        source = moneer_ui.live_source(phrase, text, method, language)
-        if source:
-            _live_sources[i] = source
-        _live_rows[i] = text
-
-    progress.report("الترجمة", 2)
-    summary = translate_pipeline.translate_document(
-        translation,
-        on_progress=lambda done, total: progress.report(
-            f"الترجمة ({done}/{total})", 2 + round(done / max(total, 1) * 94)
-        ),
-        on_result=on_result,
-    )
-    segments = moneer_ui.to_ui_segments(document, translation)
-    if language.iso_code.lower() != "en":
-        progress.report("مطابقة المصطلحات", 98)
-        term_match.localize_terms(segments, language)
-    term_match.prune_unmatched(segments)
-    moneer_ui.mark_approved_terms(segments)
-    progress.report("اكتمل", 100)
+    result = tasks.translate_document_task.enqueue(translation.pk)
     return JsonResponse(
         {
             "doc_id": document.pk,
             "translation_id": translation.pk,
-            "failed": summary.counts["failed"],
-            "segments": segments,
+            "task_id": result.id,
+            "finished": result.is_finished,
         }
     )
 
 
+def _task_finished(task_id, translation):
+    """انتهت مهمة الترجمة؟ من نتيجة المهمة إن أمكن جلبها، وإلا من حالة ترجمة المستند."""
+    if task_id:
+        try:
+            return tasks.translate_document_task.get_result(task_id).is_finished
+        except (NotImplementedError, TaskException):
+            pass
+    return translation.status not in tasks.UNFINISHED
+
+
 @require_safe
 def api_translate_progress(request):
-    """أحدث مرحلة جارية + الجمل المترجمة فور اكتمالها (``rows``) ومصدرها المعتمد (``sources``)."""
+    """تقدّم المرحلة الجارية: بلا ``doc_id`` مرحلة التصنيف، ومعه ترجمة المستند من القاعدة.
+
+    ``after``: أحدث ترجمة يعرفها المتصفح قبل الطلب؛ تُتابَع ترجمة أحدث منها فقط.
+    """
+    if not request.GET.get("doc_id"):
+        return JsonResponse(progress.snapshot())
+    try:
+        doc_id, after = int(request.GET["doc_id"]), int(request.GET.get("after") or 0)
+    except ValueError:
+        return JsonResponse({"error": "doc_id وafter أرقام."}, status=400)
+    translation = (
+        DocumentTranslation.objects.select_related("document", "target_language")
+        .filter(document_id=doc_id, pk__gt=after)
+        .order_by("-id")
+        .first()
+    )
+    if translation is None:
+        return JsonResponse({"stage": "بدء الترجمة", "pct": 1, "waiting": True, "finished": False})
+    state = moneer_ui.translation_progress(translation)
+    done, total = state["done"], state["total"]
     return JsonResponse(
-        {**progress.snapshot(), "rows": dict(_live_rows), "sources": dict(_live_sources)}
+        {
+            **state,
+            "stage": f"الترجمة ({done}/{total})",
+            "pct": 2 + round(done / max(total, 1) * 94),
+            "finished": _task_finished(request.GET.get("task_id"), translation),
+        }
     )
 
 
