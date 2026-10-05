@@ -61,6 +61,7 @@ python manage.py runserver
 
 - الصفحة الرئيسية: <http://127.0.0.1:8000/>
 - لوحة الإدارة (بالعربية وRTL): <http://127.0.0.1:8000/admin/>
+- قائمة الملفات (مرحلة كل ملف وكل لغة فيه ونسبة تقدّمها): <http://127.0.0.1:8000/translate/documents/>
 
 لا يُفرض تسجيل الدخول على أي صفحة؛ الدخول مطلوب للوحة admin فقط.
 
@@ -134,7 +135,7 @@ sudo chmod 644 /etc/cron.d/moneer-translate-pending
 | `translate` | الترجمة في الخلفية على `django.tasks`: الآيات من الترجمة المعتمدة لموسوعة القرآن الكريم بعد مطابقتها بالرسمين واستخلاصها بـ gpt-5-nano، وبقية النصوص بـ Gemini على طريقة ترجمان؛ يكتب في `content.PhraseTranslation`. الأوامر: `import_quran_ayat`، `import_quran_keys`، `import_quran_translations`، `translate_pending` |
 | `export` | تصدير ترجمة المستند إلى DOCX وPDF بـ Spire.Doc بمنطق لوحة تنسيق الكتب، وتنسيق افتراضي لكل لغة (`ExportFormat`)؛ تصدير آني بلا تخزين من روابط admin أو `/export/<id>/docx/`. الأوامر: `ensure_default_formats`، `export_translation` |
 | `users` | نموذج المستخدم المخصّص: البريد الإلكتروني معرّف الدخول، `full_name`، `preferred_language`؛ admin مخصّص |
-| `pages` | الصفحات العامة: تخدم `index.html` على `/` وصفحات `pages/html` كما هي مع ملفات الجذر (الأيقونات، `site.webmanifest`، `og.jpg`)، وأصولها المشتركة (الخطوط والصور والأنماط ومشغّل القوالب) من `pages/assets` على `/assets/` بلا `collectstatic` |
+| `pages` | الصفحات العامة: تخدم `index.html` على `/` وصفحات `pages/html` كما هي مع ملفات الجذر (الأيقونات، `site.webmanifest`، `og.jpg`)، وأصولها المشتركة (الخطوط والصور والأنماط ومشغّل القوالب) من `pages/assets` على `/assets/` بلا `collectstatic`؛ وقائمة الملفات `/translate/documents/` التي تقرأ `/api/translate/documents/` وتعرض مرحلة كل ملف وكل لغة ونسبة التقدّم، وخطوطها وشعارها في `pages/static/pages/` |
 
 ## هيكل المستودع
 

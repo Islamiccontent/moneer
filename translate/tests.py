@@ -67,10 +67,12 @@ class TranslateUrlsTests(SimpleTestCase):
         self.assertEqual(reverse("pages:translate"), "/translate/")
         self.assertEqual(reverse("translate:api_translate"), "/api/translate/")
 
-    def test_home_serves_the_bundle_byte_for_byte(self):
+    def test_home_starts_at_upload_and_documents_serve_the_page(self):
         from pages.views import TRANSLATE_PAGE
 
-        response = self.client.get("/translate/")
+        home = self.client.get("/translate/")
+        self.assertRedirects(home, "/classify/", fetch_redirect_response=False)
+        response = self.client.get("/translate/documents/7/review/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "text/html; charset=utf-8")
         self.assertEqual(b"".join(response.streaming_content), TRANSLATE_PAGE.read_bytes())
@@ -1346,3 +1348,127 @@ class ApproveApiTests(TranslationFixture):
 
     def test_approve_rejects_get(self):
         self.assertEqual(self.client.get("/api/translate/approve/").status_code, 405)
+
+
+class DocumentsDashboardApiTests(TranslationFixture):
+    """لوحة المستندات: مرحلة كل لغة ونسبتها من حالة الترجمة وعدّادات جملها، ومرحلة المستند منها."""
+
+    STAGES = ["رفع الملف", "التقطيع الذكي", "المطابقة والترجمة", "المراجعة", "التصدير"]
+
+    def row(self, document=None):
+        data = self.client.get("/api/translate/documents/").json()
+        self.assertEqual(data["stages"], self.STAGES)
+        pk = (document or self.document).pk
+        return next(d for d in data["documents"] if d["id"] == pk)
+
+    def translate(self, dt, phrase, text, status=PhraseTranslation.Status.SUGGESTED):
+        return PhraseTranslation.objects.create(
+            document_translation=dt, phrase=phrase, translation=text, status=status
+        )
+
+    def set_status(self, dt, status):
+        dt.status = status
+        dt.save(update_fields=["status"])
+
+    def test_review_language_progress_counts_translated_and_approved_phrases(self):
+        self.set_status(self.dt_fr, DocumentTranslation.Status.REVIEW)
+        self.translate(self.dt_fr, self.full, "Louange", PhraseTranslation.Status.APPROVED)
+        self.translate(self.dt_fr, self.part, "Jour")
+        row = self.row()
+        self.assertEqual(row["phrases"], 5)
+        self.assertEqual(row["translatable"], 4)
+        self.assertEqual(row["kind_label"], "خطبة")
+        self.assertEqual(row["stage"], "قيد المراجعة")  # اللفظ القديم: حالة أحدث ترجمة
+        fr = next(t for t in row["translations"] if t["iso"] == "fr")
+        self.assertEqual((fr["total"], fr["translated"], fr["approved"]), (4, 2, 1))
+        self.assertEqual(fr["stage_index"], 4)
+        self.assertEqual(fr["stage_label"], "المراجعة")
+        self.assertEqual(fr["progress"], 65)  # 60 + 20 × 1/4
+        self.assertEqual(fr["status_label"], "قيد المراجعة")
+        self.assertEqual(fr["url"], f"/translate/documents/{self.document.pk}/review/?target=fr")
+        self.assertEqual(fr["export_urls"]["docx"], f"/export/{self.dt_fr.pk}/docx/")
+        self.assertEqual(fr["direction"], "ltr")
+
+    def test_pending_language_opens_on_segments_and_holds_the_document_stage(self):
+        self.set_status(self.dt_fr, DocumentTranslation.Status.REVIEW)
+        self.translate(self.dt_fr, self.full, "Louange", PhraseTranslation.Status.APPROVED)
+        row = self.row()
+        en = next(t for t in row["translations"] if t["iso"] == "en")
+        self.assertEqual((en["stage_index"], en["progress"]), (3, 40))
+        self.assertEqual(en["url"], f"/translate/documents/{self.document.pk}/segments/?target=en")
+        # مرحلة المستند مرحلة أبطأ لغاته، وتقدّمه متوسط تقدّمها: (65 + 40) / 2 = 52.5 ← 53
+        self.assertEqual(row["stage_index"], 3)
+        self.assertEqual(row["stage_label"], "المطابقة والترجمة")
+        self.assertEqual(row["progress"], 53)
+        self.assertEqual(row["xlsx_url"], f"/classify/documents/{self.document.pk}/export.xlsx")
+
+    def test_translating_progress_follows_the_translated_share(self):
+        self.set_status(self.dt_en, DocumentTranslation.Status.TRANSLATING)
+        self.translate(self.dt_en, self.full, "Praise")
+        self.translate(self.dt_en, self.text, "Islam")
+        en = next(t for t in self.row()["translations"] if t["iso"] == "en")
+        self.assertEqual(en["progress"], 50)  # 40 + 20 × 2/4
+        self.assertEqual(
+            en["url"], f"/translate/documents/{self.document.pk}/translation/?target=en"
+        )
+
+    def test_untranslatable_phrases_count_in_neither_total_nor_progress(self):
+        self.set_status(self.dt_en, DocumentTranslation.Status.REVIEW)
+        self.translate(self.dt_en, self.fixed, "[2:153]", PhraseTranslation.Status.APPROVED)
+        en = next(t for t in self.row()["translations"] if t["iso"] == "en")
+        self.assertEqual((en["total"], en["translated"], en["approved"]), (4, 0, 0))
+        self.assertEqual(en["progress"], 60)
+
+    def test_approved_translation_completes_the_pipeline(self):
+        self.set_status(self.dt_en, DocumentTranslation.Status.APPROVED)
+        row = self.row()
+        en = next(t for t in row["translations"] if t["iso"] == "en")
+        self.assertEqual((en["stage_index"], en["progress"]), (5, 100))
+        self.assertEqual(en["url"], f"/translate/documents/{self.document.pk}/export/?target=en")
+        self.assertEqual(row["progress"], 70)  # (100 + 40) / 2
+
+    def test_archived_languages_do_not_hold_the_document_back(self):
+        self.set_status(self.dt_en, DocumentTranslation.Status.ARCHIVED)
+        self.set_status(self.dt_fr, DocumentTranslation.Status.APPROVED)
+        row = self.row()
+        self.assertEqual((row["stage_index"], row["progress"]), (5, 100))
+        self.assertEqual(row["stage_label"], "التصدير")
+
+    def test_document_without_translations_is_saved_past_segmentation(self):
+        document = Document.objects.create(title="نص بلا ترجمة", kind=Document.Kind.POST)
+        row = self.row(document)
+        self.assertEqual(row["translations"], [])
+        self.assertEqual((row["stage_index"], row["progress"]), (2, 40))
+        self.assertEqual(row["stage"], "مصنَّف")
+        self.assertEqual(row["source"], "نص مباشر")
+        self.assertEqual(row["source_kind"], "text")
+        self.assertEqual(row["url"], f"/translate/documents/{document.pk}/")
+
+    def test_list_is_built_in_a_fixed_number_of_queries(self):
+        for n in range(3):
+            Document.objects.create(title=f"مستند {n}", kind=Document.Kind.ARTICLE)
+        with self.assertNumQueries(2):
+            self.client.get("/api/translate/documents/")
+
+    def test_progress_formula(self):
+        from translate.services.dashboard import translation_progress
+
+        status = DocumentTranslation.Status
+        pending, translating, review, approved = (
+            status.PENDING,
+            status.TRANSLATING,
+            status.REVIEW,
+            status.APPROVED,
+        )
+        self.assertEqual(translation_progress(pending, 0, 0, 4), 40)
+        self.assertEqual(translation_progress(translating, 1, 0, 3), 47)  # 46.67 ← 47
+        self.assertEqual(translation_progress(review, 3, 2, 4), 70)
+        self.assertEqual(translation_progress(review, 0, 0, 0), 60)  # بلا جمل قابلة للترجمة
+        self.assertEqual(translation_progress(approved, 0, 0, 4), 100)
+
+    def test_document_api_opens_the_requested_target_language(self):
+        url = f"/api/translate/documents/{self.document.pk}/"
+        with mock.patch.object(llm, "gemini_generate", return_value="{}"):
+            self.assertEqual(self.client.get(url).json()["target_iso"], "fr")  # الأحدث
+            self.assertEqual(self.client.get(url + "?target=EN").json()["target_iso"], "en")
+            self.assertEqual(self.client.get(url + "?target=xx").json()["target_iso"], "fr")

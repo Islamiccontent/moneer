@@ -809,7 +809,7 @@ class Component extends DCLogic {
   loadDoc(id, stage) {
     this.clearTimers();
     this.setState({ screen: 'app', step: 0, uploading: true, upload: 100, srvStage: 'فتح المستند', srvPct: 0 });
-    fetch('/api/translate/documents/' + id + '/').then(r => r.json()).then(data => {
+    fetch('/api/translate/documents/' + id + '/' + location.search).then(r => r.json()).then(data => {
       if (!data || !data.segments || !data.segments.length) { this.setState({ uploading: false }); alert('تعذّر فتح المستند'); return; }
       this.docId = data.doc_id;
       this.segments = data.segments;

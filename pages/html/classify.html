@@ -86,7 +86,10 @@
         </div>
       </sc-for>
     </div>
-    <button data-m="app-back" sc-camel-on-click="{{ goLanding }}" style="background:transparent;border:1px solid #E3E8F4;border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px;color:#475569" style-hover="background:#F5F7FC">الصفحة التعريفية</button>
+    <div data-m="app-actions" style="display:flex;align-items:center;gap:10px;flex:none">
+      <a data-m="app-new" href="/translate/documents/" title="قائمة الملفات بمراحلها ونسب تقدّمها" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#2464EC,#3B82F6);color:#fff;border:0;border-radius:999px;padding:9px 18px;font-weight:800;font-size:14px;box-shadow:0 8px 22px rgba(36,100,236,.35);white-space:nowrap;transition:transform .2s" style-hover="transform:translateY(-1px);color:#fff">قائمة الملفات</a>
+      <button data-m="app-back" sc-camel-on-click="{{ goLanding }}" style="background:transparent;border:1px solid #E3E8F4;border-radius:999px;padding:9px 18px;font-weight:700;font-size:14px;color:#475569" style-hover="background:#F5F7FC">الصفحة التعريفية</button>
+    </div>
   </header>
 
   <main data-m="app-main" style="max-width:1200px;width:100%;margin:0 auto;padding:36px 28px 80px;display:flex;flex-direction:column;gap:22px">

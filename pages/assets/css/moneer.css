@@ -272,6 +272,9 @@ textarea{font-family:inherit}
   [data-m="app-brand"] > span[style*="width"]{display:none}
   [data-m="app-brand"] span:first-child{font-size:16px!important}
   [data-m="app-back"]{margin-inline-start:auto;padding:7px 12px!important;font-size:12.5px!important}
+  [data-m="app-actions"]{margin-inline-start:auto;gap:5px!important}
+  [data-m="app-actions"] [data-m="app-back"]{margin-inline-start:0;padding:7px 10px!important;font-size:12px!important}
+  [data-m="app-new"]{padding:7px 10px!important;font-size:12px!important;gap:4px!important}
   [data-m="stepper"]{order:3;flex:0 0 100%!important;flex-wrap:nowrap!important;justify-content:flex-start!important;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
   [data-m="stepper"] > div{flex:none;white-space:nowrap;font-size:12.5px!important;padding:6px 11px 6px 6px!important}
   [data-m="app-main"]{padding:20px 14px 64px!important;gap:16px!important}
