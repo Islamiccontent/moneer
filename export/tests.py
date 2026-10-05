@@ -382,20 +382,17 @@ class XlsxExportTests(ExportTestCase):
 
         return list(load_workbook(BytesIO(content)).active.iter_rows(values_only=True))
 
-    def test_xlsx_lists_every_phrase_with_its_type_translation_and_status(self):
+    def test_xlsx_lists_every_phrase_with_its_type_and_translation(self):
         result = export_translation(self.dt, kind="xlsx")
         rows = self.read(result.content)
-        self.assertEqual(rows[0], ("#", "النوع", "النص الأصلي", "الترجمة", "الحالة"))
+        self.assertEqual(rows[0], ("#", "النوع", "النص الأصلي", "الترجمة"))
         self.assertEqual(len(rows) - 1, len(self.phrases))
         by_text = {row[2]: row for row in rows[1:]}
-        self.assertEqual(
-            by_text["عنوان الخطبة"][1:], ("عنوان", "عنوان الخطبة", "Khutbah Title", "مقترحة آلياً")
-        )
+        self.assertEqual(by_text["عنوان الخطبة"][1:], ("عنوان", "عنوان الخطبة", "Khutbah Title"))
         self.assertEqual(by_text["﴿قُلْ هُوَ اللَّهُ أَحَدٌ﴾"][1], "آية")
         self.assertEqual(by_text["[1] نص الهامش"][1], "هامش")
         self.assertFalse(by_text["[الإخلاص: 1]"][3])
-        self.assertEqual(by_text["[الإخلاص: 1]"][4], "يُنقل كما هو")
-        self.assertEqual(by_text["جملة بلا ترجمة"][4], "بلا ترجمة")
+        self.assertFalse(by_text["جملة بلا ترجمة"][3])
         self.assertEqual((result.rows, result.missing), (len(self.phrases), 1))
         self.assertTrue(result.file_name.endswith(".xlsx"))
 

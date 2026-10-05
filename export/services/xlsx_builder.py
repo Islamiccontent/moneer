@@ -1,4 +1,4 @@
-"""ترجمة المستند جدولَ Excel للمراجعة: جملة في كل صف بنوعها ونصها الأصلي وترجمتها وحالتها."""
+"""ترجمة المستند جدولَ Excel للمراجعة: جملة في كل صف بنوعها ونصها الأصلي وترجمتها."""
 
 from io import BytesIO
 
@@ -7,8 +7,8 @@ from openpyxl.styles import Alignment, Font, PatternFill
 
 from classify.services.moneer_ui import attribution_label, title_label
 
-HEADERS = ("#", "النوع", "النص الأصلي", "الترجمة", "الحالة")
-WIDTHS = {"A": 6, "B": 12, "C": 60, "D": 60, "E": 16}
+HEADERS = ("#", "النوع", "النص الأصلي", "الترجمة")
+WIDTHS = {"A": 6, "B": 12, "C": 60, "D": 60}
 
 # تسميات الأنواع كما تعرضها الواجهة
 _KIND_LABELS = {
@@ -31,14 +31,6 @@ def kind_label(phrase) -> str:
     if phrase.tag == "footnote":
         return "هامش"
     return _KIND_LABELS.get(kind) or _TYPE_LABELS.get(phrase.content_type.code, "نص عام")
-
-
-def status_label(phrase, row) -> str:
-    if not phrase.translatable:
-        return "يُنقل كما هو"
-    if row is None or not row.translation.strip():
-        return "بلا ترجمة"
-    return row.get_status_display()
 
 
 def build_xlsx(document_translation) -> tuple[bytes, int, int]:
@@ -68,9 +60,7 @@ def build_xlsx(document_translation) -> tuple[bytes, int, int]:
         translation = row.translation.strip() if row else ""
         if phrase.translatable and not translation:
             missing += 1
-        sheet.append(
-            [count, kind_label(phrase), phrase.text, translation, status_label(phrase, row)]
-        )
+        sheet.append([count, kind_label(phrase), phrase.text, translation])
         line = sheet[sheet.max_row]
         for cell in line:
             cell.alignment = Alignment(vertical="top", wrap_text=True)
