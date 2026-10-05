@@ -126,7 +126,7 @@ class RootFilesTests(SimpleTestCase):
 
 
 class DocumentsPageTests(SimpleTestCase):
-    """صفحة قائمة المستندات: تقرأ واجهة القائمة، وكل أصولها الثابتة موجودة فعلاً في pages/static."""
+    """صفحة قائمة المستندات: تقرأ واجهة القائمة، وكل أصولها موجودة فعلاً في pages/assets."""
 
     def test_page_reads_the_documents_api(self):
         html = DOCUMENTS_PAGE.read_text(encoding="utf-8")
@@ -138,9 +138,10 @@ class DocumentsPageTests(SimpleTestCase):
         import re
 
         html = DOCUMENTS_PAGE.read_text(encoding="utf-8")
-        paths = set(re.findall(r"/static/pages/([\w./-]+\.\w+)", html))
+        # /static/ لا يُخدم في الإنتاج؛ كل الأصول من /assets/
+        self.assertNotIn("/static/", html)
+        paths = set(re.findall(r"/assets/([\w./-]+\.\w+)", html))
         self.assertTrue(paths)
-        static_dir = Path(__file__).resolve().parent / "static" / "pages"
         for path in paths:
             with self.subTest(path=path):
-                self.assertTrue((static_dir / path).is_file(), path)
+                self.assertTrue((ASSETS_DIR / path).is_file(), path)
