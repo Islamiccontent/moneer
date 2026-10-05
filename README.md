@@ -111,7 +111,7 @@ systemctl status moneer-translate-worker                        # active (runnin
 journalctl -u moneer-translate-worker -f                        # سجل العامل الحي
 
 # 5) الكنس الدوري: ملف cron الجاهز deploy/cron/moneer-translate-pending كل عشر دقائق
-sudo mkdir -p /var/log/moneer && sudo chown moneer:moneer /var/log/moneer
+sudo mkdir -p /var/log/moneer && sudo chown root:www-data /var/log/moneer
 sudo cp deploy/cron/moneer-translate-pending /etc/cron.d/moneer-translate-pending
 sudo nano /etc/cron.d/moneer-translate-pending                 # المستخدم والمسار
 sudo chmod 644 /etc/cron.d/moneer-translate-pending
