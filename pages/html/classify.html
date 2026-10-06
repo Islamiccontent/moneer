@@ -143,32 +143,56 @@
       <sc-if value="{{ isUpload }}" hint-placeholder-val="{{ true }}">
       <div style="text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;margin-bottom:8px;animation:mlIn .6s ease both">
         <h2 style="margin:0;font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:clamp(30px,4vw,44px);color:#070B1A">ارفــع محتــواك</h2>
-        <p style="margin:0;font-size:17px;color:#64748B;font-weight:500">ملفًا أو نصًّا — سيقوم مُنير بقراءته وتقطيعه وتصنيف محتواه تلقائيًا.</p>
+        <p style="margin:0;font-size:17px;color:#64748B;font-weight:500">ملف Word أو نص ملصق — يقرؤه مُنير ويقطّعه ويصنّف كل جملة فيه تلقائيًا.</p>
       </div>
       <sc-if value="{{ notUploading }}" hint-placeholder-val="{{ true }}">
-        <button data-m="dropzone" sc-camel-on-click="{{ pickFile }}" style="background:#fff;border:2px dashed #B9C8EE;border-radius:28px;padding:64px 30px;display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;transition:all .25s;animation:mlIn .7s ease both" style-hover="border-color:#2464EC;background:#F0F5FF;box-shadow:0 20px 50px rgba(36,100,236,.12)">
-          <span style="width:84px;height:84px;border-radius:26px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;font-size:36px;box-shadow:0 14px 34px rgba(36,100,236,.35);animation:mlFloat 4s ease-in-out infinite">⇧</span>
-          <span style="font-size:22px;font-weight:800;color:#070B1A">اسحب الملف هنا أو انقر للاختيار</span>
-          <span style="font-size:14.5px;color:#64748B;font-weight:600">DOCX — يُرفع إلى خادمِ التقطيع ويُصنَّف فعلاً</span>
-          <span style="margin-top:10px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px">اختيار ملف من جهازك</span>
-        </button>
-        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:14px;padding:12px 16px;font-weight:700;font-size:14px;animation:mlIn .25s ease both">⚠ {{ errorMsg }}</div></sc-if>
-        <div style="display:flex;align-items:center;gap:14px;color:#94A3B8;font-size:13px;font-weight:800"><span style="flex:1;height:1px;background:#E3E8F4"></span>أو<span style="flex:1;height:1px;background:#E3E8F4"></span></div>
-        <sc-if value="{{ pasteClosed }}" hint-placeholder-val="{{ true }}">
-          <button sc-camel-on-click="{{ openPaste }}" style="background:#fff;border:1px solid #E3E8F4;border-radius:22px;padding:18px 22px;display:flex;align-items:center;gap:16px;width:100%;text-align:right;transition:all .25s;animation:mlIn .7s ease both" style-hover="border-color:#2464EC;box-shadow:0 12px 30px rgba(36,100,236,.10)">
-            <span style="flex:none;width:52px;height:52px;border-radius:16px;background:#EFF6FF;display:grid;place-items:center;color:#2464EC;font-size:22px">✎</span>
-            <span style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
-              <span style="font-size:17px;font-weight:800;color:#070B1A">الصق نصًّا مباشرة</span>
-              <span style="font-size:14px;color:#64748B;font-weight:600">خطبة، مقال، أو منشور — يُقطَّع ويُصنَّف مثل الملف تمامًا.</span>
+        <sc-if value="{{ isDragging }}" hint-placeholder-val="{{ false }}">
+          <div aria-hidden="true" style="position:fixed;inset:0;z-index:2000;background:rgba(36,100,236,.12);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none;animation:mlIn .15s ease both">
+            <div style="width:min(560px,100%);background:#fff;border:3px dashed #2464EC;border-radius:28px;padding:44px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;box-shadow:0 30px 80px rgba(36,100,236,.3)">
+              <span style="width:84px;height:84px;border-radius:26px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;box-shadow:0 14px 34px rgba(36,100,236,.35);animation:mlFloat 1.6s ease-in-out infinite"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:36px;height:36px;color:#fff"></span></span>
+              <span style="font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:26px;color:#070B1A">أفلت الملف لرفعه</span>
+              <span style="font-size:14.5px;color:#64748B;font-weight:600">ملف Word بصيغة DOCX — في أي مكان من الصفحة</span>
+            </div>
+          </div>
+        </sc-if>
+        <!-- لغة الترجمة تُختار قبل الرفع؛ الخاصيتان القادمتان شارتان صغيرتان -->
+        <div data-m="upload-settings" style="position:relative;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;background:#fff;border:1px solid #E3E8F4;border-radius:20px;padding:12px 18px;animation:mlIn .6s ease both">
+          <div style="position:relative;display:flex;align-items:center;gap:12px;min-width:0">
+            <span style="flex:none;width:42px;height:42px;border-radius:13px;background:#EFF6FF;display:grid;place-items:center;color:#2464EC"><span class="mn-ico mn-ico-globe" aria-hidden="true" style="width:21px;height:21px;color:currentColor"></span></span>
+            <span style="display:flex;flex-direction:column;gap:1px;min-width:0">
+              <span style="font-size:12.5px;font-weight:700;color:#64748B">ستُترجَم إلى</span>
+              <button type="button" aria-haspopup="listbox" aria-expanded="{{ langExpanded }}" sc-camel-on-click="{{ toggleLangs }}" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;padding:0;font-size:17px;font-weight:800;color:#0F172A;cursor:pointer" style-hover="color:#2464EC">{{ target }}<span class="mn-ico mn-ico-chevron" aria-hidden="true" style="width:16px;height:16px;color:#94A3B8;transition:transform .2s;transform:rotate({{ langChevron }})"></span></button>
             </span>
-            <span style="flex:none;color:#2464EC;font-weight:800;font-size:14px">إضافة نص ←</span>
-          </button>
+            <sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:calc(100% + 10px);right:0;width:min(360px,calc(100vw - 48px));z-index:40;background:#fff;border:1px solid #E3E8F4;border-radius:14px;box-shadow:0 18px 44px rgba(7,11,26,.14);padding:10px;margin-top:8px"><input value="{{ langQuery }}" sc-camel-on-change="{{ onLangSearch }}" placeholder="ابحث عن لغة…" style="width:100%;box-sizing:border-box;border:1px solid #E3E8F4;border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px"/><div style="display:flex;gap:6px;flex-wrap:wrap;max-height:200px;overflow:auto"><sc-for list="{{ langPick }}" as="lp" hint-placeholder-count="6"><button sc-camel-on-click="{{ lp.onPick }}" style="border-radius:999px;padding:6px 13px;font-weight:700;font-size:12.5px;border:1px solid {{ lp.border }};background:{{ lp.bg }};color:{{ lp.fg }};cursor:pointer" style-hover="border-color:#2464EC">{{ lp.name }}</button></sc-for></div></div></sc-if>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><span title="قريباً" style="display:inline-flex;align-items:center;gap:6px;border:1px dashed #D5DEF0;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#94A3B8">الذاكرة المعتمدة<span style="font-size:11px;font-weight:800;color:#64748B;background:#F1F5F9;border-radius:999px;padding:1px 8px">قريباً</span></span><span title="قريباً" style="display:inline-flex;align-items:center;gap:6px;border:1px dashed #D5DEF0;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700;color:#94A3B8">أسلوب الخطاب<span style="font-size:11px;font-weight:800;color:#64748B;background:#F1F5F9;border-radius:999px;padding:1px 8px">قريباً</span></span></div>
+        </div>
+        <!-- طريقة الإدخال: ملف أو نص -->
+        <div style="display:flex;justify-content:center;animation:mlIn .65s ease both">
+          <div role="tablist" aria-label="طريقة الإدخال" style="display:inline-flex;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:5px;gap:4px;box-shadow:0 2px 10px rgba(7,11,26,.04)">
+            <button type="button" role="tab" aria-selected="{{ modeFileSel }}" sc-camel-on-click="{{ closePaste }}" style="display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 22px;font-weight:800;font-size:15px;transition:all .25s;background:{{ modeFileBg }};color:{{ modeFileFg }}"><span class="mn-ico mn-ico-file" aria-hidden="true" style="width:18px;height:18px;color:currentColor"></span>ملف Word</button>
+            <button type="button" role="tab" aria-selected="{{ modeTextSel }}" sc-camel-on-click="{{ openPaste }}" style="display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 22px;font-weight:800;font-size:15px;transition:all .25s;background:{{ modeTextBg }};color:{{ modeTextFg }}"><span class="mn-ico mn-ico-pen" aria-hidden="true" style="width:17px;height:17px;color:currentColor"></span>لصق نص</button>
+          </div>
+        </div>
+        <sc-if value="{{ pasteClosed }}" hint-placeholder-val="{{ true }}">
+          <div data-m="dropzone" style="background:{{ dropBg }};border:2px dashed {{ dropBorder }};border-radius:28px;padding:24px 24px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;transition:all .25s;animation:mlIn .7s ease both;box-shadow:0 20px 50px rgba(36,100,236,.06)" style-hover="border-color:#2464EC;box-shadow:0 24px 60px rgba(36,100,236,.12)">
+            <button type="button" sc-camel-on-click="{{ pickFile }}" style="background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%">
+              <span style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;box-shadow:0 14px 34px rgba(36,100,236,.35);transition:transform .25s;transform:{{ dropLift }}"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:30px;height:30px;color:currentColor"></span></span>
+              <span style="font-size:22px;font-weight:800;color:#070B1A">{{ dropTitle }}</span>
+              <span style="font-size:14.5px;color:#64748B;font-weight:600">ملفات Word بصيغة <span style="font-weight:800;color:#475569">DOCX</span> — يحافظ مُنير على العناوين والهوامش</span>
+              <span style="margin-top:4px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px;box-shadow:0 10px 24px rgba(36,100,236,.3)">اختيار ملف من جهازك</span>
+            </button>
+            <div data-m="sample-bar" style="display:flex;align-items:center;justify-content:center;gap:8px 12px;flex-wrap:wrap;width:100%;border-top:1px solid #E3E8F4;padding-top:14px">
+              <span style="display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:800;color:#070B1A"><span class="mn-ico mn-ico-file" aria-hidden="true" style="width:18px;height:18px;color:#0E9F6E"></span>ليس لديك ملف؟ جرّب بملف تجريبي</span>
+              <button type="button" sc-camel-on-click="{{ trySample }}" style="display:inline-flex;align-items:center;gap:6px;background:#ECFDF5;color:#0E7A55;border:1px solid #BDEBD6;border-radius:999px;padding:7px 14px;font-weight:800;font-size:13.5px" style-hover="background:#D9F7EA"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:15px;height:15px;color:currentColor"></span>جرّبه الآن</button>
+              <a href="/assets/samples/moneer-sample-khutbah.docx" download="ملف تجريبي من مُنير.docx" style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:7px 14px;font-weight:800;font-size:13.5px;color:#0F172A" style-hover="background:#F5F7FC;color:#0F172A"><span class="mn-ico mn-ico-download" aria-hidden="true" style="width:15px;height:15px;color:#475569"></span>تحميل الملف</a>
+            </div>
+          </div>
         </sc-if>
         <sc-if value="{{ pasteOpen }}" hint-placeholder-val="{{ false }}">
           <div style="background:#fff;border:1.5px solid #2464EC;border-radius:22px;padding:18px 22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 32px rgba(36,100,236,.12);animation:mlIn .25s ease both">
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-              <span style="display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:#070B1A"><span style="width:34px;height:34px;border-radius:10px;background:#EFF6FF;display:grid;place-items:center;color:#2464EC;font-size:16px">✎</span>الصق نصّك هنا</span>
-              <button sc-camel-on-click="{{ closePaste }}" style="border:0;background:transparent;color:#94A3B8;font-size:20px;line-height:1" style-hover="color:#DC2626">×</button>
+              <span style="display:flex;align-items:center;gap:10px;font-size:16px;font-weight:800;color:#070B1A"><span style="width:34px;height:34px;border-radius:10px;background:#EFF6FF;display:grid;place-items:center;color:#2464EC"><span class="mn-ico mn-ico-pen" aria-hidden="true" style="width:17px;height:17px;color:currentColor"></span></span>الصق نصّك هنا</span>
             </div>
             <textarea value="{{ pasteText }}" sc-camel-on-change="{{ onPasteText }}" rows="7" placeholder="الحمد لله رب العالمين… قال الله تعالى: ﴿…﴾ وقال النبي ﷺ: «…»" style="width:100%;font-family:'ThmanyahText',serif;font-size:17px;line-height:1.9;color:#0F172A;background:#F8FAFF;border:1px solid #C7D5F5;border-radius:14px;padding:14px 16px;resize:vertical;outline:none" style-focus="border-color:#2464EC;box-shadow:0 0 0 3px rgba(36,100,236,.12)"></textarea>
             <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
@@ -180,18 +204,56 @@
             </div>
           </div>
         </sc-if>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
-          <div style="background:#fff;border:1px solid #E3E8F4;border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;position:relative"><span style="font-size:13px;font-weight:800;color:#2464EC">اللغة المستهدفة</span><span sc-camel-on-click="{{ toggleLangs }}" style="font-size:17px;font-weight:700;color:#0F172A;display:flex;justify-content:space-between;cursor:pointer">{{ target }} <span style="color:#94A3B8">⌄</span></span><sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:100%;right:0;left:0;z-index:40;background:#fff;border:1px solid #E3E8F4;border-radius:14px;box-shadow:0 18px 44px rgba(7,11,26,.14);padding:10px;margin-top:8px"><input value="{{ langQuery }}" sc-camel-on-change="{{ onLangSearch }}" placeholder="ابحث عن لغة…" style="width:100%;box-sizing:border-box;border:1px solid #E3E8F4;border-radius:10px;padding:8px 12px;font-size:13px;font-family:inherit;outline:none;margin-bottom:8px"/><div style="display:flex;gap:6px;flex-wrap:wrap;max-height:200px;overflow:auto"><sc-for list="{{ langPick }}" as="lp" hint-placeholder-count="6"><button sc-camel-on-click="{{ lp.onPick }}" style="border-radius:999px;padding:6px 13px;font-weight:700;font-size:12.5px;border:1px solid {{ lp.border }};background:{{ lp.bg }};color:{{ lp.fg }};cursor:pointer" style-hover="border-color:#2464EC">{{ lp.name }}</button></sc-for></div></div></sc-if></div>
-          <div style="background:#fff;border:1px solid #E3E8F4;border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;opacity:.55"><span style="font-size:13px;font-weight:800;color:#2464EC;display:flex;align-items:center;gap:8px">الذاكرة المعتمدة <span style="background:#F1F5F9;color:#64748B;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800">قريباً</span></span><span style="font-size:17px;font-weight:700;color:#0F172A">صحيح انترناشيونال + الكتب التسعة</span></div>
-          <div style="background:#fff;border:1px solid #E3E8F4;border-radius:18px;padding:18px 20px;display:flex;flex-direction:column;gap:6px;opacity:.55"><span style="font-size:13px;font-weight:800;color:#2464EC;display:flex;align-items:center;gap:8px">أسلوب الخطاب <span style="background:#F1F5F9;color:#64748B;border-radius:999px;padding:2px 10px;font-size:11px;font-weight:800">قريباً</span></span><span style="font-size:17px;font-weight:700;color:#0F172A">دعوي ميسّر لغير المسلمين</span></div>
+        <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}"><div style="background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:14px;padding:12px 16px;font-weight:700;font-size:14px;animation:mlIn .25s ease both"><span class="mn-ico mn-ico-alert" aria-hidden="true" style="width:18px;height:18px;color:#DC2626;vertical-align:-4px;margin-inline-end:6px"></span>{{ errorMsg }}</div></sc-if>
+        <p style="margin:0;display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;font-size:13.5px;color:#64748B;font-weight:600"><span class="mn-ico mn-ico-sparkle" aria-hidden="true" style="width:16px;height:16px;color:#2464EC"></span>تُكتشف الآيات والأحاديث والمصطلحات تلقائيًا، وتراجع التقطيع قبل الترجمة.</p>
+      <!-- خادم MCP للمحتوى الإسلامي: نفس المصادر المعتمدة داخل المساعدات الذكية اليومية -->
+      <section data-m="mcp" aria-labelledby="mcp-title" style="position:relative;overflow:hidden;margin-top:28px;background:#070B1A;color:#fff;border-radius:28px;padding:30px 28px;box-shadow:0 30px 70px rgba(7,11,26,.22);animation:mlIn .8s ease both">
+        <div style="position:absolute;inset:0;background:radial-gradient(ellipse 55% 60% at 85% 0%,rgba(36,100,236,.35),transparent 60%),radial-gradient(ellipse 40% 50% at 0% 100%,rgba(79,209,255,.16),transparent 60%);pointer-events:none"></div>
+        <div style="position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:26px;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+            <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:rgba(79,209,255,.14);border:1px solid rgba(79,209,255,.35);color:#9FE6FF;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:800"><span dir="ltr" style="unicode-bidi:isolate">MCP</span> · لمساعدك الذكي اليومي</span>
+            <h3 id="mcp-title" style="margin:0;font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:clamp(22px,2.6vw,30px);line-height:1.45">اجعل مساعدك الذكي يجيب من <span style="background:linear-gradient(90deg,#6D9BFF,#4FD1FF);-webkit-background-clip:text;background-clip:text;color:transparent">القرآن والسنّة</span>، لا من ذاكرته</h3>
+            <p style="margin:0;font-size:15px;line-height:1.9;color:#C9D4F5;font-weight:500">لتجربة أفضل مع النماذج العالمية واستخدام الترجمات المعتمدة، يمكنك استخدام خادم MCP من الجمعية: يبحث مساعدك في موسوعاتها ويعيد كل إجابة برابط مصدرها.</p><div role="note" style="display:flex;align-items:flex-start;gap:10px;background:rgba(217,119,6,.14);border:1px solid rgba(217,119,6,.45);border-radius:14px;padding:12px 14px"><span class="mn-ico mn-ico-alert" aria-hidden="true" style="width:18px;height:18px;color:#FFB547;margin-top:3px"></span><span style="font-size:13.5px;line-height:1.8;color:#FFE2B3;font-weight:600"><strong style="color:#FFD59A;font-weight:800">تنبيه:</strong> الآيات والأحاديث والترجمات المعتمدة تُسحب من الموسوعات كما هي مع رابط مصدرها، أما ما يصوغه النموذج أو يشرحه أو يترجمه من عنده فاجتهاد آلي يجب مراجعته قبل اعتماده أو نشره.</span></div><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:13px;font-weight:700;color:#9FB3E8">يعمل مع:</span><span dir="ltr" style="unicode-bidi:isolate;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:3px 10px;font-size:12.5px;font-weight:800;color:#fff">Claude</span><span dir="ltr" style="unicode-bidi:isolate;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:3px 10px;font-size:12.5px;font-weight:800;color:#fff">ChatGPT</span><span dir="ltr" style="unicode-bidi:isolate;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:3px 10px;font-size:12.5px;font-weight:800;color:#fff">Cursor</span><span dir="ltr" style="unicode-bidi:isolate;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:3px 10px;font-size:12.5px;font-weight:800;color:#fff">VS Code</span></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
+              <span style="display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;min-width:0"><span style="font-size:14px;font-weight:800;color:#fff">موسوعة القرآن الكريم</span><span style="font-size:12.5px;font-weight:600;color:#9FB3E8">75 ترجمة بـ 56 لغة</span></span>
+              <span style="display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;min-width:0"><span style="font-size:14px;font-weight:800;color:#fff">موسوعة الأحاديث النبوية</span><span style="font-size:12.5px;font-weight:600;color:#9FB3E8">72 لغة مع الدرجة والشرح</span></span>
+              <span style="display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;min-width:0"><span style="font-size:14px;font-weight:800;color:#fff">موقع دار الإسلام</span><span style="font-size:12.5px;font-weight:600;color:#9FB3E8">كتب ومقالات بـ 130 لغة</span></span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;min-width:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:18px">
+            <span style="font-size:13px;font-weight:800;color:#9FB3E8">عنوان الخادم — ألصقه في إعدادات مساعدك</span>
+            <div style="display:flex;align-items:center;gap:10px;background:#0B1226;border:1px solid rgba(109,155,255,.35);border-radius:14px;padding:8px 8px 8px 14px">
+              <code dir="ltr" style="flex:1;min-width:0;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:13.5px;line-height:1.5;color:#9FE6FF;text-align:left">https://mcp.islamiccontent.org/<wbr>mcp</code>
+              <button type="button" sc-camel-on-click="{{ copyMcpUrl }}" style="flex:none;display:inline-flex;align-items:center;gap:6px;background:#2464EC;color:#fff;border:0;border-radius:999px;padding:8px 16px;font-weight:800;font-size:13px" style-hover="background:#1B4FC4">{{ mcpUrlCopyLabel }}</button>
+            </div>
+            <a href="https://mcp.islamiccontent.org/#video" target="_blank" rel="noopener" aria-label="شرح مرئي: طريقة تفعيل الخادم في أربع دقائق (يفتح في صفحة جديدة)" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(36,100,236,.35),rgba(79,209,255,.12));border:1px solid rgba(109,155,255,.4);border-radius:18px;padding:14px;color:#fff;transition:all .2s" style-hover="border-color:#4FD1FF;transform:translateY(-2px);color:#fff">
+              <span style="flex:none;position:relative;width:136px;height:80px;border-radius:12px;background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.3)">
+                <img src="/assets/img/islamiccontent.png" alt="جمعية خدمة المحتوى الإسلامي باللغات" style="position:absolute;inset:10px 10px 20px;width:calc(100% - 20px);height:calc(100% - 30px);object-fit:contain">
+                <span style="position:absolute;bottom:-8px;right:-8px;width:32px;height:32px;border-radius:50%;background:#2464EC;border:3px solid #0B1226;display:grid;place-items:center"><span class="mn-ico mn-ico-play" aria-hidden="true" style="width:13px;height:13px;color:#fff;margin-inline-start:2px"></span></span>
+                <span dir="ltr" style="position:absolute;bottom:4px;left:5px;background:rgba(7,11,26,.85);border-radius:6px;padding:0 5px;font-size:11px;font-weight:800;color:#fff">4:02</span>
+              </span>
+              <span style="display:flex;flex-direction:column;gap:3px;min-width:0">
+                <span style="font-size:12.5px;font-weight:800;color:#9FE6FF">شرح مرئي</span>
+                <span style="font-size:15.5px;font-weight:800;line-height:1.5">شاهد طريقة تفعيل الخادم في أربع دقائق</span>
+                <span style="font-size:12.5px;font-weight:600;color:#C9D4F5">من نسخ العنوان إلى ربطه بمساعدك ثم أول إجابة بمصادرها ←</span>
+              </span>
+            </a>
+          </div>
         </div>
+      </section>
       </sc-if>
       <sc-if value="{{ uploading }}" hint-placeholder-val="{{ false }}">
-        <div data-m="pad-box" style="background:#fff;border:1px solid #E3E8F4;border-radius:28px;padding:50px 30px;display:flex;flex-direction:column;align-items:center;gap:18px;animation:mlIn .4s ease both">
-          <span style="width:64px;height:64px;border-radius:20px;background:#EFF6FF;display:grid;place-items:center;color:#2464EC;font-weight:900;font-size:14px;direction:ltr">DOCX</span>
-          <span style="font-size:20px;font-weight:800;color:#070B1A">{{ docName }}</span>
-          <div style="width:min(420px,100%);height:10px;border-radius:999px;background:#E9EEFA;overflow:hidden"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#2464EC,#4FD1FF);width:{{ uploadPct }};transition:width .12s linear"></div></div>
-          <span style="font-size:14px;color:#64748B;font-weight:700">{{ uploadMsg }}</span>
+        <div data-m="pad-box" style="background:#fff;border:1px solid #E3E8F4;border-radius:28px;padding:40px 30px;display:flex;flex-direction:column;align-items:center;gap:16px;animation:mlIn .4s ease both">
+          <div style="display:flex;align-items:center;gap:14px;width:min(460px,100%)">
+            <span style="flex:none;width:52px;height:52px;border-radius:16px;background:#EFF6FF;display:grid;place-items:center;color:#2464EC"><span class="mn-ico mn-ico-file" aria-hidden="true" style="width:26px;height:26px;color:currentColor"></span></span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
+              <span dir="auto" style="font-size:17px;font-weight:800;color:#070B1A;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ docName }}</span>
+              <span style="font-size:13px;color:#64748B;font-weight:700">{{ docMeta }}</span>
+            </span>
+          </div>
+          <div style="width:min(460px,100%);height:10px;border-radius:999px;background:#E9EEFA;overflow:hidden"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#2464EC,#4FD1FF);width:{{ uploadPct }};transition:width .12s linear"></div></div>
+          <span style="display:inline-flex;align-items:center;gap:8px;font-size:14px;color:#64748B;font-weight:700"><span style="width:14px;height:14px;border:2px solid #C7D5F5;border-top-color:#2464EC;border-radius:50%;animation:mlSpin .8s linear infinite"></span>{{ uploadMsg }}</span>
+          <button type="button" sc-camel-on-click="{{ cancelUpload }}" style="background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:9px 22px;font-weight:800;font-size:14px;color:#475569" style-hover="background:#FEF2F2;border-color:#FECACA;color:#B91C1C">إلغاء</button>
         </div>
       </sc-if>
       </sc-if>
@@ -314,7 +376,7 @@
           <sc-if value="{{ segmenting }}" hint-placeholder-val="{{ false }}">
             <div style="position:absolute;left:0;right:0;height:80px;background:linear-gradient(180deg,transparent,rgba(36,100,236,.12),transparent);animation:mlScan 2.6s linear infinite;pointer-events:none"></div>
           </sc-if>
-          <textarea value="{{ editText }}" sc-camel-on-change="{{ onEditText }}" rows="14" dir="rtl" style="width:100%;margin:0;font-family:'ThmanyahText',serif;font-size:19px;line-height:2.1;color:#1E293B;background:#F8FAFF;border:1px solid #C7D5F5;border-radius:14px;padding:12px 14px;resize:vertical;outline:none;box-sizing:border-box" style-focus="border-color:#2464EC;box-shadow:0 0 0 3px rgba(36,100,236,.12)"></textarea>
+          <textarea value="{{ editText }}" sc-camel-on-change="{{ onEditText }}" rows="9" dir="rtl" style="width:100%;margin:0;font-family:'ThmanyahText',serif;font-size:19px;line-height:2.1;color:#1E293B;background:#F8FAFF;border:1px solid #C7D5F5;border-radius:14px;padding:12px 14px;resize:vertical;outline:none;box-sizing:border-box" style-focus="border-color:#2464EC;box-shadow:0 0 0 3px rgba(36,100,236,.12)"></textarea>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px">
             <span style="font-size:13px;color:#64748B;font-weight:700">{{ editHint }}</span>
             <button sc-camel-on-click="{{ resegment }}" style="display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:10px 20px;font-weight:800;font-size:14.5px;background:{{ resegmentBg }};color:#fff;box-shadow:{{ resegmentShadow }};transition:all .2s">إعادة التقطيع <span>↻</span></button>
@@ -718,12 +780,15 @@ class Component extends DCLogic {
   expand(list) {
     if (list.__x) return list.__x;
     const out = [];
-    for (const s of list) {
+    for (const raw of list) {
+      // كل ما تقرؤه الصفحة من الوحدة نصوص؛ الحقل الغائب فارغ لا undefined
+      const s = { ...raw, ar: raw.ar || '', en: raw.en || '' };
       if (s.k === 'aya' || s.k === 'hadith') {
         const ar = s.ar.match(/^([^﴿«]*?[:：])\s*(.+)$/), en = s.en.match(/^(.*?\b(?:says|said):)\s*(.+)$/);
-        if (ar && en) {
-          out.push({ k: 'text', gen: true, lead: true, part: s.part, ar: ar[1], en: en[1], meta: 'صيغة الإسناد — صياغة مُنير', conf: '99%' });
-          out.push({ ...s, ar: ar[2], en: en[2] });
+        // «قال الله تعالى:» وحدة مستقلة عن الآية؛ وإن لم تُترجم الوحدة بعد يُفصل العربي وحده
+        if (ar && (en || !s.en)) {
+          out.push({ k: 'text', gen: true, lead: true, part: s.part, ar: ar[1], en: en ? en[1] : '', meta: 'صيغة الإسناد — صياغة مُنير', conf: '99%' });
+          out.push({ ...s, ar: ar[2], en: en ? en[2] : '' });
           continue;
         }
       }
@@ -753,8 +818,10 @@ class Component extends DCLogic {
       else this.setState({ langsLoaded: true });
     }).catch(() => {});
     if (this.props.startScreen === 'app') this.setState({ screen: 'app' });
+    for (const [type, fn] of this.dragListeners()) window.addEventListener(type, fn);
   }
-  componentWillUnmount() { this.clearTimers(); }
+  componentWillUnmount() { for (const [type, fn] of this.dragListeners()) window.removeEventListener(type, fn); clearTimeout(this.dragWatch); this.clearTimers(); }
+  dragListeners() { return [['dragenter', this.onWinDragEnter], ['dragover', this.onWinDragOver], ['dragleave', this.onWinDragLeave], ['drop', this.onWinDrop]]; }
 
   // ---- flow
   startApp = () => this._startAppDisabled();
@@ -794,9 +861,68 @@ class Component extends DCLogic {
     this.sendReal(null, this.state.pasteText);
   };
   pickFile = () => {
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.docx';
-    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.sendReal(f, null); };
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.acceptFile(f); };
     inp.click();
+  };
+  // السحب والإفلات على منطقة الرفع؛ الملف يُفحص قبل إرساله
+  acceptFile(f) {
+    if (!/\.docx$/i.test(f.name || '')) { this.setState({ dragging: false, error: 'صيغة «' + f.name + '» غير مدعومة — ارفع ملف Word بصيغة DOCX' }); return; }
+    this.setState({ dragging: false, error: '' }); this.sendReal(f, null);
+  }
+  // السحب والإفلات على الصفحة كلها: ملف يُسحب فوق شاشة الرفع يُظهر طبقة «أفلت الملف»، وإفلاته في أي مكان يرفعه.
+  // في غير شاشة الرفع يُمنع الإفلات فقط حتى لا يفتح المتصفح الملف ويغادر الصفحة.
+  draggingFiles(e) { return !!(e.dataTransfer && [...(e.dataTransfer.types || [])].includes('Files')); }
+  canDropFile() { const S = this.state; return S.step === 0 && !S.uploading && S.mode !== 'create'; }
+  onWinDragEnter = (e) => {
+    if (!this.draggingFiles(e)) return;
+    e.preventDefault();
+    this.dragDepth = (this.dragDepth || 0) + 1;
+    if (this.canDropFile() && !this.state.dragging) this.setState({ dragging: true });
+  };
+  onWinDragOver = (e) => {
+    if (!this.draggingFiles(e)) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = this.canDropFile() ? 'copy' : 'none';
+    // المتصفح يرسل dragover باستمرار ما دام الملف فوق الصفحة؛ إن انقطع (Esc أو إفلات خارجها) تُخفى الطبقة
+    clearTimeout(this.dragWatch);
+    this.dragWatch = setTimeout(() => this.endDrag(), 300);
+  };
+  endDrag() { this.dragDepth = 0; clearTimeout(this.dragWatch); if (this.state && this.state.dragging) this.setState({ dragging: false }); }
+  onWinDragLeave = (e) => {
+    if (!this.draggingFiles(e)) return;
+    this.dragDepth = Math.max(0, (this.dragDepth || 0) - 1);
+    if (!this.dragDepth) this.endDrag();
+  };
+  onWinDrop = (e) => {
+    if (!this.draggingFiles(e)) return;
+    e.preventDefault();
+    this.endDrag();
+    const f = e.dataTransfer.files && e.dataTransfer.files[0];
+    if (!f || !this.canDropFile()) return;
+    this.setState({ pasteOpen: false });
+    this.acceptFile(f);
+  };
+  // «جرّبه الآن»: الملف التجريبي نفسه يمر بمسار الرفع العادي
+  trySample = () => {
+    fetch('/assets/samples/moneer-sample-khutbah.docx').then(r => { if (!r.ok) throw new Error(); return r.blob(); })
+      .then(blob => this.acceptFile(new File([blob], 'ملف تجريبي.docx', { type: blob.type })))
+      .catch(() => this.setState({ error: 'تعذّر تحميل الملف التجريبي.' }));
+  };
+  // خادم MCP للمحتوى الإسلامي (mcp.islamiccontent.org)
+  MCP_URL = 'https://mcp.islamiccontent.org/mcp';
+  copyText(key, text) {
+    const done = () => { this.setState({ copied: key }); this.later(() => { if (this.state.copied === key) this.setState({ copied: '' }); }, 1800); };
+    if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(done, () => this.copyFallback(text, done)); }
+    else this.copyFallback(text, done);
+  }
+  copyFallback(text, done) {
+    const area = document.createElement('textarea'); area.value = text; area.setAttribute('readonly', ''); area.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(area); area.select(); try { document.execCommand('copy'); done(); } catch (e) {} area.remove();
+  }
+  cancelUpload = () => {
+    if (this.xhr) { const x = this.xhr; this.xhr = null; x.abort(); }
+    this.clearTimers(); this.setState({ uploading: false, upload: 0, srvStage: '', srvPct: 0, error: '' });
   };
   // الرفعُ الحقيقيّ: XHR ليقودَ شريطُ التقدّمِ بتقدّمِ الرفعِ الفعليّ، ثم تنتظرُ الواجهةُ
   // عندَ 100% («اكتمل الرفع — يبدأ التحليل») ريثما يقطّع الخادمُ ويصنّف.
@@ -804,17 +930,20 @@ class Component extends DCLogic {
     this.clearTimers();
     const name = file ? file.name : (keepName && this.state.docName ? this.state.docName : 'نص ملصق');
     // إعادةُ التقطيعِ من النصِّ المعدَّل: يعود المصدرُ نصّاً ويُحفَظ النصُّ المعدَّلُ في مربّعِ اللصق
-    this.setState({ uploading: true, upload: 0, srvStage: '', srvPct: 0, docName: name, sourceKind: file ? 'file' : 'text', pasteText: file ? this.state.pasteText : text, editText: null, step: 0, revealed: 0, real: null, realMeta: null, error: '' });
+    this.setState({ uploading: true, upload: 0, srvStage: '', srvPct: 0, docName: name, docSize: file ? file.size : 0, sourceKind: file ? 'file' : 'text', pasteText: file ? this.state.pasteText : text, editText: null, step: 0, revealed: 0, real: null, realMeta: null, error: '' });
     const fd = new FormData(); if (file) fd.append('file', file); else fd.append('text', text);
-    const xhr = new XMLHttpRequest(); xhr.open('POST', '/api/segment/');
+    const xhr = new XMLHttpRequest(); this.xhr = xhr; xhr.open('POST', '/api/segment/');
     xhr.upload.onprogress = (e) => { if (e.lengthComputable) this.setState({ upload: Math.min(99, Math.round(e.loaded / e.total * 100)) }); };
     xhr.upload.onload = () => this.setState({ upload: 100 });
-    xhr.onerror = () => this.setState({ uploading: false, error: 'تعذّر الاتصال بالخادم.' });
+    xhr.onerror = () => { if (this.xhr === xhr) this.setState({ uploading: false, error: 'تعذّر الاتصال بالخادم.' }); };
     xhr.onload = () => {
+      if (this.xhr !== xhr) return; // أُلغي الرفع
+      this.xhr = null;
       let r = null; try { r = JSON.parse(xhr.responseText); } catch (e) {}
       if (xhr.status !== 200 || !r || !r.segments) { this.setState({ uploading: false, error: (r && r.error) || ('خطأ من الخادم (' + xhr.status + ')') }); return; }
       if (!r.segments.length) { this.setState({ uploading: false, error: 'لم يُعثر على نصٍّ قابلٍ للتقطيع.' }); return; }
-      this.setState({ upload: 100, real: r.segments, realMeta: r, docName: file ? (r.title || name) : name });
+      // كل وحدة تحمل en نصاً (ولو فارغاً) فلا تتعطّل الصفحة إن غاب من الرد
+      this.setState({ upload: 100, real: r.segments.map(seg => ({ ...seg, en: seg.en || '' })), realMeta: r, docName: file ? (r.title || name) : name });
       if (r.doc_id) history.replaceState(null, '', '/classify/documents/' + r.doc_id + '/');
       this.later(() => this.beginSegment(), 500);
     };
@@ -918,7 +1047,7 @@ class Component extends DCLogic {
     const tagCounts = Object.keys(T).map(k => ({ label: T[k].tag, color: T[k].color, count: k === 'term' ? shownSegs.reduce((n, s) => n + (s.terms || []).length, 0) : shownSegs.filter(s => s.k === k || (k === 'text' && s.k === 'term')).length }));
     const matchRows = segs.map((s, i) => {
       const st = S.match[i] || 0, ai = s.k === 'text', done = st === 2, busy = st === 1;
-      const en = ai ? s.en.slice(0, S.matchTyped[i] || 0) : (done ? s.en : '');
+      const en = ai ? (s.en || '').slice(0, S.matchTyped[i] || 0) : (done ? s.en || '' : '');
       const showTermMap = done && s.k === 'term' && !!s.terms;
       const split = (text, list, keyPrefix) => { const out = []; let rest = text; list.forEach((t, j) => { const at = rest.indexOf(t.w); if (at < 0) return; if (at > 0) out.push({ text: rest.slice(0, at), isPlainText: true }); const key = 'm' + i + ':' + j; out.push({ text: t.w, isTerm: true, en: t.en, def: t.def, hovered: S.hoverKey === key, bg: S.hoverKey === key ? '#FDE2B8' : '#FFF7ED', onEnter: (e) => this.hoverTerm(e, key, t), onLeave: () => this.setState({ hoverKey: null, tip: null }) }); rest = rest.slice(at + t.w.length); }); if (rest) out.push({ text: rest, isPlainText: true }); return out; };
       const enTerms = (s.terms || []).map(t => { const m = s.en.match(new RegExp(t.en.toLowerCase() + '(\\s*\\([^)]*\\))?')); return { ...t, w: m ? m[0] : t.en.toLowerCase() }; });
@@ -988,9 +1117,9 @@ class Component extends DCLogic {
       startApp: this.startApp, goLanding: this.goLanding,
       goTranslate: this.goTranslate, langOpen: !!S.langOpen, toggleLangs: () => this.setState({ langOpen: !this.state.langOpen, langQuery: '' }), langQuery: S.langQuery || '', onLangSearch: (e) => this.setState({ langQuery: e.target.value }), restart: this.restart, pickFile: this.pickFile,
       toMatching: this.toMatching, toReview: this.toReview, toExport: this.toExport, doExport: this.doExport,
-      fileLabel: S.step === 0 ? 'مشروع جديد' : (create ? S.ctype + ' عن الصبر → ' : ((S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'خطبة الصبر.docx')) + ' → ')) + this.target(),
-      sourcePanelTitle: S.sourceKind === 'text' ? 'النص الأصلي' : 'الملف الأصلي', sourceName: S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'خطبة الصبر.docx'),
-      docName: S.docName || 'خطبة الصبر.docx', hasError: !!S.error, errorMsg: S.error || '', hasReal: !!S.real,
+      fileLabel: S.step === 0 ? 'مشروع جديد' : (create ? S.ctype + ' عن الصبر → ' : ((S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'ملف تجريبي.docx')) + ' → ')) + this.target(),
+      sourcePanelTitle: S.sourceKind === 'text' ? 'النص الأصلي' : 'الملف الأصلي', sourceName: S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'ملف تجريبي.docx'),
+      docName: S.docName || 'ملف تجريبي.docx', hasError: !!S.error, errorMsg: S.error || '', hasReal: !!S.real,
       editText: S.editText != null ? S.editText : (S.real ? (S.sourceKind === 'text' ? (S.pasteText || '') : S.real.map(s => s.ar).join('\n')) : ''),
       onEditText: (e) => this.setState({ editText: e.target.value }),
       resegment: () => { const t = (S.editText != null ? S.editText : (S.sourceKind === 'text' ? (S.pasteText || '') : (S.real || []).map(s => s.ar).join('\n'))).trim(); if (t) this.sendReal(null, t, true); },
@@ -1002,7 +1131,14 @@ class Component extends DCLogic {
       downloadJson: () => { const m = S.realMeta; if (m) window.open(m.json_url, '_blank'); },
       downloadXlsx: () => { const m = S.realMeta; if (m) window.open(m.xlsx_url, '_blank'); },
       warnCount: segs.filter(s => s.warn).length, hasWarn: segs.some(s => s.warn),
-      pasteOpen: !!S.pasteOpen, pasteClosed: !S.pasteOpen, openPaste: () => this.setState({ pasteOpen: true }), closePaste: () => this.setState({ pasteOpen: false }),
+      pasteOpen: !!S.pasteOpen, pasteClosed: !S.pasteOpen, openPaste: () => this.setState({ pasteOpen: true, error: '' }), closePaste: () => this.setState({ pasteOpen: false, error: '' }),
+      modeFileSel: S.pasteOpen ? 'false' : 'true', modeTextSel: S.pasteOpen ? 'true' : 'false',
+      modeFileBg: S.pasteOpen ? 'transparent' : '#2464EC', modeFileFg: S.pasteOpen ? '#475569' : '#fff', modeTextBg: S.pasteOpen ? '#2464EC' : 'transparent', modeTextFg: S.pasteOpen ? '#fff' : '#475569',
+      dropTitle: S.dragging ? 'أفلت الملف لرفعه' : (window.matchMedia && matchMedia('(hover: none)').matches ? 'اختر ملف Word من جهازك' : 'اسحب ملف Word هنا أو انقر للاختيار'), dropBg: S.dragging ? '#EFF6FF' : '#fff', dropBorder: S.dragging ? '#2464EC' : '#B9C8EE', dropLift: S.dragging ? 'translateY(-6px) scale(1.04)' : 'none',
+      cancelUpload: this.cancelUpload, trySample: this.trySample, isDragging: !!S.dragging,
+      copyMcpUrl: () => this.copyText('url', this.MCP_URL), mcpUrlCopyLabel: S.copied === 'url' ? 'نُسخ ✓' : 'نسخ',
+      langExpanded: S.langOpen ? 'true' : 'false', langChevron: S.langOpen ? '180deg' : '0deg',
+      docMeta: S.sourceKind === 'text' ? 'نص ملصق · ' + ((S.pasteText || '').trim().split(/\s+/).filter(Boolean).length) + ' كلمة' : (S.docSize ? (S.docSize >= 1048576 ? (S.docSize / 1048576).toFixed(1) + ' م.ب' : Math.max(1, Math.round(S.docSize / 1024)) + ' ك.ب') + ' · ملف Word' : 'ملف Word'),
       pasteText: S.pasteText || '', onPasteText: (e) => this.setState({ pasteText: e.target.value }), pasteSample: () => this.setState({ pasteText: this.SAMPLE_TEXT }),
       pasteCount: (S.pasteText || '').trim() ? (S.pasteText.trim().split(/\s+/).length) : 0, submitPaste: this.submitPaste,
       pasteBtnBg: (S.pasteText || '').trim() ? '#2464EC' : '#CBD5E1', pasteBtnShadow: (S.pasteText || '').trim() ? '0 8px 22px rgba(36,100,236,.35)' : 'none', pasteCursor: (S.pasteText || '').trim() ? 'pointer' : 'not-allowed',

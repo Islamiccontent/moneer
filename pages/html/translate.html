@@ -159,7 +159,7 @@
           <span style="width:84px;height:84px;border-radius:26px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;font-size:36px;box-shadow:0 14px 34px rgba(36,100,236,.35);animation:mlFloat 4s ease-in-out infinite">⇧</span>
           <span style="font-size:22px;font-weight:800;color:#070B1A">اسحب الملف هنا أو انقر للاختيار</span>
           <span style="font-size:14.5px;color:#64748B;font-weight:600">DOCX · DOC · PDF — حتى 50 ميجابايت</span>
-          <span style="margin-top:10px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px">اختيار ملف تجريبي: خطبة الصبر.docx</span>
+          <span style="margin-top:10px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px">اختيار ملف تجريبي</span>
         </button>
         <a href="/translate/documents/" style="display:block;text-align:center;margin-top:16px;color:#2464EC;font-weight:800;font-size:14px;text-decoration:none">تصفح المحتوى المحفوظ بمراحله ←</a>
         <div style="display:flex;align-items:center;gap:14px;color:#94A3B8;font-size:13px;font-weight:800"><span style="flex:1;height:1px;background:#E3E8F4"></span>أو<span style="flex:1;height:1px;background:#E3E8F4"></span></div>
@@ -363,7 +363,7 @@
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <sc-for list="{{ matchRows }}" as="r" hint-placeholder-count="6">
-          <div data-m="match-row" style="background:#fff;border:1px solid #E3E8F4;border-radius:18px;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:18px;align-items:center;opacity:{{ r.opacity }};transition:opacity .4s;box-shadow:0 2px 10px rgba(7,11,26,.04)">
+          <div data-m="match-row" data-kind="{{ r.k }}" style="background:#fff;border:1px solid #E3E8F4;border-radius:18px;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:18px;align-items:center;opacity:{{ r.opacity }};transition:opacity .4s;box-shadow:0 2px 10px rgba(7,11,26,.04)">
             <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
               <span style="align-self:flex-start;font-size:11.5px;font-weight:800;color:{{ r.color }};background:{{ r.bg }};border-radius:7px;padding:2px 9px">{{ r.tag }}</span>
               <span style="font-family:'ThmanyahText',serif;font-size:17px;line-height:1.7;color:#0F172A"><sc-if value="{{ r.plainAr }}" hint-placeholder-val="{{ true }}">{{ r.ar }}</sc-if><sc-if value="{{ r.showTermMap }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ r.arParts }}" as="ap" hint-placeholder-count="1"><sc-if value="{{ ap.isTerm }}" hint-placeholder-val="{{ false }}"><span sc-camel-on-mouse-enter="{{ ap.onEnter }}" sc-camel-on-mouse-leave="{{ ap.onLeave }}" style="position:relative;display:inline-block;color:#047857;background:{{ ap.bg }};border-bottom:2px dotted #0E9F6E;border-radius:4px;padding:0 3px;cursor:help;transition:background .2s">{{ ap.text }}</span></sc-if><sc-if value="{{ ap.isPlainText }}" hint-placeholder-val="{{ true }}"><span>{{ ap.text }}</span></sc-if></sc-for></sc-if></span>
@@ -391,9 +391,42 @@
         </div>
         <span style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:800;color:#0F172A">اعتُمد <span style="color:#2464EC">{{ reviewedCount }}</span> من <span>{{ totalCount }}</span></span>
       </div>
+      <!-- التدقيق الذكي: قواعد آلية ثم نموذج، بنتيجة لكل جملة (تطبيق audit) -->
+      <div data-m="audit-panel" style="background:#fff;border:1px solid #E3E8F4;border-radius:20px;padding:16px 20px;display:flex;flex-direction:column;gap:12px;animation:mlIn .5s ease both">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 280px">
+            <span style="flex:none;width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center"><span class="mn-ico mn-ico-sparkle" aria-hidden="true" style="width:22px;height:22px;color:#fff"></span></span>
+            <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
+              <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:16px;font-weight:800;color:#070B1A">التدقيق الذكي</span><span style="border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:800;background:#FFF4DB;color:#8A5A00;border:1px solid #F5DFA8;white-space:nowrap">تشغيل تجريبي</span></span>
+              <span style="font-size:13px;color:#64748B;font-weight:600;line-height:1.7">{{ auditSubtitle }}</span>
+            </span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <sc-if value="{{ auditCanStart }}" hint-placeholder-val="{{ true }}"><button type="button" sc-camel-on-click="{{ startAudit }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 18px;font-weight:800;font-size:13.5px;white-space:nowrap;border:0;background:#2464EC;color:#fff;box-shadow:0 8px 20px rgba(36,100,236,.25)" style-hover="background:#1B4FC4"><span class="mn-ico mn-ico-sparkle" aria-hidden="true" style="width:16px;height:16px;color:#fff"></span>{{ auditStartLabel }}</button></sc-if>
+            
+          </div>
+        </div>
+        <sc-if value="{{ auditRunning }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="height:8px;border-radius:999px;background:#E9EEFA;overflow:hidden"><div style="height:100%;border-radius:999px;background:linear-gradient(90deg,#2464EC,#4FD1FF);width:{{ auditPct }};transition:width .4s ease"></div></div>
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#64748B;font-weight:700"><span style="width:14px;height:14px;border:2px solid #C7D5F5;border-top-color:#2464EC;border-radius:50%;animation:mlSpin .8s linear infinite"></span>{{ auditProgressText }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ auditHasError }}" hint-placeholder-val="{{ false }}">
+          <div role="alert" style="display:flex;align-items:flex-start;gap:8px;background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;border-radius:12px;padding:10px 14px;font-size:13.5px;font-weight:700"><span class="mn-ico mn-ico-alert" aria-hidden="true" style="width:18px;height:18px;color:#DC2626;margin-top:1px"></span>{{ auditError }}</div>
+        </sc-if>
+        <sc-if value="{{ auditHasResults }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ auditVerdicts }}" as="av" hint-placeholder-count="3"><span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800;background:{{ av.bg }};color:{{ av.fg }}">{{ av.label }}<span style="background:#fff;border-radius:999px;padding:0 8px;min-width:22px;text-align:center">{{ av.count }}</span></span></sc-for>
+            </div>
+            <button type="button" aria-pressed="{{ auditOnlyIssuesPressed }}" sc-camel-on-click="{{ toggleAuditFilter }}" style="display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 18px;font-weight:800;font-size:13.5px;white-space:nowrap;border:1px solid {{ auditFilterBorder }};background:{{ auditFilterBg }};color:{{ auditFilterFg }}">{{ auditFilterLabel }}</button>
+          </div>
+        </sc-if>
+      </div>
       <div style="display:flex;flex-direction:column;gap:10px">
         <sc-for list="{{ reviewRows }}" as="v" hint-placeholder-count="6">
-          <div data-m="review-row" style="background:#fff;border:1px solid {{ v.border }};border-radius:18px;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;box-shadow:0 2px 10px rgba(7,11,26,.04);transition:border .3s">
+          <div data-m="review-row" data-kind="{{ v.k }}" style="background:#fff;border:1px solid {{ v.border }};border-radius:18px;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;box-shadow:0 2px 10px rgba(7,11,26,.04);transition:border .3s">
             <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
               <div style="display:flex;gap:8px;align-items:center"><span style="font-size:11.5px;font-weight:800;color:{{ v.color }};background:{{ v.bg }};border-radius:7px;padding:2px 9px">{{ v.tag }}</span><span style="font-size:12px;color:#64748B;font-weight:600">{{ v.meta }}</span></div>
               <span style="font-family:'ThmanyahText',serif;font-size:17px;line-height:1.7;color:#0F172A"><sc-if value="{{ v.plainAr }}" hint-placeholder-val="{{ true }}">{{ v.ar }}</sc-if><sc-if value="{{ v.arHasTerms }}" hint-placeholder-val="{{ false }}"><sc-for list="{{ v.arParts }}" as="ap" hint-placeholder-count="1"><sc-if value="{{ ap.isTerm }}" hint-placeholder-val="{{ false }}"><span sc-camel-on-mouse-enter="{{ ap.onEnter }}" sc-camel-on-mouse-leave="{{ ap.onLeave }}" style="position:relative;display:inline-block;color:{{ ap.fg }};background:{{ ap.bg }};border-bottom:2px dotted {{ ap.line }};border-radius:4px;padding:0 3px;cursor:help;transition:background .2s">{{ ap.text }}</span></sc-if><sc-if value="{{ ap.isPlainText }}" hint-placeholder-val="{{ true }}"><span>{{ ap.text }}</span></sc-if></sc-for></sc-if></span>
@@ -419,6 +452,32 @@
                 </div>
               </sc-if>
             </div>
+            <sc-if value="{{ v.hasAudit }}" hint-placeholder-val="{{ false }}">
+              <div data-m="audit-result" style="grid-column:1/-1;border-top:1px dashed #E3E8F4;padding-top:12px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                  <span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:800;background:{{ v.auditBg }};color:{{ v.auditFg }}">{{ v.auditVerdict }}</span>
+                  <span style="flex:1;min-width:180px;font-size:13.5px;line-height:1.7;color:#475569;font-weight:600">{{ v.auditSummary }}</span>
+                  <sc-if value="{{ v.auditHasFindings }}" hint-placeholder-val="{{ false }}"><button type="button" aria-expanded="{{ v.auditExpanded }}" sc-camel-on-click="{{ v.toggleAudit }}" style="display:inline-flex;align-items:center;gap:6px;border:1px solid #E3E8F4;background:#fff;border-radius:999px;padding:5px 12px;font-weight:800;font-size:12.5px;color:#0F172A" style-hover="background:#F5F7FC">{{ v.auditToggleLabel }}<span class="mn-ico mn-ico-chevron" aria-hidden="true" style="width:14px;height:14px;color:#94A3B8;transform:rotate({{ v.auditChevron }});transition:transform .2s"></span></button></sc-if>
+                </div>
+                <sc-if value="{{ v.auditOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <sc-for list="{{ v.auditFindings }}" as="af" hint-placeholder-count="2">
+                      <div style="background:#F8FAFF;border:1px solid #E3E8F4;border-inline-start:4px solid {{ af.color }};border-radius:12px;padding:10px 14px;display:flex;flex-direction:column;gap:6px">
+                        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                          <span style="border-radius:7px;padding:2px 9px;font-size:11.5px;font-weight:800;background:{{ af.bg }};color:{{ af.color }}">{{ af.severity }}</span>
+                          <span style="font-size:13.5px;font-weight:800;color:#0F172A">{{ af.type }}</span>
+                          <sc-if value="{{ af.sharia }}" hint-placeholder-val="{{ false }}"><span style="border-radius:7px;padding:2px 9px;font-size:11.5px;font-weight:800;background:#F3E8FF;color:#7C3AED">حساسية شرعية</span></sc-if>
+                          <span style="font-size:11.5px;font-weight:700;color:#94A3B8">{{ af.meta }}</span>
+                        </div>
+                        <sc-if value="{{ af.hasExplanation }}" hint-placeholder-val="{{ true }}"><span style="font-size:13.5px;line-height:1.8;color:#334155;font-weight:600">{{ af.explanation }}</span></sc-if>
+                        <sc-if value="{{ af.hasFix }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;font-weight:800;color:#047857">اقتراح</span><span dir="auto" style="text-align:start;font-size:13.5px;line-height:1.7;color:#0F172A;font-weight:600;background:#ECFDF5;border:1px solid #A7F3D0;border-radius:10px;padding:6px 10px">{{ af.fix }}</span></div></sc-if>
+                        <sc-if value="{{ af.hasAction }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;line-height:1.7;color:#64748B;font-weight:700">المطلوب: {{ af.action }}</span></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
           </div>
         </sc-for>
       </div>
@@ -612,7 +671,7 @@
               </button>
             </sc-for>
           </div>
-          <button sc-camel-on-click="{{ doFileExport }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#2464EC,#3B82F6);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:800;font-size:18px;box-shadow:0 12px 32px rgba(36,100,236,.4);opacity:{{ exportOpacity }}" style-hover="transform:translateY(-2px)">{{ exportLabel }} <span>⇩</span></button>
+          <button sc-camel-on-click="{{ doFileExport }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#2464EC,#3B82F6);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:800;font-size:18px;box-shadow:0 12px 32px rgba(36,100,236,.4);opacity:{{ exportOpacity }};cursor:{{ exportCursor }}" style-hover="transform:translateY(-2px)"><sc-if value="{{ exportBusy }}" hint-placeholder-val="{{ false }}"><span data-m="export-spinner" aria-hidden="true" style="width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:mlSpin .8s linear infinite"></span></sc-if>{{ exportLabel }}<sc-if value="{{ exportIdle }}" hint-placeholder-val="{{ true }}"> <span>⇩</span></sc-if></button>
         </div>
         <!-- preview -->
         <div style="background:#fff;border:1px solid #E3E8F4;border-radius:20px;padding:26px;box-shadow:0 20px 50px rgba(7,11,26,.08);display:flex;flex-direction:column;gap:14px">
@@ -764,7 +823,7 @@ class Component extends DCLogic {
       else this.setState({ langsLoaded: true });
     }).catch(() => {});
   }
-  componentWillUnmount() { window.removeEventListener('scroll', this.onScroll); this.clearTimers(); }
+  componentWillUnmount() { clearTimeout(this.auditTimer); window.removeEventListener('scroll', this.onScroll); this.clearTimers(); }
 
   // ---- flow
   startApp = () => this._startAppDisabled();
@@ -828,6 +887,7 @@ class Component extends DCLogic {
       this.docId = data.doc_id;
       this.segments = data.segments;
       this.translationId = data.translation_id || null;
+      this.loadAudit();
       const savedApproved = {}; this.expand(data.segments).forEach((x, j) => { if (x.approved) savedApproved[j] = true; });
       this.setState({ uploading: false, mode: 'upload', sourceKind: data.source_file_name ? 'file' : 'text', pasteText: data.source_file_name ? '' : data.segments.map(s => s.ar).join(' '), srcName: data.title || '', target: data.target_language || this.state.target, targetIso: data.target_iso || '', real: data.segments, realMeta: data, editText: null, approved: savedApproved, edits: {} });
       if (data.segments.some(s => s.en)) {
@@ -884,6 +944,7 @@ class Component extends DCLogic {
         if (!data || !data.segments) { alert('تعذّرت الترجمة'); return; }
         this.segments = data.segments;
         this.translationId = data.translation_id || null;
+        this.loadAudit();
         this.setState({ real: data.segments, approved: {} }, () => this.setState({ match: this.segs().map(() => 2), matchTyped: this.segs().map(s => (s.en || '').length) }));
       }).catch(() => { this.setState({ translating: false }); alert('تعذّر الاتصال بالخادم'); });
     };
@@ -930,6 +991,100 @@ class Component extends DCLogic {
     const rows = field.rows; field.rows = 1; const need = Math.max(2, Math.ceil((field.scrollHeight - pad) / line)); field.rows = rows;
     const grow = this.state.grow || {};
     this.setState({ grow: grow[i] === need ? grow : { ...grow, [i]: need }, tip: null, hoverKey: null });
+  }
+  // ---- التدقيق الذكي (تطبيق audit): أحدث تدقيق للترجمة، وطلب تدقيق جديد، ومتابعة تقدّمه
+  AUDIT_VERDICTS = { 'مقبول': ['#ECFDF5', '#047857'], 'يحتاج مراجعة': ['#FFF7ED', '#B45309'], 'مرفوض': ['#FEF2F2', '#B91C1C'] };
+  AUDIT_SEVERITIES = { 'حرج': ['#FEF2F2', '#DC2626'], 'كبير': ['#FFF7ED', '#EA580C'], 'متوسط': ['#FFFBEB', '#B45309'], 'بسيط': ['#F1F5F9', '#64748B'] };
+  // العدد والمعدود: 1 ملاحظة واحدة، 2 ملاحظتان، 3–10 ملاحظات، 11+ ملاحظة
+  countAr(n, [one, two, few, many]) { return n === 1 ? one : n === 2 ? two : (n % 100 >= 3 && n % 100 <= 10 ? n + ' ' + few : n + ' ' + many); }
+  loadAudit() {
+    const tid = this.translationId;
+    if (!tid) { this.setState({ audit: null }); return; }
+    fetch('/api/audit/translations/' + tid + '/').then(r => r.ok ? r.json() : null).then(data => {
+      if (this.translationId !== tid) return;
+      const job = data && data.job;
+      this.setState({ audit: job || null, auditError: '' });
+      if (job && !job.finished) this.pollAudit(job.job_id);
+    }).catch(() => {});
+  }
+  startAudit = () => {
+    const tid = this.translationId;
+    if (!tid || this.state.auditStarting) return;
+    this.setState({ auditStarting: true, auditError: '', auditOpen: {} });
+    const fd = new FormData(); fd.append('translation_id', tid);
+    fetch('/api/audit/run/', { method: 'POST', body: fd })
+      .then(r => r.json().catch(() => ({})).then(data => ({ ok: r.ok, status: r.status, data })))
+      .then(({ ok, status, data }) => {
+        this.setState({ auditStarting: false });
+        if (status === 409) { this.loadAudit(); return; }
+        if (!ok) { this.setState({ auditError: data.error || 'تعذّر بدء التدقيق.' }); return; }
+        this.setState({ audit: { job_id: data.job_id, status: data.status, finished: false, counts: {}, progress: {} } });
+        this.pollAudit(data.job_id);
+      })
+      .catch(() => this.setState({ auditStarting: false, auditError: 'تعذّر الاتصال بالخادم.' }));
+  };
+  pollAudit(jobId) {
+    clearTimeout(this.auditTimer);
+    const tick = () => fetch('/api/audit/jobs/' + jobId + '/?rows=0').then(r => r.ok ? r.json() : null).then(data => {
+      const job = data && data.job;
+      if (!job) return;
+      if (job.finished) {
+        return fetch('/api/audit/jobs/' + jobId + '/').then(r => r.json()).then(full => this.setState({ audit: full.job }));
+      }
+      this.setState({ audit: job });
+      this.auditTimer = setTimeout(tick, 2500);
+    }).catch(() => { this.auditTimer = setTimeout(tick, 5000); });
+    tick();
+  }
+  auditByPhrase() {
+    const job = this.state.audit;
+    if (!job || !job.rows) return null;
+    if (this._auditJob !== job) { this._auditJob = job; this._auditMap = new Map(job.rows.map(r => [String(r.phrase_id), r])); }
+    return this._auditMap;
+  }
+  auditRowVals(s, i) {
+    const map = this.auditByPhrase(), row = map && !s.lead && s.id != null ? map.get(String(s.id)) : null;
+    if (!row) return { hasAudit: false, auditFindings: [] };
+    const open = !!(this.state.auditOpen || {})[s.id], findings = row.findings || [];
+    const [bg, fg] = this.AUDIT_VERDICTS[row.verdict] || ['#F1F5F9', '#64748B'];
+    const verdict = row.verdict || (row.status === 'skipped' ? 'مستبعد' : row.status === 'failed' ? 'تعذّر الفحص' : row.status_label);
+    return {
+      hasAudit: true, auditVerdict: verdict, auditBg: bg, auditFg: fg,
+      auditSummary: row.summary || row.skip_reason || (findings.length ? '' : 'لا ملاحظات على هذه الجملة.'),
+      auditHasFindings: findings.length > 0, auditOpen: open, auditExpanded: open ? 'true' : 'false', auditChevron: open ? '180deg' : '0deg',
+      auditToggleLabel: (open ? 'إخفاء ' : 'عرض ') + this.countAr(findings.length, ['ملاحظة واحدة', 'ملاحظتين', 'ملاحظات', 'ملاحظة']),
+      toggleAudit: () => this.setState({ auditOpen: { ...(this.state.auditOpen || {}), [s.id]: !open } }),
+      auditIssue: row.verdict !== 'مقبول' || findings.length > 0,
+      auditFindings: findings.map(f => {
+        const [fbg, fcolor] = this.AUDIT_SEVERITIES[f.severity] || ['#F1F5F9', '#64748B'];
+        return { severity: f.severity || '—', bg: fbg, color: fcolor, type: f.type_name || f.category || 'ملاحظة', sharia: !!f.sharia_sensitive,
+          meta: [f.category, f.detection, f.confidence != null ? 'ثقة ' + f.confidence + '%' : '', f.source === 'rule' ? 'قاعدة آلية' : ''].filter(Boolean).join(' · '),
+          explanation: f.explanation || '', hasExplanation: !!f.explanation, fix: f.suggested_fix || '', hasFix: !!f.suggested_fix, action: f.required_action || '', hasAction: !!f.required_action };
+      }),
+    };
+  }
+  auditPanelVals() {
+    const S = this.state, job = S.audit, running = !!job && !job.finished, rows = (job && job.rows) || [];
+    const progressRows = (job && job.progress && job.progress.rows) || {};
+    const checked = (progressRows.done || 0) + (progressRows.failed || 0) + (progressRows.skipped || 0);
+    const total = (job && job.counts && job.counts.rows) || 0;
+    const verdicts = Object.keys(this.AUDIT_VERDICTS).map(label => ({ label, count: rows.filter(r => r.verdict === label).length, bg: this.AUDIT_VERDICTS[label][0], fg: this.AUDIT_VERDICTS[label][1] })).filter(v => v.count);
+    const failed = job && job.status === 'failed';
+    const subtitle = !job ? 'يفحص كل جملة بقواعد آلية ثم بنموذج ذكاء اصطناعي، ويصنّف كل ملاحظة بخطورتها وحساسيتها الشرعية. نتائجه إرشادية والقرار للمراجع.'
+      : running ? 'جارٍ تدقيق الترجمة؛ يمكنك متابعة المراجعة في أثناء ذلك.'
+      : failed ? 'تعذّر إكمال التدقيق.'
+      : 'آخر تدقيق: ' + (job.counts.findings ? this.countAr(job.counts.findings, ['ملاحظة واحدة', 'ملاحظتان', 'ملاحظات', 'ملاحظة']) : 'لا ملاحظات') + ' في ' + this.countAr(job.counts.rows || rows.length, ['جملة واحدة', 'جملتين', 'جمل', 'جملة']) + (job.status === 'partial' ? ' (مكتمل جزئياً)' : '') + (job.finished_at ? ' — ' + new Date(job.finished_at).toLocaleString('ar') : '') + '.';
+    const only = !!S.auditOnlyIssues;
+    return {
+      auditSubtitle: subtitle, auditRunning: running || !!S.auditStarting, auditCanStart: !job && !S.auditStarting && !!this.translationId,
+      auditStartLabel: 'ابدأ التدقيق', startAudit: this.startAudit,
+      auditPct: (total ? Math.round(checked / total * 100) : 5) + '%',
+      auditProgressText: S.auditStarting && !job ? 'جارٍ بدء التدقيق…' : (total ? 'فُحصت ' + checked + ' من ' + total + ' جملة' : 'جارٍ التحضير…'),
+      auditHasError: !!(S.auditError || (failed && job.error_message)), auditError: S.auditError || (job && job.error_message) || '',
+      auditHasResults: !!job && job.finished && rows.length > 0, auditVerdicts: verdicts,
+      auditOnlyIssuesPressed: only ? 'true' : 'false', toggleAuditFilter: () => this.setState({ auditOnlyIssues: !only }),
+      auditFilterLabel: only ? 'عرض كل الجمل' : 'ما يحتاج مراجعة فقط', auditFilterBg: only ? '#2464EC' : '#fff', auditFilterFg: only ? '#fff' : '#0F172A', auditFilterBorder: only ? '#2464EC' : '#E3E8F4',
+    };
   }
   approveRow = (i, on) => { const segs = this.segs(), s = segs[i]; if (!s) return; const idx = s.id ? segs.map((x, j) => j).filter(j => segs[j].id === s.id) : [i]; const mark = () => { const a = { ...this.state.approved }; idx.forEach(j => { a[j] = on; }); this.setState({ approved: a }); }; if (!this.translationId || !s.id) { mark(); return; } this.approving = this.approving || {}; if (this.approving[s.id]) return; this.approving[s.id] = true; const fd = new FormData(); fd.append('translation_id', this.translationId); fd.append('phrase_id', s.id); fd.append('approved', on ? '1' : '0'); fd.append('text', idx.map(j => this.state.edits[j] ?? segs[j].en).filter(Boolean).join(' ')); fetch('/api/translate/approve/', { method: 'POST', body: fd }).then(r => r.json().then(d => ({ ok: r.ok, d }))).then(({ ok, d }) => { if (!ok) { alert((d && d.error) || 'تعذّر حفظ الاعتماد'); return; } mark(); }).catch(() => alert('تعذّر الاتصال بالخادم')).finally(() => { delete this.approving[s.id]; }); };
   toReview = () => { this.setState({ step: 3 }); this.syncUrl(3); window.scrollTo(0, 0); };
@@ -1080,8 +1235,8 @@ class Component extends DCLogic {
           field.value = enText; field.blur();
           this.askWarn(steps, i, () => { apply(); setTimeout(() => { const f = document.querySelector('textarea[data-row=r' + i + ']'); if (f) { f.focus(); f.setSelectionRange(f.value.length, f.value.length); } }, 0); });
         },
-        onApprove: () => this.approveRow(i, !ok) };
-    });
+        onApprove: () => this.approveRow(i, !ok), ...this.auditRowVals(s, i) };
+    }).filter(row => !S.auditOnlyIssues || !S.audit || !S.audit.rows || row.auditIssue);
     const reviewedCount = segs.filter(s => s.locked !== undefined ? !!s.locked : s.k !== 'text').length + Object.values(S.approved).filter(Boolean).length;
     const pick = (key) => (v) => () => this.setState({ [key]: v });
     const formats = [['DOCX', true], ['XLSX', true], ['PDF', false], ['SRT', false], ['HTML', false], ['JSON', false]].map(([f, on]) => ({ label: f, soon: !on, title: on ? '' : 'قريباً', onPick: on ? pick('fmt')(f) : () => {}, border: S.fmt === f ? '#2464EC' : '#E3E8F4', bg: S.fmt === f ? '#2464EC' : '#fff', fg: S.fmt === f ? '#fff' : '#0F172A', opacity: on ? 1 : .45, cursor: on ? 'pointer' : 'not-allowed' }));
@@ -1142,9 +1297,9 @@ class Component extends DCLogic {
       notUploading: !S.uploading, uploading: S.uploading, uploadPct, uploadMsg: S.upload < 100 ? 'جارٍ الرفع… ' + S.upload + '%' : (S.srvStage ? (S.srvStage + '… ' + (S.srvPct || 0) + '%') : 'اكتمل الرفع — يبدأ التحليل'),
       visibleSegments, tagCounts, segmenting: S.segmenting, segmentDone: !S.segmenting && S.revealed >= segs.length,
       matchRows, approvedCount, aiCount, matchDone,
-      reviewRows, reviewedCount, totalCount: segs.length,
+      reviewRows, reviewedCount, totalCount: segs.length, ...this.auditPanelVals(),
       formats, layouts, extras, previewRows, showFootnotes: S.extras.fn, showGlossary: S.extras.gl,
-      layoutLabel: layouts.find(l => l.bg === '#2464EC').label, fileName: create ? 'post-patience.' + S.fmt.toLowerCase() : ((S.exportName && S.exportName.endsWith('.' + S.fmt.toLowerCase())) ? S.exportName : this.exportBaseName() + '.' + S.fmt.toLowerCase()), exportLabel: S.exporting ? 'جارٍ التصدير…' : 'تصدير الملف', exportOpacity: S.exporting ? .7 : 1,
+      layoutLabel: layouts.find(l => l.bg === '#2464EC').label, fileName: create ? 'post-patience.' + S.fmt.toLowerCase() : ((S.exportName && S.exportName.endsWith('.' + S.fmt.toLowerCase())) ? S.exportName : this.exportBaseName() + '.' + S.fmt.toLowerCase()), exportLabel: S.exporting ? 'جارٍ التصدير…' : 'تصدير الملف', exportOpacity: S.exporting ? .7 : 1, exportBusy: !!S.exporting, exportIdle: !S.exporting, exportCursor: S.exporting ? 'progress' : 'pointer',
       notExported: !S.exported, exported: S.exported,
       exportFile: exportMode === 'file', exportDesign: exportMode === 'design', setExportFile: () => this.setState({ exportMode: 'file' }), setExportDesign: () => {},
       exFileBg: exportMode === 'file' ? '#2464EC' : 'transparent', exFileFg: exportMode === 'file' ? '#fff' : '#475569', exDesignBg: exportMode === 'design' ? '#2464EC' : 'transparent', exDesignFg: exportMode === 'design' ? '#fff' : '#475569',

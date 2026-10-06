@@ -69,6 +69,8 @@ python manage.py runserver
 
 التصدير آني بلا تخزين: روابط DOCX وPDF في admin «ترجمات المستندات» (المسار `/export/<id>/docx/`)، أو `python manage.py export_translation <id> --output ملف.docx`.
 
+التدقيق (تطبيق `audit`) فوري لا بدفعات: `POST /api/audit/run/` بـ `translation_id` يُنشئ مهمة تدقيق لترجمة المستند ويُنفّذها على `django.tasks` (داخل الطلب نفسه مع الـ backend الفوري، أو في `db_worker` في الإنتاج)، ثم `GET /api/audit/jobs/<id>/` للحالة والنتائج و`/xlsx/` لملف Excel بأوراقه الأربع، و`GET /api/audit/translations/<translation_id>/` لأحدث تدقيق. من سطر الأوامر: `python manage.py audit_translation <translation_id> [--output ملف.xlsx]`. صفحة المراجعة لا تستدعي هذه المسارات بعد.
+
 ## الفحوصات قبل الدمج
 
 تعمل آلياً في CI على PostgreSQL 17 (`.github/workflows/ci.yml`)، وتُشغَّل محلياً هكذا:
@@ -134,6 +136,7 @@ sudo chmod 644 /etc/cron.d/moneer-translate-pending
 | `content` | المحتوى العربي بعد التقطيع والتصنيف: المستندات والعبارات وتحليلها والمعجم الموحّد، وترجمة كل مستند إلى لغات هدف جملةً جملة؛ أمر `manage.py import_glossary` |
 | `translate` | الترجمة في الخلفية على `django.tasks`: الآيات من الترجمة المعتمدة لموسوعة القرآن الكريم بعد مطابقتها بالرسمين واستخلاصها بـ gpt-5-nano، وبقية النصوص بـ Gemini على طريقة ترجمان؛ يكتب في `content.PhraseTranslation`. الأوامر: `import_quran_ayat`، `import_quran_keys`، `import_quran_translations`، `translate_pending` |
 | `export` | تصدير ترجمة المستند إلى DOCX وPDF بـ Spire.Doc بمنطق لوحة تنسيق الكتب، وتنسيق افتراضي لكل لغة (`ExportFormat`)؛ تصدير آني بلا تخزين من روابط admin أو `/export/<id>/docx/`. الأوامر: `ensure_default_formats`، `export_translation` |
+| `audit` | أداة التدقيق (منقولة من حزمة `trreview` في منصة تدقيق بلا تغيير في المنطق سوى إسقاط Gemini Batch): قواعد قطعية محلية (ترجمة فارغة، نسخ الأصل، حروف عربية دخيلة، أقواس، مؤشرا الطول والتكرار) ثم Gemini فورياً على مجموعات من الجمل، وتصنيف كل خطأ على التصنيف المعتمد (7 فئات × ~55 نوعاً بالخطورة والحساسية الشرعية وطريقة الكشف والثقة). المخرجات في `AuditJob` (لقطة البرومت والإعدادات والإحصائيات) و`AuditGroup` (طلب لكل مجموعة بمحاولاته ورده الخام) و`AuditRow` (صف لكل جملة بحكمه) و`AuditFinding` (ملاحظة لكل خطأ). المسارات `/api/audit/…`، والأمر `audit_translation` |
 | `users` | نموذج المستخدم المخصّص: البريد الإلكتروني معرّف الدخول، `full_name`، `preferred_language`؛ admin مخصّص |
 | `pages` | الصفحات العامة: تخدم `index.html` على `/` وصفحات `pages/html` كما هي مع ملفات الجذر (الأيقونات، `site.webmanifest`، `og.jpg`)، وأصولها المشتركة (الخطوط والصور والأنماط ومشغّل القوالب) من `pages/assets` على `/assets/` بلا `collectstatic`؛ وقائمة الملفات `/translate/documents/` التي تقرأ `/api/translate/documents/` وتعرض مرحلة كل ملف وكل لغة ونسبة التقدّم |
 

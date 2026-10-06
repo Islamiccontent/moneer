@@ -27,6 +27,23 @@ def env_list(key, default=""):
     return [item.strip() for item in env(key, default).split(",") if item.strip()]
 
 
+def env_int(key, default):
+    try:
+        return int(env(key, "") or default)
+    except ValueError:
+        return default
+
+
+def env_float(key, default=None):
+    raw = str(env(key, "") or "").strip()
+    if not raw:
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
 SECRET_KEY = env("SECRET_KEY", required=True)
 
 DEBUG = env_bool("DEBUG", False)
@@ -49,6 +66,7 @@ INSTALLED_APPS = [
     "classify",
     "translate",
     "export",
+    "audit",
     "pages",
 ]
 
@@ -134,7 +152,7 @@ QURAN_KB_DIR = BASE_DIR / env("QURAN_KB_DIR", "imports/quran-kb")
 
 GEMINI_API_KEY = env("GEMINI_API_KEY", "")
 OPENAI_API_KEY = env("OPENAI_API_KEY", "")
-TRANSLATE_MODEL = env("TRANSLATE_MODEL", "gemini-3.1-pro-preview")
+TRANSLATE_MODEL = env("TRANSLATE_MODEL", "gemini-3.8-flash")
 CENTRAL_DB_URL = env("CENTRAL_DB_URL", "https://icadb.com")
 QURAN_EXTRACT_MODEL = env("QURAN_EXTRACT_MODEL", "gpt-5-nano")
 
@@ -146,3 +164,21 @@ TASKS = {
 
 # مفتاح ترخيص Spire.Doc لتطبيق export؛ بدونه تعمل نسخة التقييم ويظهر تحذيرها في الملف
 SPIRE_DOC_KEY = env("SPIRE_DOC_KEY", "")
+
+# تطبيق audit: تدقيق الترجمة فورياً بقواعد محلية ثم Gemini (بالمفتاح GEMINI_API_KEY أعلاه)
+AUDIT = {
+    "MODEL": env("AUDIT_MODEL", "gemini-3.8-flash"),
+    # مستوى التفكير (high/low)؛ فارغ = لا يُرسل thinkingConfig
+    "THINKING_LEVEL": env("AUDIT_THINKING_LEVEL", "high"),
+    "TEMPERATURE": env_float("AUDIT_TEMPERATURE", 0.2),
+    "USE_SCHEMA": env_bool("AUDIT_USE_SCHEMA", False),
+    # عدد الجمل في طلب Gemini الواحد
+    "GROUP_SIZE": env_int("AUDIT_GROUP_SIZE", 20),
+    # محاولات المجموعة الواحدة قبل أن تُعدّ فاشلة
+    "MAX_ATTEMPTS": env_int("AUDIT_MAX_ATTEMPTS", 3),
+    "HTTP_TIMEOUT": env_int("AUDIT_HTTP_TIMEOUT", 60),
+    "HTTP_RETRIES": env_int("AUDIT_HTTP_RETRIES", 3),
+    # حدود مؤشر الطول الشاذ نسبةً إلى وسيط الملف
+    "LEN_SHORT_RATIO": env_float("AUDIT_LEN_SHORT_RATIO", 0.40),
+    "LEN_LONG_RATIO": env_float("AUDIT_LEN_LONG_RATIO", 3.0),
+}
