@@ -152,7 +152,7 @@ QURAN_KB_DIR = BASE_DIR / env("QURAN_KB_DIR", "imports/quran-kb")
 
 GEMINI_API_KEY = env("GEMINI_API_KEY", "")
 OPENAI_API_KEY = env("OPENAI_API_KEY", "")
-TRANSLATE_MODEL = env("TRANSLATE_MODEL", "gemini-3.1-pro-preview")
+TRANSLATE_MODEL = env("TRANSLATE_MODEL", "gemini-3.8-flash")
 CENTRAL_DB_URL = env("CENTRAL_DB_URL", "https://icadb.com")
 QURAN_EXTRACT_MODEL = env("QURAN_EXTRACT_MODEL", "gpt-5-nano")
 
@@ -167,7 +167,7 @@ SPIRE_DOC_KEY = env("SPIRE_DOC_KEY", "")
 
 # تطبيق audit: تدقيق الترجمة فورياً بقواعد محلية ثم Gemini (بالمفتاح GEMINI_API_KEY أعلاه)
 AUDIT = {
-    "MODEL": env("AUDIT_MODEL", "gemini-3.1-pro-preview"),
+    "MODEL": env("AUDIT_MODEL", "gemini-3.8-flash"),
     # مستوى التفكير (high/low)؛ فارغ = لا يُرسل thinkingConfig
     "THINKING_LEVEL": env("AUDIT_THINKING_LEVEL", "high"),
     "TEMPERATURE": env_float("AUDIT_TEMPERATURE", 0.2),
