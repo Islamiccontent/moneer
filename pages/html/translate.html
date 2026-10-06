@@ -612,7 +612,7 @@
               </button>
             </sc-for>
           </div>
-          <button sc-camel-on-click="{{ doFileExport }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#2464EC,#3B82F6);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:800;font-size:18px;box-shadow:0 12px 32px rgba(36,100,236,.4);opacity:{{ exportOpacity }}" style-hover="transform:translateY(-2px)">{{ exportLabel }} <span>⇩</span></button>
+          <button sc-camel-on-click="{{ doFileExport }}" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,#2464EC,#3B82F6);color:#fff;border:0;border-radius:999px;padding:16px 30px;font-weight:800;font-size:18px;box-shadow:0 12px 32px rgba(36,100,236,.4);opacity:{{ exportOpacity }};cursor:{{ exportCursor }}" style-hover="transform:translateY(-2px)"><sc-if value="{{ exportBusy }}" hint-placeholder-val="{{ false }}"><span data-m="export-spinner" aria-hidden="true" style="width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:mlSpin .8s linear infinite"></span></sc-if>{{ exportLabel }}<sc-if value="{{ exportIdle }}" hint-placeholder-val="{{ true }}"> <span>⇩</span></sc-if></button>
         </div>
         <!-- preview -->
         <div style="background:#fff;border:1px solid #E3E8F4;border-radius:20px;padding:26px;box-shadow:0 20px 50px rgba(7,11,26,.08);display:flex;flex-direction:column;gap:14px">
@@ -1144,7 +1144,7 @@ class Component extends DCLogic {
       matchRows, approvedCount, aiCount, matchDone,
       reviewRows, reviewedCount, totalCount: segs.length,
       formats, layouts, extras, previewRows, showFootnotes: S.extras.fn, showGlossary: S.extras.gl,
-      layoutLabel: layouts.find(l => l.bg === '#2464EC').label, fileName: create ? 'post-patience.' + S.fmt.toLowerCase() : ((S.exportName && S.exportName.endsWith('.' + S.fmt.toLowerCase())) ? S.exportName : this.exportBaseName() + '.' + S.fmt.toLowerCase()), exportLabel: S.exporting ? 'جارٍ التصدير…' : 'تصدير الملف', exportOpacity: S.exporting ? .7 : 1,
+      layoutLabel: layouts.find(l => l.bg === '#2464EC').label, fileName: create ? 'post-patience.' + S.fmt.toLowerCase() : ((S.exportName && S.exportName.endsWith('.' + S.fmt.toLowerCase())) ? S.exportName : this.exportBaseName() + '.' + S.fmt.toLowerCase()), exportLabel: S.exporting ? 'جارٍ التصدير…' : 'تصدير الملف', exportOpacity: S.exporting ? .7 : 1, exportBusy: !!S.exporting, exportIdle: !S.exporting, exportCursor: S.exporting ? 'progress' : 'pointer',
       notExported: !S.exported, exported: S.exported,
       exportFile: exportMode === 'file', exportDesign: exportMode === 'design', setExportFile: () => this.setState({ exportMode: 'file' }), setExportDesign: () => {},
       exFileBg: exportMode === 'file' ? '#2464EC' : 'transparent', exFileFg: exportMode === 'file' ? '#fff' : '#475569', exDesignBg: exportMode === 'design' ? '#2464EC' : 'transparent', exDesignFg: exportMode === 'design' ? '#fff' : '#475569',
