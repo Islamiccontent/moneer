@@ -159,7 +159,7 @@
           <span style="width:84px;height:84px;border-radius:26px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;font-size:36px;box-shadow:0 14px 34px rgba(36,100,236,.35);animation:mlFloat 4s ease-in-out infinite">⇧</span>
           <span style="font-size:22px;font-weight:800;color:#070B1A">اسحب الملف هنا أو انقر للاختيار</span>
           <span style="font-size:14.5px;color:#64748B;font-weight:600">DOCX · DOC · PDF — حتى 50 ميجابايت</span>
-          <span style="margin-top:10px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px">اختيار ملف تجريبي: خطبة الصبر.docx</span>
+          <span style="margin-top:10px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px">اختيار ملف تجريبي</span>
         </button>
         <a href="/translate/documents/" style="display:block;text-align:center;margin-top:16px;color:#2464EC;font-weight:800;font-size:14px;text-decoration:none">تصفح المحتوى المحفوظ بمراحله ←</a>
         <div style="display:flex;align-items:center;gap:14px;color:#94A3B8;font-size:13px;font-weight:800"><span style="flex:1;height:1px;background:#E3E8F4"></span>أو<span style="flex:1;height:1px;background:#E3E8F4"></span></div>
@@ -397,7 +397,7 @@
           <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 280px">
             <span style="flex:none;width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center"><span class="mn-ico mn-ico-sparkle" aria-hidden="true" style="width:22px;height:22px;color:#fff"></span></span>
             <span style="display:flex;flex-direction:column;gap:2px;min-width:0">
-              <span style="font-size:16px;font-weight:800;color:#070B1A">التدقيق الذكي</span>
+              <span style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:16px;font-weight:800;color:#070B1A">التدقيق الذكي</span><span style="border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:800;background:#FFF4DB;color:#8A5A00;border:1px solid #F5DFA8;white-space:nowrap">تشغيل تجريبي</span></span>
               <span style="font-size:13px;color:#64748B;font-weight:600;line-height:1.7">{{ auditSubtitle }}</span>
             </span>
           </div>
@@ -1076,8 +1076,8 @@ class Component extends DCLogic {
       : 'آخر تدقيق: ' + (job.counts.findings ? this.countAr(job.counts.findings, ['ملاحظة واحدة', 'ملاحظتان', 'ملاحظات', 'ملاحظة']) : 'لا ملاحظات') + ' في ' + this.countAr(job.counts.rows || rows.length, ['جملة واحدة', 'جملتين', 'جمل', 'جملة']) + (job.status === 'partial' ? ' (مكتمل جزئياً)' : '') + (job.finished_at ? ' — ' + new Date(job.finished_at).toLocaleString('ar') : '') + '.';
     const only = !!S.auditOnlyIssues;
     return {
-      auditSubtitle: subtitle, auditRunning: running || !!S.auditStarting, auditCanStart: !running && !S.auditStarting && !!this.translationId,
-      auditStartLabel: job ? 'إعادة التدقيق' : 'ابدأ التدقيق', startAudit: this.startAudit,
+      auditSubtitle: subtitle, auditRunning: running || !!S.auditStarting, auditCanStart: !job && !S.auditStarting && !!this.translationId,
+      auditStartLabel: 'ابدأ التدقيق', startAudit: this.startAudit,
       auditPct: (total ? Math.round(checked / total * 100) : 5) + '%',
       auditProgressText: S.auditStarting && !job ? 'جارٍ بدء التدقيق…' : (total ? 'فُحصت ' + checked + ' من ' + total + ' جملة' : 'جارٍ التحضير…'),
       auditHasError: !!(S.auditError || (failed && job.error_message)), auditError: S.auditError || (job && job.error_message) || '',

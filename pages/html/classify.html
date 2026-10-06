@@ -175,21 +175,17 @@
           </div>
         </div>
         <sc-if value="{{ pasteClosed }}" hint-placeholder-val="{{ true }}">
-          <button type="button" data-m="dropzone" sc-camel-on-click="{{ pickFile }}" style="background:{{ dropBg }};border:2px dashed {{ dropBorder }};border-radius:28px;padding:56px 30px;display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;transition:all .25s;animation:mlIn .7s ease both;box-shadow:0 20px 50px rgba(36,100,236,.06)" style-hover="border-color:#2464EC;box-shadow:0 24px 60px rgba(36,100,236,.12)">
-            <span style="width:84px;height:84px;border-radius:26px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;box-shadow:0 14px 34px rgba(36,100,236,.35);transition:transform .25s;transform:{{ dropLift }}"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:36px;height:36px;color:currentColor"></span></span>
-            <span style="font-size:22px;font-weight:800;color:#070B1A">{{ dropTitle }}</span>
-            <span style="font-size:14.5px;color:#64748B;font-weight:600">ملفات Word بصيغة <span style="font-weight:800;color:#475569">DOCX</span> — يحافظ مُنير على العناوين والهوامش</span>
-            <span style="margin-top:8px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px;box-shadow:0 10px 24px rgba(36,100,236,.3)">اختيار ملف من جهازك</span>
-          </button>
-          <div data-m="sample-bar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#fff;border:1px solid #E3E8F4;border-radius:20px;padding:14px 18px;animation:mlIn .75s ease both">
-            <span style="flex:none;width:44px;height:44px;border-radius:13px;background:#ECFDF5;display:grid;place-items:center;color:#0E9F6E"><span class="mn-ico mn-ico-file" aria-hidden="true" style="width:22px;height:22px;color:#0E9F6E"></span></span>
-            <span style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:200px">
-              <span style="font-size:15.5px;font-weight:800;color:#070B1A">ليس لديك ملف؟ جرّب بخطبة تجريبية</span>
-              <span style="font-size:13px;color:#64748B;font-weight:600">«خطبة الصبر»: عناوين وآيتان وحديث ومصطلحات معتمدة — لترى التقطيع والترجمة كاملين.</span>
-            </span>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button type="button" sc-camel-on-click="{{ trySample }}" style="display:inline-flex;align-items:center;gap:8px;background:#2464EC;color:#fff;border:0;border-radius:999px;padding:10px 18px;font-weight:800;font-size:14px;box-shadow:0 8px 20px rgba(36,100,236,.25)" style-hover="background:#1B4FC4"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:16px;height:16px;color:#fff"></span>جرّبه الآن</button>
-              <a href="/assets/samples/moneer-sample-khutbah.docx" download="خطبة الصبر — ملف تجريبي من مُنير.docx" style="display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:10px 18px;font-weight:800;font-size:14px;color:#0F172A" style-hover="background:#F5F7FC;color:#0F172A"><span class="mn-ico mn-ico-download" aria-hidden="true" style="width:16px;height:16px;color:#475569"></span>تحميل الملف</a>
+          <div data-m="dropzone" style="background:{{ dropBg }};border:2px dashed {{ dropBorder }};border-radius:28px;padding:24px 24px 16px;display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;transition:all .25s;animation:mlIn .7s ease both;box-shadow:0 20px 50px rgba(36,100,236,.06)" style-hover="border-color:#2464EC;box-shadow:0 24px 60px rgba(36,100,236,.12)">
+            <button type="button" sc-camel-on-click="{{ pickFile }}" style="background:none;border:0;padding:0;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%">
+              <span style="width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg,#2464EC,#4FD1FF);display:grid;place-items:center;color:#fff;box-shadow:0 14px 34px rgba(36,100,236,.35);transition:transform .25s;transform:{{ dropLift }}"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:30px;height:30px;color:currentColor"></span></span>
+              <span style="font-size:22px;font-weight:800;color:#070B1A">{{ dropTitle }}</span>
+              <span style="font-size:14.5px;color:#64748B;font-weight:600">ملفات Word بصيغة <span style="font-weight:800;color:#475569">DOCX</span> — يحافظ مُنير على العناوين والهوامش</span>
+              <span style="margin-top:4px;background:#2464EC;color:#fff;border-radius:999px;padding:12px 26px;font-weight:800;font-size:16px;box-shadow:0 10px 24px rgba(36,100,236,.3)">اختيار ملف من جهازك</span>
+            </button>
+            <div data-m="sample-bar" style="display:flex;align-items:center;justify-content:center;gap:8px 12px;flex-wrap:wrap;width:100%;border-top:1px solid #E3E8F4;padding-top:14px">
+              <span style="display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:800;color:#070B1A"><span class="mn-ico mn-ico-file" aria-hidden="true" style="width:18px;height:18px;color:#0E9F6E"></span>ليس لديك ملف؟ جرّب بملف تجريبي</span>
+              <button type="button" sc-camel-on-click="{{ trySample }}" style="display:inline-flex;align-items:center;gap:6px;background:#ECFDF5;color:#0E7A55;border:1px solid #BDEBD6;border-radius:999px;padding:7px 14px;font-weight:800;font-size:13.5px" style-hover="background:#D9F7EA"><span class="mn-ico mn-ico-upload" aria-hidden="true" style="width:15px;height:15px;color:currentColor"></span>جرّبه الآن</button>
+              <a href="/assets/samples/moneer-sample-khutbah.docx" download="ملف تجريبي من مُنير.docx" style="display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:7px 14px;font-weight:800;font-size:13.5px;color:#0F172A" style-hover="background:#F5F7FC;color:#0F172A"><span class="mn-ico mn-ico-download" aria-hidden="true" style="width:15px;height:15px;color:#475569"></span>تحميل الملف</a>
             </div>
           </div>
         </sc-if>
@@ -910,7 +906,7 @@ class Component extends DCLogic {
   // «جرّبه الآن»: الملف التجريبي نفسه يمر بمسار الرفع العادي
   trySample = () => {
     fetch('/assets/samples/moneer-sample-khutbah.docx').then(r => { if (!r.ok) throw new Error(); return r.blob(); })
-      .then(blob => this.acceptFile(new File([blob], 'خطبة الصبر (ملف تجريبي).docx', { type: blob.type })))
+      .then(blob => this.acceptFile(new File([blob], 'ملف تجريبي.docx', { type: blob.type })))
       .catch(() => this.setState({ error: 'تعذّر تحميل الملف التجريبي.' }));
   };
   // خادم MCP للمحتوى الإسلامي (mcp.islamiccontent.org)
@@ -1121,9 +1117,9 @@ class Component extends DCLogic {
       startApp: this.startApp, goLanding: this.goLanding,
       goTranslate: this.goTranslate, langOpen: !!S.langOpen, toggleLangs: () => this.setState({ langOpen: !this.state.langOpen, langQuery: '' }), langQuery: S.langQuery || '', onLangSearch: (e) => this.setState({ langQuery: e.target.value }), restart: this.restart, pickFile: this.pickFile,
       toMatching: this.toMatching, toReview: this.toReview, toExport: this.toExport, doExport: this.doExport,
-      fileLabel: S.step === 0 ? 'مشروع جديد' : (create ? S.ctype + ' عن الصبر → ' : ((S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'خطبة الصبر.docx')) + ' → ')) + this.target(),
-      sourcePanelTitle: S.sourceKind === 'text' ? 'النص الأصلي' : 'الملف الأصلي', sourceName: S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'خطبة الصبر.docx'),
-      docName: S.docName || 'خطبة الصبر.docx', hasError: !!S.error, errorMsg: S.error || '', hasReal: !!S.real,
+      fileLabel: S.step === 0 ? 'مشروع جديد' : (create ? S.ctype + ' عن الصبر → ' : ((S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'ملف تجريبي.docx')) + ' → ')) + this.target(),
+      sourcePanelTitle: S.sourceKind === 'text' ? 'النص الأصلي' : 'الملف الأصلي', sourceName: S.docName || (S.sourceKind === 'text' ? 'نص ملصق' : 'ملف تجريبي.docx'),
+      docName: S.docName || 'ملف تجريبي.docx', hasError: !!S.error, errorMsg: S.error || '', hasReal: !!S.real,
       editText: S.editText != null ? S.editText : (S.real ? (S.sourceKind === 'text' ? (S.pasteText || '') : S.real.map(s => s.ar).join('\n')) : ''),
       onEditText: (e) => this.setState({ editText: e.target.value }),
       resegment: () => { const t = (S.editText != null ? S.editText : (S.sourceKind === 'text' ? (S.pasteText || '') : (S.real || []).map(s => s.ar).join('\n'))).trim(); if (t) this.sendReal(null, t, true); },
