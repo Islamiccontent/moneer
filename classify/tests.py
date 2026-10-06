@@ -923,6 +923,23 @@ class HadithLeadinTests(TestCase):
         self.assertEqual([(s.kind, s.content) for s in out], [("attribution", "وقال النبي ﷺ:")])
 
 
+class GlossaryHonorificTests(TestCase):
+    """صيغ الدعاء بالرحمة («رحمكم الله») لا تُطابَق بمصطلح «رحم» (صلة القرابة)."""
+
+    def terms(self, text):
+        from classify.services.matchers import GlossaryMatcher
+
+        return [t["arabic"] for t in GlossaryMatcher().find(text)]
+
+    def test_mercy_supplications_are_not_kinship(self):
+        for text in ("واعلموا رحمكم الله أن", "رحمك الله يا أخي", "رحمنا الله وإياكم"):
+            self.assertNotIn("رحم", self.terms(text), text)
+
+    def test_kinship_is_still_found(self):
+        self.assertIn("رحم", self.terms("فإن الرحم معلقة بالعرش"))
+        self.assertIn("صلة الرحم", self.terms("وصلة الرحم واجبة"))
+
+
 class ClosedQuoteBoundaryTests(TestCase):
     """اقتباسٌ مغلق تليه علامة وقف حدُّ جملة ولو ضمّ المصنّفُ المتعلَّم ما بعده إليه."""
 
