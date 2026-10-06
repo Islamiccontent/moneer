@@ -13,10 +13,11 @@ import logging
 import time
 
 from django.db import transaction
-from django.db.models import F, Max
+from django.db.models import F, Max, Q
 from django.utils import timezone
 
-from content.models import Phrase
+from content.models import Phrase, PhraseAnalysis
+from translate.models import QuranTranslationKey
 
 from .models import AuditFinding, AuditGroup, AuditJob, AuditRow
 from .services import gemini
@@ -71,6 +72,9 @@ def log(message):
 def build_rows(document_translation, limit=None):
     """صفوف التدقيق من جمل المستند القابلة للترجمة بترتيبها، ونص كل جملة الحالي في الترجمة.
 
+    المعتمد لا يُدقَّق: الآيات المطابَقة تُنقل من الترجمة المعتمدة للغة كما هي (وتُقفل في صفحة
+    المراجعة)، أما الآية بلا مطابقة فترجمتها آلية فتُدقَّق كغيرها.
+
     ``seq`` هو ``id`` العنصر في البرومت (عدد صحيح) ويُحفظ في AuditRow.seq؛ الجملة التي لم
     تُترجم بعد تُدرج بترجمة فارغة فتلتقطها قاعدة FRM-EMP كما في السكربت الأصلي.
     """
@@ -78,6 +82,11 @@ def build_rows(document_translation, limit=None):
     phrases = document_translation.document.phrases.filter(translatable=True).order_by(
         "group_id", "group_order"
     )
+    if QuranTranslationKey.objects.filter(language=document_translation.target_language).exists():
+        phrases = phrases.exclude(
+            Q(analysis__kind=PhraseAnalysis.Kind.QURAN)
+            & ~Q(analysis__reason_code=PhraseAnalysis.ReasonCode.UNMATCHED_QURAN)
+        )
     rows = []
     for seq, phrase in enumerate(phrases, start=1):
         rows.append(

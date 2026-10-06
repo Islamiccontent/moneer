@@ -18,8 +18,15 @@ from django.test import SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from openpyxl import load_workbook
 
-from content.models import Document, DocumentTranslation, Phrase, PhraseTranslation
+from content.models import (
+    Document,
+    DocumentTranslation,
+    Phrase,
+    PhraseAnalysis,
+    PhraseTranslation,
+)
 from core.models import ContentTypeLookup, Language
+from translate.models import QuranTranslationKey
 from users.models import User
 
 from . import pipeline, tasks
@@ -332,6 +339,30 @@ class AuditFixture(TestCase):
 
 
 class CreateJobTests(AuditFixture):
+    def add_ayah(self, group, reason_code):
+        phrase = Phrase.objects.create(
+            document=self.document,
+            content_type=ContentTypeLookup.objects.get(code="ayah"),
+            group_id=group,
+            group_order=1,
+            text="إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
+        )
+        PhraseAnalysis.objects.create(
+            phrase=phrase, kind=PhraseAnalysis.Kind.QURAN, reason_code=reason_code, confidence=99
+        )
+        return phrase
+
+    def test_approved_verses_are_not_audited(self):
+        matched = self.add_ayah(20, PhraseAnalysis.ReasonCode.INDEX_MATCH)
+        unmatched = self.add_ayah(21, PhraseAnalysis.ReasonCode.UNMATCHED_QURAN)
+        audited = lambda: {r["phrase"] for r in pipeline.build_rows(self.dt)}  # noqa: E731
+        self.assertTrue({matched, unmatched} <= audited())
+        QuranTranslationKey.objects.create(language=self.english, key="english_saheeh", name="S")
+        rows = audited()
+        self.assertNotIn(matched, rows)
+        self.assertIn(unmatched, rows)
+        self.assertEqual(len(rows), 13)
+
     def test_rows_rules_and_groups_are_built_without_calling_the_model(self):
         with mock.patch.object(pipeline.gemini, "generate_content") as generate:
             job = pipeline.create_job(self.dt)
