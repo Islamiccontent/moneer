@@ -18,6 +18,7 @@ ASSET_TYPES = {
     ".png": "image/png",
     ".webp": "image/webp",
     ".svg": "image/svg+xml",
+    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 }
 # الخطوط والصور نادراً ما تتغير؛ الأنماط والسكربت يُتحقَّق منها كل مرة (304 إن لم تتغير)
 ASSET_CACHE = {
