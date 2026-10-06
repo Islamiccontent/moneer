@@ -9,6 +9,7 @@ from content.models import Document, Glossary, Phrase, PhraseAnalysis, PhraseTer
 
 os.environ["LLM_REVIEW"] = "0"
 os.environ["LLM_HEADINGS"] = "0"
+os.environ["LLM_TERMS"] = "0"
 
 SAMPLE_TEXT = """الإخلاص في العمل
 
@@ -938,6 +939,82 @@ class GlossaryHonorificTests(TestCase):
     def test_kinship_is_still_found(self):
         self.assertIn("رحم", self.terms("فإن الرحم معلقة بالعرش"))
         self.assertIn("صلة الرحم", self.terms("وصلة الرحم واجبة"))
+
+
+class TermFilterTests(TestCase):
+    """Gemini يُبقي من مصطلحات كل مقطع ما يقصده سياقه، والفشل يُبقي نتيجة المطابق."""
+
+    def setUp(self):
+        from unittest import mock
+
+        patcher = mock.patch.dict(os.environ, {"LLM_TERMS": "1", "GEMINI_API_KEY": "test"})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    @staticmethod
+    def term(arabic, surface=None, note="", english=""):
+        return {"arabic": arabic, "surface": surface or arabic, "note": note, "english": english}
+
+    def segments(self):
+        from classify.services.classifier import Segment
+
+        return [
+            Segment(
+                "term",
+                "واعلموا رحمكم الله أن الإخلاص شرط",
+                note="مصطلح: رحم",
+                terms=[self.term("رحم", "رحمكم", "القرابة", "kinship"), self.term("إخلاص")],
+            ),
+            Segment(
+                "term",
+                "وصلوا أرحامكم",
+                note="مصطلح: رحم",
+                terms=[self.term("رحم", "أرحامكم", "القرابة")],
+            ),
+            Segment("text", "الحمد لله رب العالمين"),
+        ]
+
+    def run_filter(self, answer):
+        from unittest import mock
+
+        from classify.services import term_filter
+
+        segs = self.segments()
+        with mock.patch.object(term_filter, "_ask", side_effect=answer) as ask:
+            stats = term_filter.filter_terms(segs)
+        return segs, stats, ask
+
+    def test_keeps_only_the_terms_the_context_means(self):
+        segs, stats, ask = self.run_filter(['{"keep": ["1.2", "2.1"]}'])
+        self.assertEqual([t["arabic"] for t in segs[0].terms], ["إخلاص"])
+        self.assertEqual(segs[0].note, "مصطلح: إخلاص")
+        self.assertEqual([t["arabic"] for t in segs[1].terms], ["رحم"])
+        self.assertEqual((stats["asked"], stats["dropped"]), (2, 1))
+        listing = ask.call_args.args[0]
+        self.assertIn("1.1 «رحمكم» ← رحم (kinship): القرابة", listing)
+        self.assertNotIn("الحمد لله", listing)
+
+    def test_segment_without_kept_terms_becomes_plain_text(self):
+        segs, _, _ = self.run_filter(['{"keep": ["1.2"]}'])
+        self.assertEqual((segs[1].kind, segs[1].note, segs[1].terms), ("text", "", []))
+
+    def test_ids_outside_the_listing_are_ignored(self):
+        segs, _, _ = self.run_filter(['{"keep": ["1.1", "1.2", "2.1", "9.9", "رحم"]}'])
+        self.assertEqual([len(s.terms) for s in segs], [2, 1, 0])
+
+    def test_failure_keeps_the_matcher_result(self):
+        for answer in (RuntimeError("503"), "", "not json"):
+            segs, stats, _ = self.run_filter([answer])
+            self.assertEqual([len(s.terms) for s in segs], [2, 1, 0])
+            self.assertEqual((stats["failed"], stats["dropped"]), (2, 0))
+
+    def test_disabled_without_the_flag(self):
+        from unittest import mock
+
+        with mock.patch.dict(os.environ, {"LLM_TERMS": "0"}):
+            segs, stats, ask = self.run_filter(['{"keep": []}'])
+        ask.assert_not_called()
+        self.assertEqual([len(s.terms) for s in segs], [2, 1, 0])
 
 
 class ClosedQuoteBoundaryTests(TestCase):

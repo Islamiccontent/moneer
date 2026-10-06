@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 from django.db import transaction
 
-from classify.services import bert_layer, reviewer, speaker
+from classify.services import bert_layer, reviewer, speaker, term_filter
 from classify.services.classifier import classify_paragraphs
 from classify.services.matchers import get_matchers
 from classify.services.payload import build_payload
@@ -530,7 +530,7 @@ def enforce_quran_precedence(segments) -> int:
 
 
 def run(paragraphs, progress=None):
-    """خط الإنتاج كاملاً: المصنّف ثم BERT ثم المراجعة ثم نسبة القول ثم أسبقية المصحف."""
+    """خط الإنتاج كاملاً: المصنّف ثم BERT ثم المراجعة ثم نسبة القول ثم أسبقية المصحف ثم المصطلحات."""
 
     def step(stage, pct):
         if progress:
@@ -563,6 +563,8 @@ def run(paragraphs, progress=None):
     rescue_short_ayas(segments)
     speaker.reattribute(segments)
     enforce_quran_precedence(segments)
+    step("فحص المصطلحات بالسياق", 96)
+    term_filter.filter_terms(segments)
     return segments
 
 
