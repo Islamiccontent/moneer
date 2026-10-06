@@ -124,8 +124,7 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
         elif kind == "attribution":
             unit.update(lead=True, tagLabel=attribution_label(phrase.text))
         elif kind == "citation":
-            reviewed = en if approved and en != phrase.text else ""
-            unit.update(tagLabel="عزو", en=reviewed, conf="100%")
+            unit.update(tagLabel="عزو", src="ترجمة مُنير", locked=False)
         else:
             unit.update(gen=True)
         if kind not in ("quran", "citation"):

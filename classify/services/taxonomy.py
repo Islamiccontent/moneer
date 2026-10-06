@@ -165,7 +165,8 @@ REASON_CODE: dict[str, ConfidenceReason] = {
     "لا قرينة": ConfidenceReason.NO_EVIDENCE,
 }
 
-UNTRANSLATABLE = frozenset({SegmentKind.CITATION})
+# كل الأنواع تُترجم بما فيها إحالات المصادر (العزو)؛ الحقل translatable باقٍ لما يُستثنى يدوياً
+UNTRANSLATABLE: frozenset[str] = frozenset()
 
 DESCRIPTIONS: dict[str, dict[str, str]] = {
     "segment_kind": {
