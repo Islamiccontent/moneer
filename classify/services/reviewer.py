@@ -17,7 +17,7 @@ from .normalizer import normalize
 LABELS = ["آية", "حديث", "نص"]
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
-DEFAULTS = {"gemini": "gemini-3.1-flash-lite", "groq": "qwen/qwen3.8-27b"}
+DEFAULTS = {"gemini": "gemini-3.8-flash", "groq": "qwen/qwen3.8-27b"}
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) textsegmenter/1.0"
 
 SYSTEM = """أنت مراجعٌ لتصنيف مقاطع نصوص إسلامية. مهمتك حكمٌ لا إنشاء.

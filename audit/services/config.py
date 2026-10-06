@@ -8,7 +8,7 @@ from django.conf import settings as dj_settings
 @dataclass
 class Settings:
     api_key: str = ""
-    model: str = "gemini-3.1-pro-preview"
+    model: str = "gemini-3.8-flash"
     thinking_level: str = "high"  # فارغ = لا يُرسل thinkingConfig
     temperature: float | None = None  # None = افتراضي النموذج
     use_schema: bool = False
