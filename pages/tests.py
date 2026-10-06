@@ -1,4 +1,5 @@
 import re
+from html.parser import HTMLParser
 from pathlib import Path
 
 from django.conf import settings
@@ -108,6 +109,55 @@ class AssetsTests(SimpleTestCase):
             for ref in refs:
                 with self.subTest(page=page.name, ref=ref):
                     self.assertTrue((ASSETS_DIR / ref).is_file())
+
+
+class _TagBalance(HTMLParser):
+    """يكدّس الوسوم المفتوحة؛ أي إغلاق لا يطابق آخر مفتوح يُسجَّل."""
+
+    VOID = {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "source",
+        "wbr",
+    }
+
+    def __init__(self):
+        super().__init__()
+        self.stack, self.mismatched = [], []
+
+    def handle_starttag(self, tag, attrs):
+        if tag not in self.VOID:
+            self.stack.append((tag, self.getpos()[0]))
+
+    def handle_endtag(self, tag):
+        if tag in self.VOID:
+            return
+        if self.stack and self.stack[-1][0] == tag:
+            self.stack.pop()
+        else:
+            self.mismatched.append((tag, self.getpos()[0]))
+
+
+class PageMarkupTests(SimpleTestCase):
+    """قالب كل صفحة متوازن الوسوم: إغلاق ناقص أو زائد يُخرج ما بعده من حاويته فتبدو الصفحة مكسورة."""
+
+    def test_page_templates_have_balanced_tags(self):
+        for page in (Path(settings.BASE_DIR) / HOME_FILE, CLASSIFY_PAGE, TRANSLATE_PAGE):
+            with self.subTest(page=page.name):
+                html = page.read_text(encoding="utf-8")
+                template = html[html.index("<x-dc>") : html.index("</x-dc>") + len("</x-dc>")]
+                parser = _TagBalance()
+                parser.feed(template)
+                self.assertEqual(parser.mismatched, [], "إغلاق لا يطابق المفتوح (الوسم، السطر)")
+                self.assertEqual(parser.stack, [], "وسوم بلا إغلاق (الوسم، السطر)")
 
 
 class RootFilesTests(SimpleTestCase):
