@@ -1090,7 +1090,7 @@ class Component extends DCLogic {
   toReview = () => { this.setState({ step: 3 }); this.syncUrl(3); window.scrollTo(0, 0); };
   toExport = () => { this.setState({ step: 4 }); this.syncUrl(4); window.scrollTo(0, 0); };
   doExport = () => { this.setState({ exported: true }); window.scrollTo(0, 0); };
-  // تصدير الملف من تطبيق export بصيغة docx أو xlsx ثم حفظه باسم الخادم
+  // تصدير الملف من تطبيق export بصيغة docx أو pdf أو xlsx ثم حفظه باسم الخادم
   doFileExport = () => {
     if (!this.translationId) { this.doExport(); return; }
     if (this.state.exporting) return;
@@ -1239,7 +1239,7 @@ class Component extends DCLogic {
     }).filter(row => !S.auditOnlyIssues || !S.audit || !S.audit.rows || row.auditIssue);
     const reviewedCount = segs.filter(s => s.locked !== undefined ? !!s.locked : s.k !== 'text').length + Object.values(S.approved).filter(Boolean).length;
     const pick = (key) => (v) => () => this.setState({ [key]: v });
-    const formats = [['DOCX', true], ['XLSX', true], ['PDF', false], ['SRT', false], ['HTML', false], ['JSON', false]].map(([f, on]) => ({ label: f, soon: !on, title: on ? '' : 'قريباً', onPick: on ? pick('fmt')(f) : () => {}, border: S.fmt === f ? '#2464EC' : '#E3E8F4', bg: S.fmt === f ? '#2464EC' : '#fff', fg: S.fmt === f ? '#fff' : '#0F172A', opacity: on ? 1 : .45, cursor: on ? 'pointer' : 'not-allowed' }));
+    const formats = [['DOCX', true], ['PDF', true], ['XLSX', true], ['SRT', false], ['HTML', false], ['JSON', false]].map(([f, on]) => ({ label: f, soon: !on, title: on ? '' : 'قريباً', onPick: on ? pick('fmt')(f) : () => {}, border: S.fmt === f ? '#2464EC' : '#E3E8F4', bg: S.fmt === f ? '#2464EC' : '#fff', fg: S.fmt === f ? '#fff' : '#0F172A', opacity: on ? 1 : .45, cursor: on ? 'pointer' : 'not-allowed' }));
     const layouts = ['مقابل', 'متتابع', 'الترجمة فقط'].map(l => ({ label: l === 'مقابل' ? 'ثنائي مقابل' : l === 'متتابع' ? 'ثنائي متتابع' : 'الترجمة فقط', soon: l === 'مقابل', ...(l === 'مقابل' || S.fmt === 'XLSX' ? { onPick: () => {}, opacity: .45, cursor: 'not-allowed', title: l === 'مقابل' ? 'قريباً' : 'جدول XLSX يضع النص الأصلي والترجمة في عمودين' } : { onPick: pick('layout')(l), opacity: 1, cursor: 'pointer', title: '' }), border: S.layout === l ? '#2464EC' : '#E3E8F4', bg: S.layout === l ? '#2464EC' : '#fff', fg: S.layout === l ? '#fff' : '#0F172A' }));
     const exDefs = [['fn', 'هوامش المصادر (آية/حديث)'], ['gl', 'قائمة المصطلحات في النهاية'], ['keep', 'الحفاظ على تنسيق الملف الأصلي']];
     const extras = exDefs.map(([k, label]) => ({ label, onToggle: () => {}, trackBg: S.extras[k] ? '#2464EC' : '#CBD5E1', knobRight: S.extras[k] ? '3px' : '21px' }));
