@@ -112,6 +112,7 @@ def build_rows(segments) -> list[dict]:
         group = by_para[key]
         for i, s in enumerate(group, 1):
             heading = s.kind == "title" and s.level
+            footnote = getattr(s, "footnote", False)
             order = i
             conf, why = confidence(s)
             csv_id = f"{para_no * 10}" + ("" if order == 1 else f"_{(order - 1) * 10}")
@@ -121,9 +122,13 @@ def build_rows(segments) -> list[dict]:
                     "رقم الفقرة": para_no,
                     "الترتيب بالفقرة": order,
                     "المحتوى": s.content,
-                    "نوع المحتوى": CONTENT_TYPE.get(s.kind, "نص"),
+                    "نوع المحتوى": "هامش" if footnote else CONTENT_TYPE.get(s.kind, "نص"),
                     "التوسيم": (
-                        Tag[f"HEADING_{min(s.level, 5)}"] if heading else Tag.PARAGRAPH
+                        Tag.FOOTNOTE
+                        if footnote
+                        else Tag[f"HEADING_{min(s.level, 5)}"]
+                        if heading
+                        else Tag.PARAGRAPH
                     ).value,
                     "اتجاه النص": Direction.RTL.value,
                     "محاذاة النص": (Align.CENTER if heading else Align.RIGHT).value,
@@ -132,7 +137,7 @@ def build_rows(segments) -> list[dict]:
                     "الحالة": "new",
                     "رقم الجزء": 1,
                     "csv_id": csv_id,
-                    "نوع النص": TextType.PARAGRAPH.value,
+                    "نوع النص": (TextType.FOOTNOTE if footnote else TextType.PARAGRAPH).value,
                     "رقم الهامش": "",
                     "رقم الأب للهامش": "",
                     "uuid": str(uuid.uuid4()),

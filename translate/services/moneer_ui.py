@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from classify.services.moneer_ui import (
     _EMPTY_AYA_BRACKETS,
+    FOOTNOTE_LABEL,
     attribution_label,
     title_label,
     variant_warning,
@@ -127,6 +128,8 @@ def to_ui_segments(document, document_translation=None) -> list[dict]:
             unit.update(tagLabel="عزو", src="ترجمة مُنير", locked=False)
         else:
             unit.update(gen=True)
+        if phrase.tag == "footnote":
+            unit.update(tagLabel=FOOTNOTE_LABEL, isFootnote=True)
         if kind not in ("quran", "citation"):
             terms = _terms(
                 phrase,

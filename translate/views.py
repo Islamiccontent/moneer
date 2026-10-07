@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST, require_safe
 
 from classify import pipeline as classify_pipeline
 from classify import progress
-from classify.services.splitter import DocumentError, extract_docx, extract_text
+from classify.services.splitter import DocumentError, cover_title, extract_docx, extract_text
 from content.models import Document, DocumentTranslation, PhraseTranslation
 from core.models import Language
 from translate import tasks
@@ -56,7 +56,7 @@ def api_translate(request):
     try:
         if f:
             paragraphs = extract_docx(f)
-            title = title or Path(f.name).stem
+            title = title or cover_title(paragraphs) or Path(f.name).stem
             source_name = f.name
         elif text:
             paragraphs = extract_text(text)

@@ -1017,6 +1017,265 @@ class TermFilterTests(TestCase):
         self.assertEqual([len(s.terms) for s in segs], [2, 1, 0])
 
 
+class DocxSpecialTextTests(TestCase):
+    """ملفات الكتب القديمة: رموز AGA Arabesque، وآيات بخطوط مصحف المدينة لا نص لها،
+    وعلامات الحواشي، والغلاف في جدول، والمقدمة قبل أول عنوان، وعناوين الفهارس."""
+
+    W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+
+    def run_xml(self, inner):
+        from docx.oxml import parse_xml
+
+        return parse_xml(f'<w:r xmlns:w="{self.W}">{inner}</w:r>')
+
+    def sym(self, font, char):
+        return self.run_xml(f'<w:sym w:font="{font}" w:char="{char}"/>')
+
+    def text(self, value):
+        return self.run_xml(f'<w:t xml:space="preserve">{value}</w:t>')
+
+    def note_ref(self, note_id):
+        return self.run_xml(f'<w:footnoteReference w:id="{note_id}"/>')
+
+    def paragraph(self, doc, *runs):
+        p = doc.add_paragraph()
+        for r in runs:
+            p._p.append(r)
+        return p
+
+    def extract(self, doc):
+        from io import BytesIO
+
+        from classify.services.splitter import extract_docx
+
+        buf = BytesIO()
+        doc.save(buf)
+        buf.seek(0)
+        return extract_docx(buf)
+
+    @staticmethod
+    def new_doc():
+        from docx import Document as Docx
+
+        doc = Docx()
+        doc.add_heading("الطهارة", level=2)
+        return doc
+
+    def test_aga_arabesque_symbols_become_their_text(self):
+        doc = self.new_doc()
+        self.paragraph(
+            doc,
+            self.text("قال النبي"),
+            self.sym("AGA Arabesque", "F072"),
+            self.text(" من حديث أبي سعيد"),
+            self.sym("AGA Arabesque", "F074"),
+            self.text(" في ذلك."),
+        )
+        text = self.extract(doc)[1].text
+        self.assertEqual(text, "قال النبي ﷺ من حديث أبي سعيد رضي الله عنه في ذلك.")
+
+    def test_mushaf_font_verse_is_decoded_from_its_glyphs(self):
+        """آية بخط مصحف المدينة (HQPB): الرموز مخزنة بترتيب الرسم من اليسار، فتُفكّ بالجدول
+        حروفاً وتُعكس كل كلمة إلى ترتيب القراءة، ويُهمل التشكيل (رموز بلا مدخل في الجدول)."""
+
+        def word(*glyphs):
+            return [self.sym(font, f"F0{code}") for font, code in glyphs]
+
+        space = self.text(" ")
+        doc = self.new_doc()
+        self.paragraph(
+            doc,
+            self.text("قال تعالى: {"),
+            *word(("HQPB2", "39"), ("HQPB4", "9A"), ("HQPB2", "25")),  # لُ ق ← قل
+            space,
+            *word(("HQPB2", "71"), ("HQPB2", "64")),  # و ه ← هو
+            self.text(" "),
+            *word(("HQPB1", "21")),  # الله
+            self.text(" "),
+            *word(("HQPB1", "89"), ("HQPB1", "6D"), ("HQPB1", "26")),  # د ح أ ← أحد
+            self.text("}"),
+        )
+        self.assertEqual(self.extract(doc)[1].text, "قال تعالى: {قل هو الله أحد}")
+
+    def test_footnote_marker_keeps_the_text_around_it(self):
+        """«()» تبقى للمقطِّع حدّاً كما في Word، والعلامة المجردة بين كلمتين لا تُلصقهما."""
+        doc = self.new_doc()
+        self.paragraph(
+            doc, self.text("{ لا تقبل صلاة بغير طهور } ("), self.note_ref(4), self.text(").")
+        )
+        self.paragraph(doc, self.text("«اللَّهُمَّ قِنِي"), self.note_ref(5), self.text(" عَذَابَكَ»"))
+        out = self.extract(doc)
+        self.assertEqual(out[1].text, "{ لا تقبل صلاة بغير طهور } ().")
+        self.assertEqual(out[2].text, "«اللَّهُمَّ قِنِي عَذَابَكَ»")
+
+    def test_note_brackets_are_stripped_after_segmentation(self):
+        from classify.pipeline import strip_note_brackets
+        from classify.services.classifier import Segment
+
+        segs = [
+            Segment("hadith", "{ لا تقبل صلاة بغير طهور } ()."),
+            Segment("text", "()،"),
+            Segment("text", "() الآية."),
+            Segment("text", "قال (رحمه الله) ذلك."),
+        ]
+        self.assertEqual(
+            [s.content for s in strip_note_brackets(segs)],
+            ["{ لا تقبل صلاة بغير طهور }.", "الآية.", "قال (رحمه الله) ذلك."],
+        )
+
+    def test_cover_table_gives_the_title_and_author(self):
+        from docx import Document as Docx
+
+        from classify.services.splitter import cover_title
+
+        doc = Docx()
+        table = doc.add_table(rows=4, cols=1)
+        lines = ["كيفية صلاة النبي", "صلى الله عليه وسلم", "سماحة الشيخ", "عبد العزيز بن باز"]
+        for row, value in zip(table.rows, lines, strict=True):
+            row.cells[0].text = value
+        doc.add_heading("الطهارة", level=2)
+        doc.add_paragraph("يسبغ الوضوء.")
+        out = self.extract(doc)
+        self.assertEqual(
+            [(p.text, p.heading, p.cover) for p in out[:2]],
+            [("كيفية صلاة النبي ﷺ", True, True), ("سماحة الشيخ عبد العزيز بن باز", False, True)],
+        )
+        self.assertEqual(cover_title(out), "كيفية صلاة النبي ﷺ")
+
+    def test_long_table_is_not_a_cover(self):
+        from docx import Document as Docx
+
+        doc = Docx()
+        table = doc.add_table(rows=12, cols=1)
+        for i, row in enumerate(table.rows):
+            row.cells[0].text = f"بند {i}"
+        doc.add_heading("الطهارة", level=2)
+        self.assertFalse(any(p.cover for p in self.extract(doc)))
+
+    def test_introduction_before_the_first_heading_is_kept(self):
+        from docx import Document as Docx
+
+        doc = Docx()
+        doc.add_paragraph("بسم الله الرحمن الرحيم")
+        doc.add_paragraph(
+            "فهذه كلمات موجزة في بيان صفة صلاة النبي أردت تقديمها إلى كل مسلم ومسلمة "
+            "ليجتهد كل من يطلع عليها في التأسي به."
+        )
+        doc.add_heading("الطهارة", level=2)
+        doc.add_paragraph("يسبغ الوضوء.")
+        texts = [p.text for p in self.extract(doc)]
+        self.assertEqual(texts[0], "بسم الله الرحمن الرحيم")
+        self.assertEqual(len(texts), 4)
+
+    def test_title_page_before_the_first_heading_is_dropped(self):
+        from docx import Document as Docx
+
+        doc = Docx()
+        doc.add_paragraph("كتاب الصلاة")
+        doc.add_paragraph("تأليف فلان")
+        doc.add_paragraph(
+            "الكتاب يجمع أذكارًا من الكتاب والسنة لتيسير ترديدها في مختلف الأوقات والظروف، "
+            "ويشمل أدعية للاستيقاظ والوضوء والصلاة."
+        )
+        doc.add_heading("الطهارة", level=2)
+        doc.add_paragraph("يسبغ الوضوء.")
+        self.assertEqual([p.text for p in self.extract(doc)], ["الطهارة", "يسبغ الوضوء."])
+
+    def test_index_headings_are_dropped_with_their_entries(self):
+        from docx.enum.style import WD_STYLE_TYPE
+
+        doc = self.new_doc()
+        doc.add_paragraph("يسبغ الوضوء.")
+        doc.styles.add_style("index 2", WD_STYLE_TYPE.PARAGRAPH)
+        doc.add_heading("فهرس الأحاديث", level=2)
+        doc.add_paragraph("لا تقبل صلاة بغير طهور\t2", style="index 2")
+        doc.add_heading("الخاتمة", level=2)
+        doc.add_paragraph("والحمد لله.")
+        self.assertEqual(
+            [p.text for p in self.extract(doc)],
+            ["الطهارة", "يسبغ الوضوء.", "الخاتمة", "والحمد لله."],
+        )
+
+
+class MushafFontVerseTests(TestCase):
+    """آية مفكوكة من خط مصحف المدينة: يُستبدل بها نص المصحف المقابل كلمةً بكلمة بعد المطابقة،
+    ولا تُنبَّه مخالفةً للرسم؛ وما لا يقابل المصحف يبقى كما هو."""
+
+    DECODED = "ياأيها الذين ءامنوا إذا قمتم إلى الصلوة فاغسلوا وجوهكم"
+
+    def canon(self, surah_no, ayah):
+        from classify.services.matchers import get_matchers
+
+        return next(
+            r["text"]
+            for r in get_matchers()[0].index.records
+            if (r["surah_no"], r["ayah"]) == (surah_no, ayah)
+        )
+
+    def test_window_is_the_quoted_part_of_the_verse(self):
+        from classify.pipeline import mushaf_window
+
+        exact = mushaf_window("سورة المائدة — 6", self.DECODED)
+        self.assertEqual(exact, " ".join(self.canon(5, 6).split()[: len(self.DECODED.split())]))
+
+    def test_unrelated_text_is_not_replaced(self):
+        from classify.pipeline import mushaf_window
+
+        self.assertEqual(mushaf_window("سورة المائدة — 6", "هذا كلام لا صلة له بالآية"), "")
+        self.assertEqual(mushaf_window("", self.DECODED), "")
+
+    def test_matched_verse_is_restored_without_a_variant_warning(self):
+        from classify.pipeline import MUSHAF_FONT_NOTE, restore_mushaf_verses
+        from classify.services.classifier import Segment
+        from classify.services.splitter import Paragraph
+
+        seg = Segment(
+            "quran",
+            f"{{ {self.DECODED} }}[2]",
+            source="سورة المائدة — 6",
+            note="⚠ يخالف رسم المصحف — زائد: ياايها",
+            para=1,
+        )
+        paragraph = Paragraph("…", mushaf_verses=[self.DECODED])
+        self.assertEqual(restore_mushaf_verses([seg], [paragraph]), 1)
+        self.assertEqual(
+            seg.content,
+            f"{{ {' '.join(self.canon(5, 6).split()[: len(self.DECODED.split())])} }}[2]",
+        )
+        self.assertEqual(seg.note, MUSHAF_FONT_NOTE)
+
+
+class FootnoteLabelTests(TestCase):
+    """مقطع الحاشية يظهر في الواجهة بوسم «حاشية» أيّاً كان صنفه."""
+
+    def test_footnote_segment_is_labelled_hashiya(self):
+        from classify.services.classifier import Segment
+        from classify.services.moneer_ui import to_ui_segments
+
+        units = to_ui_segments(
+            [
+                Segment("hadith", "{ لا تقبل صلاة بغير طهور }[1]", para=1),
+                Segment("text", "[1] مسلم الطهارة (224).", para=1.001, footnote=True),
+            ]
+        )
+        self.assertEqual([u.get("tagLabel") for u in units], [None, "حاشية"])
+
+
+class EditorialAfterAyahTests(TestCase):
+    """«الآية.» بعد آية مقتبسة كلمة للمؤلف، ولو طابقها المصحف بلفظها (النازعات 20)."""
+
+    def test_editorial_word_is_not_a_verse(self):
+        from classify.pipeline import unmark_editorial_notes
+        from classify.services.classifier import Segment
+
+        segs = [
+            Segment("quran", "﴿إِنَّ ٱللَّهَ مَعَ ٱلصَّٰبِرِينَ﴾", source="سورة البقرة — 153"),
+            Segment("quran", "الآية.", source="سورة النازعات — 20", score=1.0),
+        ]
+        self.assertEqual(unmark_editorial_notes(segs), 1)
+        self.assertEqual((segs[0].kind, segs[1].kind, segs[1].source), ("quran", "text", ""))
+
+
 class ClosedQuoteBoundaryTests(TestCase):
     """اقتباسٌ مغلق تليه علامة وقف حدُّ جملة ولو ضمّ المصنّفُ المتعلَّم ما بعده إليه."""
 

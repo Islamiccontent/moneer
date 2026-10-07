@@ -34,7 +34,11 @@ def build_payload(title: str, segments, source: dict | None = None) -> dict:
     out = []
     for s, r in zip(segments, rows, strict=False):
         kind = KIND_OF_INTERNAL.get(s.kind, SegmentKind.PLAIN)
-        ctype = CONTENT_TYPE_ID.get(s.kind, ContentTypeId.TEXT)
+        ctype = (
+            ContentTypeId.FOOTNOTE
+            if getattr(s, "footnote", False)
+            else CONTENT_TYPE_ID.get(s.kind, ContentTypeId.TEXT)
+        )
         analysis = {
             "kind": kind.value,
             "confidence": float(r["الثقة"]),

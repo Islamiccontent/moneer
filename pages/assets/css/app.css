@@ -16,3 +16,8 @@ textarea{font-family:'Amiri Quran','ThmanyahText',serif !important;font-size:19p
 .mn-ico-sparkle{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.8 4.6L18.5 9.5l-4.7 1.9L12 16l-1.8-4.6L5.5 9.5l4.7-1.9z'/%3E%3C/svg%3E")}
 .mn-ico-download{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/%3E%3Cpath d='M7 10l5 5 5-5'/%3E%3Cpath d='M12 15V3'/%3E%3C/svg%3E")}
 .mn-ico-play{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z'/%3E%3C/svg%3E")}
+
+/* الحاشية: صفٌّ أصغر وأخفت بإزاحة وحدٍّ متقطع، كحاشية أسفل صفحة الكتاب (data-footnote على الصف) */
+[data-footnote='true']{margin-inline-start:32px;border-style:dashed !important;background:#FCFAF6 !important}
+[data-footnote='true'] [style*='ThmanyahText']{font-size:14px !important;line-height:1.8 !important;color:#57534E !important}
+[data-footnote='true'] [dir='ltr']{font-size:13.5px !important;color:#57534E !important}

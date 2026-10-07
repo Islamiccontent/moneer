@@ -1,11 +1,12 @@
 import contextlib
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from docx import Document as DocxDocument
 
-from . import boundary
+from . import boundary, docx_text
+from .normalizer import normalize
 
 QUOTE_PAIRS = {"﴿": "﴾", "«": "»", "(": ")", "“": "”", '"': '"'}
 OPENS_UNIT = {"﴿", "«", "“", '"'}
@@ -38,6 +39,11 @@ class Paragraph:
     level: int = 0
     styled: bool = True
     quoted: bool = False
+    cover: bool = False
+    # حواشي الفقرة من Word: (مرسى علامتها، نص الحاشية) بترتيب ورودها
+    footnotes: list[tuple[str, str]] = field(default_factory=list)
+    # آيات الفقرة المفكوكة من خط مصحف المدينة؛ يُستبدل بها نص المصحف بعد المطابقة
+    mushaf_verses: list[str] = field(default_factory=list)
 
 
 def diagnose(file) -> str:
@@ -85,19 +91,52 @@ def _looks_heading(p) -> bool:
     return "CENTER" in str(p.paragraph_format.alignment or "")
 
 
+# مقدمة الكتاب قبل أول عنوان تُعرف بافتتاحها (البسملة أو الحمدلة أو «أما بعد»)؛ وما سواها
+# (صفحة العنوان، بطاقة المكتبة، التواريخ، الوصف) يُحذف كما كان
+FRONT_OPENING = re.compile(r"بسم الله الرحمن الرحيم|الحمد لله|اما بعد")
+
+
+def _cover(lines: list[str]) -> list[Paragraph]:
+    """الغلاف: سطره الأول عنوان المستند، وما بعده (المؤلف ونحوه) فقرة واحدة."""
+    if not lines:
+        return []
+    out = [Paragraph(expand_ligatures(lines[0]), heading=True, level=1, cover=True)]
+    if lines[1:]:
+        out.append(Paragraph(expand_ligatures(" ".join(lines[1:])), cover=True))
+    return out
+
+
+def _clean_docx(text: str) -> str:
+    return clean_noise(expand_ligatures(text).strip())
+
+
+def cover_title(paragraphs: list[Paragraph]) -> str:
+    """عنوان المستند من غلافه إن وُجد."""
+    return next((p.text for p in paragraphs if p.cover and p.heading), "")
+
+
 def extract_docx(file, drop_front: bool = True) -> list[Paragraph]:
-    """فقرات المستند بعد استبعاد الفهرس وما قبل أول عنوان؛ drop_front=False يُبقي المقدمة."""
+    """فقرات المستند بعد استبعاد الفهرس وصفحة العنوان قبل أول عنوان؛ drop_front=False يُبقيها.
+
+    ما قبل أول عنوان يُحذف (صفحة العنوان وبطاقة الكتاب) إلا إن افتُتح بالبسملة أو الحمدلة أو
+    «أما بعد» فهو مقدمة تبقى. والغلاف في جدول أول الملف يُقرأ عنواناً ومؤلفاً.
+    """
     try:
         doc = DocxDocument(file)
     except Exception as exc:
         raise DocumentError(diagnose(file)) from exc
-    out, shapes = [], []
+    cover = _cover(docx_text.cover_lines(doc))
+    notes = docx_text.read_footnotes(doc)
+    out, shapes, index_heads = [], [], set()
     for p in doc.paragraphs:
-        text = clean_noise(expand_ligatures(p.text).strip())
+        text = _clean_docx(docx_text.paragraph_text(p))
         if not text:
             continue
         style = (p.style.name or "").lower()
         if INDEX_STYLE.search(style):
+            # عنوان لا يليه إلا بنود فهرس («فهرس الآيات») يُحذف معها
+            if out and out[-1].heading:
+                index_heads.add(id(out[-1]))
             continue
         heading = "heading" in style or style == "title"
         level = 0
@@ -105,8 +144,15 @@ def extract_docx(file, drop_front: bool = True) -> list[Paragraph]:
             digits = re.findall(r"\d", style)
             level = min(int(digits[0]), 3) if digits else 1
             text = HEAD_NUM.sub("", text) or text
-        out.append(Paragraph(text, heading=heading, level=level))
+        footnotes = docx_text.paragraph_footnotes(p, notes, _clean_docx) if notes else []
+        verses = docx_text.paragraph_verses(p)
+        out.append(
+            Paragraph(text, heading=heading, level=level, footnotes=footnotes, mushaf_verses=verses)
+        )
         shapes.append(_looks_heading(p))
+    if index_heads:
+        shapes = [s for p, s in zip(out, shapes, strict=True) if id(p) not in index_heads]
+        out = [p for p in out if id(p) not in index_heads]
 
     if not any(p.heading for p in out) and any(shapes):
         for para, is_head in zip(out, shapes, strict=False):
@@ -116,12 +162,12 @@ def extract_docx(file, drop_front: bool = True) -> list[Paragraph]:
     if not any(p.heading for p in out):
         for p in out:
             p.styled = False
-        return out
+        return cover + out
     if drop_front:
         first = next((i for i, p in enumerate(out) if p.heading), None)
-        if first:
+        if first and not any(FRONT_OPENING.search(normalize(p.text)) for p in out[:first]):
             out = out[first:]
-    return out
+    return cover + out
 
 
 MD_HEAD = re.compile(r"^(#{1,6})\s+(.+?)\s*#*$")

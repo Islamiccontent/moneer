@@ -5,7 +5,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 
 from classify import pipeline
-from classify.services.splitter import DocumentError, extract_docx, extract_text
+from classify.services.splitter import DocumentError, cover_title, extract_docx, extract_text
 from content.models import Document
 
 
@@ -64,7 +64,8 @@ class Command(BaseCommand):
                     paragraphs = extract_docx(handle)
             except DocumentError as exc:
                 raise CommandError(str(exc)) from exc
-            return options["title"] or path.stem, path.name, paragraphs
+            title = options["title"] or cover_title(paragraphs) or path.stem
+            return title, path.name, paragraphs
         text = options["text"].strip()
         if not text:
             raise CommandError("النص فارغ.")

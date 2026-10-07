@@ -1204,6 +1204,15 @@ class DocumentBrowsingApiTests(TranslationFixture):
         self.assertIn(row["terms"][0]["w"], row["ar"])
         self.assertEqual(row["terms"][0]["en"], "Taqwa")
 
+    def test_footnote_phrase_is_labelled_hashiya(self):
+        from translate.services import moneer_ui
+
+        Phrase.objects.filter(pk=self.text.pk).update(tag=Phrase.Tag.FOOTNOTE)
+        segments = moneer_ui.to_ui_segments(self.document, self.dt_fr)
+        row = next(s for s in segments if "نعمة" in s["ar"])
+        self.assertEqual(row["tagLabel"], "حاشية")
+        self.assertTrue(all(s.get("tagLabel") != "حاشية" for s in segments if s is not row))
+
     def test_terms_use_stored_translation_for_target_language(self):
         from content.models import GlossaryTranslation
         from translate.services import moneer_ui

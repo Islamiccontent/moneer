@@ -90,6 +90,9 @@ def variant_warning(note: str) -> str:
     return f"⚠ الآية بها خطأ{detail} — يُرجى تعديل النصّ."
 
 
+FOOTNOTE_LABEL = "حاشية"
+
+
 def to_ui_segments(segments) -> list[dict]:
     """قائمةُ وحداتِ الواجهة من مقاطعِ المصنِّف (نماذجَ أو بُنى، كلاهما يحمل الحقولَ نفسَها)."""
     out, part, fn = [], "", 0
@@ -171,4 +174,6 @@ def to_ui_segments(segments) -> list[dict]:
             out.append({**base, "k": "text", "lead": True, "tagLabel": "عزو", "conf": "100%"})
         else:
             out.append({**base, "k": "text"})
+        if getattr(s, "footnote", False):
+            out[-1].update(tagLabel=FOOTNOTE_LABEL, isFootnote=True)
     return out

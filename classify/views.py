@@ -13,7 +13,7 @@ from classify import pipeline, progress
 from classify.services import moneer_ui
 from classify.services.exporter import to_xlsx
 from classify.services.payload import build_payload
-from classify.services.splitter import DocumentError, extract_docx, extract_text
+from classify.services.splitter import DocumentError, cover_title, extract_docx, extract_text
 from content.models import Document
 
 
@@ -28,7 +28,7 @@ def api_segment(request):
     try:
         if f:
             paragraphs = extract_docx(f)
-            title = title or Path(f.name).stem
+            title = title or cover_title(paragraphs) or Path(f.name).stem
             source_file_name = f.name
         elif text:
             paragraphs = extract_text(text)

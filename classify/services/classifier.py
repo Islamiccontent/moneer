@@ -67,6 +67,7 @@ class Segment:
     para: int = 0
     level: int = 0
     reviewed: bool = False
+    footnote: bool = False
 
 
 AYAH_SPAN = re.compile(r"﴿([^﴾]{3,})﴾")

@@ -5,10 +5,13 @@ import re
 from dataclasses import dataclass, field
 
 from django.db import transaction
+from rapidfuzz import fuzz
 
 from classify.services import bert_layer, reviewer, speaker, term_filter
 from classify.services.classifier import classify_paragraphs
+from classify.services.docx_text import anchor_key
 from classify.services.matchers import get_matchers
+from classify.services.normalizer import normalize
 from classify.services.payload import build_payload
 from classify.services.taxonomy import KIND_OF_INTERNAL, TERM_CATEGORY_OF_DICT
 from content.models import Document, Glossary, Phrase, PhraseAnalysis, PhraseTerm
@@ -513,6 +516,164 @@ def prefer_sequential_duplicates(segments) -> int:
     return changed
 
 
+# كلمات تحريرية تلي الآية المقتبسة وليست منها («﴿…﴾ الآية»)؛ المطابق قد يطابقها بآية فيها اللفظ
+EDITORIAL_AFTER_AYAH = frozenset(
+    normalize(t) for t in ("الآية", "الآيات", "الآية الكريمة", "إلى آخر الآية", "الآية بتمامها")
+)
+
+
+EMPTY_BRACKETS = re.compile(r"\s*\(\s*\)")
+_HAS_WORD = re.compile(r"\w")
+
+
+def strip_note_brackets(segments) -> list:
+    """يحذف «()» علامات الحواشي من المقاطع بعد التقطيع (فقد كانت حدّاً له)، ويُسقط ما لا يبقى منه إلا
+    ترقيم؛ فلا تصل إلى الترجمة مقاطع «()» ولا «() الآية.»."""
+    out = []
+    for seg in segments:
+        if "()" in seg.content.replace(" ", ""):
+            seg.content = EMPTY_BRACKETS.sub("", seg.content).strip()
+            if not _HAS_WORD.search(seg.content):
+                continue
+        out.append(seg)
+    return out
+
+
+def _keyed(content: str) -> list[int]:
+    """مواضع حروف المقطع التي تبقى في anchor_key (بترتيبها)؛ بها يُردّ موضع المرسى إلى المقطع."""
+    stripped = EMPTY_BRACKETS.sub(lambda m: "\0" * len(m.group(0)), content)
+    return [i for i, c in enumerate(stripped) if c != "\0" and anchor_key(c)]
+
+
+def attach_footnotes(segments, paragraphs) -> list:
+    """حواشي Word: علامة [n] بعد مرساها في مقطع فقرتها، والحاشية مقطعٌ «حاشية» بعد الفقرة.
+
+    يُبحث عن المرسى في نص مقاطع الفقرة متصلاً بعد موضع الحاشية السابقة؛ وإن لم يوجد (تغيّر النص
+    في التقطيع) فالعلامة آخر مقطع في الفقرة. والتصدير يعلّق كل حاشية عند علامتها حاشيةً حقيقية.
+    """
+    from classify.services.classifier import Segment
+
+    by_para: dict[int, list[int]] = {}
+    for i, seg in enumerate(segments):
+        by_para.setdefault(seg.para, []).append(i)
+    inserts: dict[int, list[tuple[int, str]]] = {}
+    notes_after: dict[int, list] = {}
+    number = 0
+    for n, paragraph in enumerate(paragraphs, 1):
+        footnotes = getattr(paragraph, "footnotes", None)
+        hosts = by_para.get(n)
+        if not footnotes or not hosts:
+            continue
+        joined, owners = "", []
+        for i in hosts:
+            positions = _keyed(segments[i].content)
+            joined += "".join(segments[i].content[k] for k in positions)
+            owners += [(i, k) for k in positions]
+        start = 0
+        for anchor, text in footnotes:
+            number += 1
+            at = joined.find(anchor, start) if anchor else -1
+            if at >= 0:
+                end = at + len(anchor) - 1
+                seg_index, char = owners[end]
+                start = end + 1
+                inserts.setdefault(seg_index, []).append((char + 1, f"[{number}]"))
+            elif not anchor:
+                inserts.setdefault(hosts[0], []).append((0, f"[{number}] "))
+            else:
+                last = hosts[-1]
+                inserts.setdefault(last, []).append((len(segments[last].content), f"[{number}]"))
+            after = notes_after.setdefault(hosts[-1], [])
+            after.append(
+                Segment(
+                    "text",
+                    f"[{number}] {text}",
+                    note="حاشية",
+                    para=n + (len(after) + 1) / 1000,
+                    footnote=True,
+                )
+            )
+    for seg_index, marks in inserts.items():
+        content = segments[seg_index].content
+        for pos, mark in sorted(marks, key=lambda m: m[0], reverse=True):
+            content = content[:pos] + mark + content[pos:]
+        segments[seg_index].content = content
+    out = []
+    for i, seg in enumerate(segments):
+        out.append(seg)
+        out.extend(notes_after.get(i, []))
+    return out
+
+
+MUSHAF_SOURCE = re.compile(r"^سورة\s+(?P<surah>.+?)\s+—\s+(?P<ayah>\d+)$")
+MUSHAF_WORD_MIN = 85  # أدنى متوسط تشابه لكلمات الآية المفكوكة مع كلمات المصحف
+MUSHAF_FONT_NOTE = "من خط مصحف المدينة في الملف — نصّه من المصحف"
+
+
+def mushaf_window(source: str, decoded: str) -> str:
+    """كلمات المصحف (بالرسم العثماني وتشكيله) المقابلة للآية المفكوكة، كلمةً بكلمة.
+
+    يُبحث في الآية المطابَقة وما حولها عن أقرب مدى بعدد كلماتها، ويُقبل إن بلغ متوسط التشابه
+    MUSHAF_WORD_MIN؛ وإلا «» فيبقى النص المفكوك بتنبيهه.
+    """
+    m = MUSHAF_SOURCE.match(source or "")
+    words = decoded.split()
+    if not m or not words:
+        return ""
+    ayah = int(m.group("ayah"))
+    canon = [
+        w
+        for r in get_matchers()[0].index.records
+        if r["surah"] == m.group("surah") and ayah - 1 <= int(r["ayah"]) <= ayah + 3
+        for w in r["text"].split()
+    ]
+    keys = [normalize(w) for w in words]
+    best, best_at = 0.0, -1
+    for at in range(len(canon) - len(words) + 1):
+        score = sum(
+            fuzz.ratio(k, normalize(c))
+            for k, c in zip(keys, canon[at : at + len(words)], strict=True)
+        ) / len(words)
+        if score > best:
+            best, best_at = score, at
+    return " ".join(canon[best_at : best_at + len(words)]) if best >= MUSHAF_WORD_MIN else ""
+
+
+def restore_mushaf_verses(segments, paragraphs) -> int:
+    """الآية المفكوكة من خط المصحف يُستبدل بها نص المصحف بعد مطابقتها، ويُرفع عنها تنبيه
+    مخالفة الرسم: أدرجها برنامج المصحف نفسه، والفرق من الفكّ (بلا تشكيل، والألف الخنجرية)."""
+    accept = float(os.environ.get("ACCEPT_QURAN", "0.82"))
+    quran = get_matchers()[0]
+    changed = 0
+    for seg in segments:
+        paragraph = paragraphs[int(seg.para) - 1] if 0 < int(seg.para) <= len(paragraphs) else None
+        for decoded in getattr(paragraph, "mushaf_verses", None) or []:
+            if decoded not in seg.content:
+                continue
+            if seg.kind != "quran":
+                match = quran.match(decoded)
+                if not match or match.score < accept:
+                    continue
+                seg.kind, seg.source, seg.score, seg.terms = "quran", match.source, match.score, []
+            exact = mushaf_window(seg.source, decoded)
+            if exact:
+                seg.content = seg.content.replace(decoded, exact)
+                seg.note = MUSHAF_FONT_NOTE
+                changed += 1
+    return changed
+
+
+def unmark_editorial_notes(segments) -> int:
+    """مقطع كله «الآية» أو نحوها نصٌّ للمؤلف لا آية، ولو طابقه المصحف بلفظه."""
+    changed = 0
+    for seg in segments:
+        if seg.kind == "quran" and normalize(seg.content) in EDITORIAL_AFTER_AYAH:
+            seg.kind, seg.source, seg.score = "text", "", None
+            seg.note = "إشارة إلى الآية السابقة، لا نص قرآني"
+            changed += 1
+    return changed
+
+
 def enforce_quran_precedence(segments) -> int:
     """يعرض ما حُكم عليه حديثاً أو أثراً على فهرس القرآن أولاً ويعيد عدد ما أُعيد تصنيفه."""
     accept = float(os.environ.get("ACCEPT_QURAN", "0.82"))
@@ -563,6 +724,10 @@ def run(paragraphs, progress=None):
     rescue_short_ayas(segments)
     speaker.reattribute(segments)
     enforce_quran_precedence(segments)
+    segments = strip_note_brackets(segments)
+    unmark_editorial_notes(segments)
+    segments = attach_footnotes(segments, paragraphs)
+    restore_mushaf_verses(segments, paragraphs)
     step("فحص المصطلحات بالسياق", 96)
     term_filter.filter_terms(segments)
     return segments
@@ -667,6 +832,7 @@ class StoredSegment:
     note: str = ""
     reviewed: bool = False
     terms: list = field(default_factory=list)
+    footnote: bool = False
 
 
 def segments_from_document(document):
@@ -690,6 +856,7 @@ def segments_from_document(document):
                 score=analysis.confidence / 100 if matched else None,
                 para=phrase.group_id,
                 level=level or (1 if kind == "title" else 0),
+                footnote=phrase.tag == Phrase.Tag.FOOTNOTE,
                 terms=[
                     {
                         "arabic": occurrence.glossary.ar,
