@@ -57,6 +57,28 @@
 </helmet>
 
 <div dir="rtl" data-m-root="1" style="min-height:100vh;background:#EEF2FA;text-align:right;position:relative">
+<!-- نافذة النظام بدل نوافذ المتصفح (alert/confirm): تنبيه بزر واحد أو تأكيد بزرين؛ Escape تغلق وEnter تنفّذ الزر الرئيسي -->
+<sc-if value="{{ dlgOn }}" hint-placeholder-val="{{ false }}">
+  <div sc-camel-on-click="{{ dlgNo }}" style="position:fixed;inset:0;z-index:1000;background:rgba(7,11,26,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:mlIn .2s ease both">
+    <div dir="rtl" role="alertdialog" aria-modal="true" sc-camel-on-click="{{ dlgStay }}" style="width:100%;max-width:440px;background:#fff;border:1px solid #E3E8F4;border-radius:24px;padding:28px 26px 22px;box-shadow:0 30px 80px rgba(7,11,26,.25);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+      <span aria-hidden="true" style="width:58px;height:58px;border-radius:50%;background:{{ dlgIconBg }};border:1px solid {{ dlgIconBorder }};display:grid;place-items:center;font-size:26px;color:{{ dlgIconFg }}">
+        <sc-if value="{{ dlgIsWarn }}" hint-placeholder-val="{{ true }}"><span>⚠</span></sc-if>
+        <sc-if value="{{ dlgIsError }}" hint-placeholder-val="{{ false }}"><span class="mn-ico mn-ico-alert" style="width:30px;height:30px"></span></sc-if>
+      </span>
+      <h3 style="margin:0;font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:24px;color:#070B1A">{{ dlgTitle }}</h3>
+      <sc-if value="{{ dlgHasText }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:15px;line-height:1.8;color:#64748B;font-weight:600;overflow-wrap:anywhere">{{ dlgText }}</p></sc-if>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;width:100%">
+        <sc-if value="{{ dlgIsWarn }}" hint-placeholder-val="{{ true }}">
+          <button type="button" data-dlg-primary="1" sc-camel-on-click="{{ dlgYes }}" style="flex:1 1 160px;background:#D97706;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(217,119,6,.3)" style-hover="background:#B45309">متابعة التعديل</button>
+          <button type="button" sc-camel-on-click="{{ dlgNo }}" style="flex:1 1 120px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;color:#0F172A" style-hover="background:#F5F7FC">إلغاء</button>
+        </sc-if>
+        <sc-if value="{{ dlgIsError }}" hint-placeholder-val="{{ false }}">
+          <button type="button" data-dlg-primary="1" sc-camel-on-click="{{ dlgNo }}" style="flex:1 1 160px;background:#2464EC;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(36,100,236,.3)" style-hover="background:#1B52C8">حسناً</button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
 
 <!-- ================= APP ================= -->
 <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
@@ -67,20 +89,6 @@
       <div style="font-size:13px;font-weight:600;color:#C9D4F5">{{ tipDef }}</div>
       <sc-if value="{{ tipHasTr }}" hint-placeholder-val="{{ false }}"><div dir="ltr" style="margin-top:6px;font-size:12px;font-weight:600;color:#9FB3E8;text-align:left;unicode-bidi:isolate">{{ tipTr }}</div></sc-if>
       <span style="position:absolute;top:{{ tipArrowTop }};bottom:{{ tipArrowBottom }};left:{{ tipAx }};margin-left:-7px;border:7px solid transparent;border-top-color:{{ tipArrowColorTop }};border-bottom-color:{{ tipArrowColorBottom }}"></span>
-    </div>
-  </sc-if>
-  <!-- تحذير قبل تعديل المعتمد بتصميم النظام بدل نافذة المتصفح -->
-  <sc-if value="{{ warnOn }}" hint-placeholder-val="{{ false }}">
-    <div sc-camel-on-click="{{ warnNo }}" style="position:fixed;inset:0;z-index:1000;background:rgba(7,11,26,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:mlIn .2s ease both">
-      <div dir="rtl" role="alertdialog" aria-modal="true" sc-camel-on-click="{{ warnStay }}" style="width:100%;max-width:440px;background:#fff;border:1px solid #E3E8F4;border-radius:24px;padding:28px 26px 22px;box-shadow:0 30px 80px rgba(7,11,26,.25);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
-        <span style="width:58px;height:58px;border-radius:50%;background:#FFF7ED;border:1px solid #FDE2B8;display:grid;place-items:center;font-size:26px;color:#D97706">⚠</span>
-        <h3 style="margin:0;font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:24px;color:#070B1A">{{ warnTitle }}</h3>
-        <p style="margin:0;font-size:15px;line-height:1.8;color:#64748B;font-weight:600">{{ warnText }}</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;width:100%">
-          <button type="button" sc-camel-on-click="{{ warnYes }}" style="flex:1 1 160px;background:#D97706;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(217,119,6,.3)" style-hover="background:#B45309">متابعة التعديل</button>
-          <button type="button" sc-camel-on-click="{{ warnNo }}" style="flex:1 1 120px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;color:#0F172A" style-hover="background:#F5F7FC">إلغاء</button>
-        </div>
-      </div>
     </div>
   </sc-if>
   <header data-m="app-header" style="background:#fff;border-bottom:1px solid #E3E8F4;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;position:sticky;top:0;z-index:50">
@@ -813,6 +821,7 @@ class Component extends DCLogic {
     if (did) this.later(() => this.loadDoc(did, dtail[2] || ''), 50);
     else if (this.props.startScreen === 'app' || this.state.screen === 'app') { window.location.replace('/classify/'); return; }
     window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('keydown', this.onDialogKey);
     fetch('/api/translate/languages/').then(r => r.json()).then(d => {
       if (!d || !d.languages || !d.languages.length) return;
       this.dbLangs = d.languages;
@@ -823,7 +832,7 @@ class Component extends DCLogic {
       else this.setState({ langsLoaded: true });
     }).catch(() => {});
   }
-  componentWillUnmount() { clearTimeout(this.auditTimer); window.removeEventListener('scroll', this.onScroll); this.clearTimers(); }
+  componentWillUnmount() { clearTimeout(this.auditTimer); window.removeEventListener('scroll', this.onScroll); window.removeEventListener('keydown', this.onDialogKey); this.clearTimers(); }
 
   // ---- flow
   startApp = () => this._startAppDisabled();
@@ -861,14 +870,14 @@ class Component extends DCLogic {
     xhr.upload.onload = () => this.setState({ upload: 100 });
     xhr.onload = () => {
       let data = null; try { data = JSON.parse(xhr.responseText); } catch (err) {}
-      if (!data || !data.segments || !data.segments.length) { alert((data && data.error) || 'تعذّرت الترجمة'); this.setState({ uploading: false }); return; }
+      if (!data || !data.segments || !data.segments.length) { this.setState({ uploading: false }); this.notify(file ? 'تعذّر تحليل الملف' : 'تعذّر تحليل النص', (data && data.error) || 'لم يُعد الخادم وحدات لهذا المحتوى. أعد المحاولة بعد قليل.'); return; }
       this.docId = data.doc_id;
       this.segments = data.segments;
       this.translationId = null;
       this.setState({ uploading: false, mode: 'upload', real: data.segments, realMeta: data, editText: null, srcName: file ? file.name : (data.title || name) });
       this.beginSegment();
     };
-    xhr.onerror = () => { alert('تعذّر الاتصال بالخادم'); this.setState({ uploading: false }); };
+    xhr.onerror = () => { this.setState({ uploading: false }); this.notifyOffline(); };
     xhr.send(fd);
     const poll = () => { if (!this.state.uploading) return; fetch('/api/translate/progress/').then(r => r.json()).then(p => { if (this.state.uploading && p && p.stage) this.setState({ srvStage: p.stage, srvPct: p.pct || 0 }); }).catch(() => {}); this.later(poll, 700); };
     this.later(poll, 900);
@@ -882,8 +891,9 @@ class Component extends DCLogic {
   loadDoc(id, stage) {
     this.clearTimers();
     this.setState({ screen: 'app', step: 0, uploading: true, upload: 100, srvStage: 'فتح المستند', srvPct: 0 });
-    fetch('/api/translate/documents/' + id + '/' + location.search).then(r => r.json()).then(data => {
-      if (!data || !data.segments || !data.segments.length) { this.setState({ uploading: false }); alert('تعذّر فتح المستند'); return; }
+    // رد غير JSON (صفحة 404 مثلاً) يُعامل كمستند مفقود لا كانقطاع اتصال
+    fetch('/api/translate/documents/' + id + '/' + location.search).then(r => r.json().catch(() => (r.status === 404 ? { error: 'لم يُعثر على المستند، أو لم يعد متاحًا.' } : null))).then(data => {
+      if (!data || !data.segments || !data.segments.length) { this.setState({ uploading: false }); this.notify('تعذّر فتح المستند', (data && data.error) || 'لم يُعثر على المستند، أو لا يحتوي على وحدات بعد.'); return; }
       this.docId = data.doc_id;
       this.segments = data.segments;
       this.translationId = data.translation_id || null;
@@ -903,7 +913,7 @@ class Component extends DCLogic {
       } else {
         this.beginSegment();
       }
-    }).catch(() => { this.setState({ uploading: false }); alert('تعذّر الاتصال بالخادم'); });
+    }).catch(() => { this.setState({ uploading: false }); this.notifyOffline(); });
   }
   pickFile = () => {
     const inp = document.createElement('input');
@@ -936,17 +946,17 @@ class Component extends DCLogic {
     this.setState({ step: 2, match: segs.map(() => 0), matchTyped: segs.map(() => 0), translating: true, srvStage: '', srvPct: 0 }); this.syncUrl(2); window.scrollTo(0, 0);
     // الترجمة مهمة في الخلفية: run يعود فوراً، والتقدّم والانتهاء من /progress/ ثم تُجلب الوحدات النهائية
     const run = { after: this.translationId || 0, taskId: '', done: false, lost: false, idle: 0 };
-    const stop = (msg) => { run.done = true; this.setState({ translating: false }); if (msg) alert(msg); };
+    const stop = (title, text) => { run.done = true; this.setState({ translating: false }); if (title) this.notify(title, text); };
     const finish = () => {
       if (run.done) return; run.done = true;
       fetch('/api/translate/documents/' + this.docId + '/').then(r => r.json()).then(data => {
         this.setState({ translating: false });
-        if (!data || !data.segments) { alert('تعذّرت الترجمة'); return; }
+        if (!data || !data.segments) { this.notify('تعذّرت الترجمة', 'تعذّر جلب الوحدات المترجمة من الخادم. أعد المحاولة بعد قليل.'); return; }
         this.segments = data.segments;
         this.translationId = data.translation_id || null;
         this.loadAudit();
         this.setState({ real: data.segments, approved: {} }, () => this.setState({ match: this.segs().map(() => 2), matchTyped: this.segs().map(s => (s.en || '').length) }));
-      }).catch(() => { this.setState({ translating: false }); alert('تعذّر الاتصال بالخادم'); });
+      }).catch(() => { this.setState({ translating: false }); this.notifyOffline(); });
     };
     const fd = new FormData();
     fd.append('doc_id', this.docId || 0);
@@ -957,7 +967,7 @@ class Component extends DCLogic {
       let data = null; try { data = JSON.parse(xhr.responseText); } catch (err) {}
       if (data && data.translation_id) { run.taskId = data.task_id || ''; if (data.finished) finish(); return; }
       if (!data && (xhr.status >= 500 || xhr.status === 0)) { run.lost = true; return; }
-      stop((data && data.error) || 'تعذّرت الترجمة');
+      stop('تعذّرت الترجمة', (data && data.error) || 'أعد المحاولة بعد قليل.');
     };
     xhr.onerror = () => { run.lost = true; };
     xhr.send(fd);
@@ -965,7 +975,7 @@ class Component extends DCLogic {
       if (!this.state.translating || run.done) return;
       fetch('/api/translate/progress/?doc_id=' + this.docId + '&after=' + run.after + (run.taskId ? '&task_id=' + encodeURIComponent(run.taskId) : '')).then(r => r.json()).then(p => {
         if (!this.state.translating || !p || run.done) return;
-        if (p.waiting) { if (run.lost && ++run.idle > 30) stop('تعذّرت الترجمة'); return; } if (p.queued_for > 90) { stop('لم تبدأ الترجمة: عامل المهام في الخلفية لا يستجيب. أعد المحاولة بعد قليل أو تواصل مع مسؤول الخادم.'); return; }
+        if (p.waiting) { if (run.lost && ++run.idle > 30) stop('تعذّرت الترجمة', 'انقطع الاتصال بالخادم قبل بدء الترجمة. أعد المحاولة بعد قليل.'); return; } if (p.queued_for > 90) { stop('لم تبدأ الترجمة', 'عامل المهام في الخلفية لا يستجيب. أعد المحاولة بعد قليل أو تواصل مع مسؤول الخادم.'); return; }
         if (p.stage) this.setState({ srvStage: p.stage, srvPct: p.pct || 0 });
         if (p.rows) {
           const live = this.segs(); const m = [...this.state.match]; const ty = [...this.state.matchTyped]; let dirty = false;
@@ -981,9 +991,23 @@ class Component extends DCLogic {
   // حقل المراجعة يأخذ ارتفاع محتواه عند التركيز والكتابة، ويُخفى تلميح المصطلح
   // تحذيرات تعديل المعتمد بالترتيب؛ كل تحذير يُؤكَّد مرة واحدة لكل صف، ثم يُنفَّذ التعديل
   askWarn(steps, i, done) {
-    if (!steps.length) { this.setState({ warn: null }); done(); return; }
+    if (!steps.length) { this.setState({ dialog: null }); done(); return; }
     const [step, ...rest] = steps;
-    this.setState({ warn: { ...step, yes: () => this.setState({ [step.ack]: { ...(this.state[step.ack] || {}), [i]: true } }, () => this.askWarn(rest, i, done)) } });
+    this.openDialog({ ...step, kind: 'warn', yes: () => this.setState({ [step.ack]: { ...(this.state[step.ack] || {}), [i]: true } }, () => this.askWarn(rest, i, done)) });
+  }
+  // نافذة النظام بدل alert/confirm المتصفح: openDialog يفتح أي نافذة ويركّز زرها الرئيسي، وnotify تنبيه خطأ بزر واحد
+  openDialog(dialog) { this.setState({ dialog }, () => { const b = document.querySelector('[data-dlg-primary]'); if (b) b.focus(); }); }
+  closeDialog = () => this.setState({ dialog: null });
+  notify = (title, text) => this.openDialog({ kind: 'error', title, text: text || '' });
+  notifyOffline = () => this.notify('تعذّر الاتصال بالخادم', 'تحقّق من اتصالك بالإنترنت ثم أعد المحاولة.');
+  // Escape تغلق النافذة وEnter تنفّذ زرها الرئيسي؛ منع الافتراضي يمنع نقرة Enter المكرّرة على الزر المركَّز
+  onDialogKey = (e) => { const D = this.state.dialog; if (!D) return; if (e.key === 'Escape') { e.preventDefault(); this.closeDialog(); } else if (e.key === 'Enter') { e.preventDefault(); if (D.yes) D.yes(); else this.closeDialog(); } };
+  // قيم النافذة للقالب: التحذير كهرماني بزرين، والخطأ أحمر بزر واحد
+  dialogVals() {
+    const D = this.state.dialog, warn = !!D && D.kind === 'warn';
+    return { dlgOn: !!D, dlgIsWarn: warn, dlgIsError: !!D && !warn, dlgTitle: D ? D.title : '', dlgText: D ? D.text || '' : '', dlgHasText: !!(D && D.text),
+      dlgIconBg: warn ? '#FFF7ED' : '#FEF2F2', dlgIconBorder: warn ? '#FDE2B8' : '#FECACA', dlgIconFg: warn ? '#D97706' : '#DC2626',
+      dlgYes: () => D && D.yes && D.yes(), dlgNo: this.closeDialog, dlgStay: (e) => e.stopPropagation() };
   }
   growField(i, field) {
     const css = getComputedStyle(field), line = parseFloat(css.lineHeight) || 25.6;
@@ -1086,7 +1110,7 @@ class Component extends DCLogic {
       auditFilterLabel: only ? 'عرض كل الجمل' : 'ما يحتاج مراجعة فقط', auditFilterBg: only ? '#2464EC' : '#fff', auditFilterFg: only ? '#fff' : '#0F172A', auditFilterBorder: only ? '#2464EC' : '#E3E8F4',
     };
   }
-  approveRow = (i, on) => { const segs = this.segs(), s = segs[i]; if (!s) return; const idx = s.id ? segs.map((x, j) => j).filter(j => segs[j].id === s.id) : [i]; const mark = () => { const a = { ...this.state.approved }; idx.forEach(j => { a[j] = on; }); this.setState({ approved: a }); }; if (!this.translationId || !s.id) { mark(); return; } this.approving = this.approving || {}; if (this.approving[s.id]) return; this.approving[s.id] = true; const fd = new FormData(); fd.append('translation_id', this.translationId); fd.append('phrase_id', s.id); fd.append('approved', on ? '1' : '0'); fd.append('text', idx.map(j => this.state.edits[j] ?? segs[j].en).filter(Boolean).join(' ')); fetch('/api/translate/approve/', { method: 'POST', body: fd }).then(r => r.json().then(d => ({ ok: r.ok, d }))).then(({ ok, d }) => { if (!ok) { alert((d && d.error) || 'تعذّر حفظ الاعتماد'); return; } mark(); }).catch(() => alert('تعذّر الاتصال بالخادم')).finally(() => { delete this.approving[s.id]; }); };
+  approveRow = (i, on) => { const segs = this.segs(), s = segs[i]; if (!s) return; const idx = s.id ? segs.map((x, j) => j).filter(j => segs[j].id === s.id) : [i]; const mark = () => { const a = { ...this.state.approved }; idx.forEach(j => { a[j] = on; }); this.setState({ approved: a }); }; if (!this.translationId || !s.id) { mark(); return; } this.approving = this.approving || {}; if (this.approving[s.id]) return; this.approving[s.id] = true; const fd = new FormData(); fd.append('translation_id', this.translationId); fd.append('phrase_id', s.id); fd.append('approved', on ? '1' : '0'); fd.append('text', idx.map(j => this.state.edits[j] ?? segs[j].en).filter(Boolean).join(' ')); fetch('/api/translate/approve/', { method: 'POST', body: fd }).then(r => r.json().then(d => ({ ok: r.ok, d }))).then(({ ok, d }) => { if (!ok) { this.notify('تعذّر حفظ الاعتماد', (d && d.error) || 'أعد المحاولة بعد قليل.'); return; } mark(); }).catch(this.notifyOffline).finally(() => { delete this.approving[s.id]; }); };
   toReview = () => { this.setState({ step: 3 }); this.syncUrl(3); window.scrollTo(0, 0); };
   toExport = () => { this.setState({ step: 4 }); this.syncUrl(4); window.scrollTo(0, 0); };
   doExport = () => { this.setState({ exported: true }); window.scrollTo(0, 0); };
@@ -1097,14 +1121,14 @@ class Component extends DCLogic {
     const kind = (this.state.fmt || 'DOCX').toLowerCase();
     this.setState({ exporting: true });
     const layout = kind === 'xlsx' ? '' : ({ 'متتابع': 'sequential', 'الترجمة فقط': 'translation' })[this.state.layout] || ''; fetch('/export/' + this.translationId + '/' + kind + '/' + (layout ? '?layout=' + layout : '')).then(r => {
-      if (!r.ok) return r.text().then(t => { const plain = (r.headers.get('Content-Type') || '').startsWith('text/plain'); throw new Error(plain && t ? t : (r.status === 404 ? 'لا ترجمة لهذا المستند بعد.' : 'تعذّر التصدير')); });
+      if (!r.ok) return r.text().then(t => { const plain = (r.headers.get('Content-Type') || '').startsWith('text/plain'); throw Object.assign(new Error(plain && t ? t : (r.status === 404 ? 'لا ترجمة لهذا المستند بعد.' : 'أعاد الخادم الخطأ ' + r.status + '. أعد المحاولة بعد قليل.')), { server: true }); });
       const part = (r.headers.get('Content-Disposition') || '').split("''")[1];
       const name = part ? decodeURIComponent(part.split(';')[0]) : this.exportBaseName() + '.' + kind;
       return r.blob().then(blob => ({ blob, name }));
     }).then(file => {
       this.lastExport = file; this.saveFile(file);
       this.setState({ exporting: false, exported: true, exportName: file.name }); window.scrollTo(0, 0);
-    }).catch(err => { this.setState({ exporting: false }); alert(err.message || 'تعذّر التصدير'); });
+    }).catch(err => { this.setState({ exporting: false }); if (err && err.server) this.notify('تعذّر التصدير', err.message); else this.notifyOffline(); });
   };
   exportAgain = () => { this.setState({ exported: false, exportName: '' }); window.scrollTo(0, 0); };
   downloadAgain = () => { if (this.lastExport) this.saveFile(this.lastExport); else this.doFileExport(); };
@@ -1267,8 +1291,7 @@ class Component extends DCLogic {
     const uploadPct = (S.uploading && S.upload >= 100 && S.srvStage) ? ((S.srvPct || 0) + '%') : (S.upload + '%');
     return {
       isLanding: S.screen === 'landing', isApp: S.screen === 'app',
-      warnOn: !!S.warn, warnTitle: S.warn ? S.warn.title : '', warnText: S.warn ? S.warn.text : '',
-      warnYes: () => S.warn && S.warn.yes(), warnNo: () => this.setState({ warn: null }), warnStay: (e) => e.stopPropagation(),
+      ...this.dialogVals(),
       tipOn: !!S.tip, tipX: S.tip ? S.tip.x + 'px' : '0px', tipTop: S.tip && S.tip.top != null ? S.tip.top + 'px' : 'auto', tipBottom: S.tip && S.tip.bottom != null ? S.tip.bottom + 'px' : 'auto', tipAx: S.tip ? S.tip.ax + 'px' : '50%', tipArrowTop: S.tip && S.tip.above ? '100%' : 'auto', tipArrowBottom: S.tip && S.tip.above ? 'auto' : '100%', tipArrowColorTop: S.tip && S.tip.above ? '#070B1A' : 'transparent', tipArrowColorBottom: S.tip && S.tip.above ? 'transparent' : '#070B1A', tipEn: S.tip ? S.tip.en : '', tipDef: S.tip ? S.tip.def : '', tipTr: S.tip ? S.tip.tr : '', tipHasTr: !!(S.tip && S.tip.tr),
       langOpen: !!S.langOpen, toggleLangs: () => this.setState({ langOpen: !this.state.langOpen, langQuery: '' }), langQuery: S.langQuery || '', onLangSearch: (e) => this.setState({ langQuery: e.target.value }),
       startApp: this.startApp, goLanding: this.goLanding, restart: this.restart, pickFile: this.pickFile,

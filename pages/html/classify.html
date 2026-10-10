@@ -59,6 +59,28 @@
 </helmet>
 
 <div dir="rtl" data-m-root="1" style="min-height:100vh;background:#EEF2FA;text-align:right;position:relative">
+<!-- نافذة النظام بدل نوافذ المتصفح (alert/confirm): تنبيه بزر واحد أو تأكيد بزرين؛ Escape تغلق وEnter تنفّذ الزر الرئيسي -->
+<sc-if value="{{ dlgOn }}" hint-placeholder-val="{{ false }}">
+  <div sc-camel-on-click="{{ dlgNo }}" style="position:fixed;inset:0;z-index:1000;background:rgba(7,11,26,.45);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:16px;animation:mlIn .2s ease both">
+    <div dir="rtl" role="alertdialog" aria-modal="true" sc-camel-on-click="{{ dlgStay }}" style="width:100%;max-width:440px;background:#fff;border:1px solid #E3E8F4;border-radius:24px;padding:28px 26px 22px;box-shadow:0 30px 80px rgba(7,11,26,.25);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+      <span aria-hidden="true" style="width:58px;height:58px;border-radius:50%;background:{{ dlgIconBg }};border:1px solid {{ dlgIconBorder }};display:grid;place-items:center;font-size:26px;color:{{ dlgIconFg }}">
+        <sc-if value="{{ dlgIsWarn }}" hint-placeholder-val="{{ true }}"><span>⚠</span></sc-if>
+        <sc-if value="{{ dlgIsError }}" hint-placeholder-val="{{ false }}"><span class="mn-ico mn-ico-alert" style="width:30px;height:30px"></span></sc-if>
+      </span>
+      <h3 style="margin:0;font-family:'ThmanyahDisplay',serif;font-weight:900;font-size:24px;color:#070B1A">{{ dlgTitle }}</h3>
+      <sc-if value="{{ dlgHasText }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:15px;line-height:1.8;color:#64748B;font-weight:600;overflow-wrap:anywhere">{{ dlgText }}</p></sc-if>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;width:100%">
+        <sc-if value="{{ dlgIsWarn }}" hint-placeholder-val="{{ true }}">
+          <button type="button" data-dlg-primary="1" sc-camel-on-click="{{ dlgYes }}" style="flex:1 1 160px;background:#D97706;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(217,119,6,.3)" style-hover="background:#B45309">متابعة التعديل</button>
+          <button type="button" sc-camel-on-click="{{ dlgNo }}" style="flex:1 1 120px;background:#fff;border:1px solid #E3E8F4;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;color:#0F172A" style-hover="background:#F5F7FC">إلغاء</button>
+        </sc-if>
+        <sc-if value="{{ dlgIsError }}" hint-placeholder-val="{{ false }}">
+          <button type="button" data-dlg-primary="1" sc-camel-on-click="{{ dlgNo }}" style="flex:1 1 160px;background:#2464EC;color:#fff;border:0;border-radius:999px;padding:12px 22px;font-weight:800;font-size:15px;box-shadow:0 10px 24px rgba(36,100,236,.3)" style-hover="background:#1B52C8">حسناً</button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+</sc-if>
 
 <!-- ================= APP ================= -->
 <sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
@@ -918,8 +940,9 @@ class Component extends DCLogic {
     }).catch(() => {});
     if (this.props.startScreen === 'app') this.setState({ screen: 'app' });
     for (const [type, fn] of this.dragListeners()) window.addEventListener(type, fn);
+    window.addEventListener('keydown', this.onDialogKey);
   }
-  componentWillUnmount() { for (const [type, fn] of this.dragListeners()) window.removeEventListener(type, fn); clearTimeout(this.dragWatch); this.clearTimers(); }
+  componentWillUnmount() { for (const [type, fn] of this.dragListeners()) window.removeEventListener(type, fn); window.removeEventListener('keydown', this.onDialogKey); clearTimeout(this.dragWatch); this.clearTimers(); }
   dragListeners() { return [['dragenter', this.onWinDragEnter], ['dragover', this.onWinDragOver], ['dragleave', this.onWinDragLeave], ['drop', this.onWinDrop]]; }
 
   // ---- flow
@@ -937,6 +960,20 @@ class Component extends DCLogic {
     this.later(() => call(0), 400);
   };
   goLanding = () => { window.location.href = '/'; };
+  // نافذة النظام بدل alert/confirm المتصفح: openDialog يفتح أي نافذة ويركّز زرها الرئيسي، وnotify تنبيه خطأ بزر واحد
+  openDialog(dialog) { this.setState({ dialog }, () => { const b = document.querySelector('[data-dlg-primary]'); if (b) b.focus(); }); }
+  closeDialog = () => this.setState({ dialog: null });
+  notify = (title, text) => this.openDialog({ kind: 'error', title, text: text || '' });
+  notifyOffline = () => this.notify('تعذّر الاتصال بالخادم', 'تحقّق من اتصالك بالإنترنت ثم أعد المحاولة.');
+  // Escape تغلق النافذة وEnter تنفّذ زرها الرئيسي؛ منع الافتراضي يمنع نقرة Enter المكرّرة على الزر المركَّز
+  onDialogKey = (e) => { const D = this.state.dialog; if (!D) return; if (e.key === 'Escape') { e.preventDefault(); this.closeDialog(); } else if (e.key === 'Enter') { e.preventDefault(); if (D.yes) D.yes(); else this.closeDialog(); } };
+  // قيم النافذة للقالب: التحذير كهرماني بزرين، والخطأ أحمر بزر واحد
+  dialogVals() {
+    const D = this.state.dialog, warn = !!D && D.kind === 'warn';
+    return { dlgOn: !!D, dlgIsWarn: warn, dlgIsError: !!D && !warn, dlgTitle: D ? D.title : '', dlgText: D ? D.text || '' : '', dlgHasText: !!(D && D.text),
+      dlgIconBg: warn ? '#FFF7ED' : '#FEF2F2', dlgIconBorder: warn ? '#FDE2B8' : '#FECACA', dlgIconFg: warn ? '#D97706' : '#DC2626',
+      dlgYes: () => D && D.yes && D.yes(), dlgNo: this.closeDialog, dlgStay: (e) => e.stopPropagation() };
+  }
   openDoc(id) {
     this.setState({ screen: 'app', step: 0, uploading: true, upload: 100, srvStage: 'فتح المستند', srvPct: 0 });
     fetch('/api/translate/documents/' + id + '/').then(r => r.json()).then(data => {
@@ -948,7 +985,7 @@ class Component extends DCLogic {
   }
   goTranslate = () => {
     const id = this.state.realMeta && this.state.realMeta.doc_id;
-    if (!id) { alert('لم يُحفظ المستند بعد'); return; }
+    if (!id) { this.notify('لم يُحفظ المستند بعد', 'أكمل رفع المستند وتحليله، ثم انتقل إلى الترجمة.'); return; }
     const iso = this.state.targetIso || 'en';
     window.location.href = '/translate/documents/' + id + '/translation/?target=' + iso;
   };
@@ -1210,6 +1247,7 @@ class Component extends DCLogic {
     const uploadPct = (S.uploading && S.upload >= 100 && S.srvStage) ? ((S.srvPct || 0) + '%') : (S.upload + '%');
     return {
       isLanding: S.screen === 'landing', isApp: S.screen === 'app', isRetrieval: S.screen === 'retrieval',
+      ...this.dialogVals(),
       goRetrieval: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ screen: 'retrieval' }); window.scrollTo(0, 0); },
       goApp: () => { this.setState({ screen: 'app', step: 0 }); window.scrollTo(0, 0); },
       tipOn: !!S.tip, tipX: S.tip ? S.tip.x + 'px' : '0px', tipTop: S.tip && S.tip.top != null ? S.tip.top + 'px' : 'auto', tipBottom: S.tip && S.tip.bottom != null ? S.tip.bottom + 'px' : 'auto', tipAx: S.tip ? S.tip.ax + 'px' : '50%', tipArrowTop: S.tip && S.tip.above ? '100%' : 'auto', tipArrowBottom: S.tip && S.tip.above ? 'auto' : '100%', tipArrowColorTop: S.tip && S.tip.above ? '#070B1A' : 'transparent', tipArrowColorBottom: S.tip && S.tip.above ? 'transparent' : '#070B1A', tipEn: S.tip ? S.tip.en : '', tipDef: S.tip ? S.tip.def : '', tipTr: S.tip ? S.tip.tr : '', tipHasTr: !!(S.tip && S.tip.tr),
